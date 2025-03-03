@@ -1,0 +1,6 @@
+.idea
+.DS_STORE
+.DS_*
+.python-version
+__pycache__
+*cache
