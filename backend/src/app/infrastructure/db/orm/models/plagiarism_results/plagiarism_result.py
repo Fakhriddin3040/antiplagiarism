@@ -1,6 +1,7 @@
 from datetime import datetime
+from decimal import Decimal
 
-from sqlalchemy import ForeignKey, DECIMAL
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from base.types.pytypes import ID_T
@@ -23,7 +24,7 @@ class PlagiarismResult(SQLAlchemyBaseModel):
     target_document_id: Mapped[ID_T] = mapped_column(
         ForeignKey(DatabaseTables.DOCUMENTS.as_foreign_key), nullable=False
     )
-    similarity_score: Mapped[DECIMAL] = mapped_column(nullable=False)
+    similarity_score: Mapped[Decimal] = mapped_column(nullable=False)
     completed_at: Mapped[datetime] = mapped_column(
         default=datetime.utcnow, nullable=False
     )

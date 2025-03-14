@@ -1,10 +1,9 @@
 from sqlalchemy import ForeignKey, String, Text as TextType
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column
 
 from base.types.pytypes import ID_T
 from src.app.infrastructure.db.orm.enums import DatabaseTables
 from base.types.orm.models import SQLAlchemyBaseModel
-from src.app.infrastructure.db.orm.models.users.user import User
 
 
 class Document(SQLAlchemyBaseModel):
@@ -15,5 +14,3 @@ class Document(SQLAlchemyBaseModel):
     )
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     description: Mapped[str | None] = mapped_column(TextType, nullable=True)
-
-    author: Mapped["User"] = relationship(back_populates="documents")
