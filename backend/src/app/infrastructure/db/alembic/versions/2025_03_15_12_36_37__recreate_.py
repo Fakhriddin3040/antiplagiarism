@@ -1,8 +1,8 @@
 """recreate migrations
 
-Revision ID: b8097148ef20
+Revision ID: a3e2e83d103d
 Revises:
-Create Date: 2025-03-14 15:24:34.487020+03:00
+Create Date: 2025-03-15 12:36:37.300082+03:00
 
 """
 
@@ -12,9 +12,8 @@ from alembic import op
 import sqlalchemy as sa
 import src
 
-
 # revision identifiers, used by Alembic.
-revision: str = "b8097148ef20"
+revision: str = "a3e2e83d103d"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -39,6 +38,8 @@ def upgrade() -> None:
         sa.Column("title", sa.String(length=100), nullable=False),
         sa.Column("description", sa.Text(), nullable=True),
         sa.Column("id", sa.Uuid(), nullable=False),
+        sa.Column("created_at", sa.DateTime(), nullable=False),
+        sa.Column("updated_at", sa.DateTime(), nullable=False),
         sa.ForeignKeyConstraint(
             ["author_id"],
             ["users.id"],
@@ -57,6 +58,8 @@ def upgrade() -> None:
             nullable=False,
         ),
         sa.Column("id", sa.Uuid(), nullable=False),
+        sa.Column("created_at", sa.DateTime(), nullable=False),
+        sa.Column("updated_at", sa.DateTime(), nullable=False),
         sa.ForeignKeyConstraint(
             ["document_id"],
             ["documents.id"],

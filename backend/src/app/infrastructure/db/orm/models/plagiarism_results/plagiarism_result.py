@@ -1,4 +1,3 @@
-from datetime import datetime
 from decimal import Decimal
 
 from sqlalchemy import ForeignKey
@@ -7,14 +6,14 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from base.types.pytypes import ID_T
 from src.app.core.enums import PlagiarismResultStatusEnum
 from src.app.infrastructure.db.orm.enums import DatabaseTables
-from base.types.orm.models import SQLAlchemyBaseModel
+from base.types.orm.models import SQLAlchemyBaseModel, ChronoModelMixin
 from src.app.infrastructure.db.orm.models.documents.document import Document
 from src.app.infrastructure.db.orm.types.type_decorators.plagiarism_result import (
     PlagiarismResultStatusTD,
 )
 
 
-class PlagiarismResult(SQLAlchemyBaseModel):
+class PlagiarismResult(SQLAlchemyBaseModel, ChronoModelMixin):
     __tablename__ = DatabaseTables.PLAGIARISM_RESULTS
 
     document_id: Mapped[ID_T] = mapped_column(
@@ -25,9 +24,6 @@ class PlagiarismResult(SQLAlchemyBaseModel):
         ForeignKey(DatabaseTables.DOCUMENTS.as_foreign_key), nullable=False
     )
     similarity_score: Mapped[Decimal] = mapped_column(nullable=False)
-    completed_at: Mapped[datetime] = mapped_column(
-        default=datetime.utcnow, nullable=False
-    )
     status: Mapped[PlagiarismResultStatusTD.choices] = mapped_column(
         PlagiarismResultStatusTD,
         nullable=False,

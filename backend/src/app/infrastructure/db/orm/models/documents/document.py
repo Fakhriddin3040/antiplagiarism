@@ -3,10 +3,10 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from base.types.pytypes import ID_T
 from src.app.infrastructure.db.orm.enums import DatabaseTables
-from base.types.orm.models import SQLAlchemyBaseModel
+from base.types.orm.models import SQLAlchemyBaseModel, ChronoModelMixin
 
 
-class Document(SQLAlchemyBaseModel):
+class Document(SQLAlchemyBaseModel, ChronoModelMixin):
     __tablename__ = DatabaseTables.DOCUMENTS
 
     author_id: Mapped[ID_T] = mapped_column(

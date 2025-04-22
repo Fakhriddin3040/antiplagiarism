@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 
-from utils.functions import get_from_env
+from src.utils.functions import get_from_env
 
 
 load_dotenv()
