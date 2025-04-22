@@ -5,6 +5,7 @@ from sqlalchemy.orm import (
     Mapped,
     mapped_column,
 )
+from typing_extensions import TypeVar
 
 from base.defaults import default_id, default_dt
 from base.types.pytypes import ID_T
@@ -17,3 +18,6 @@ class SQLAlchemyBaseModel(SQLAlchemyDeclarativeBase):
 class ChronoModelMixin:
     created_at: Mapped[datetime] = mapped_column(default=default_dt(), nullable=False)
     updated_at: Mapped[datetime] = mapped_column(default=default_dt(), nullable=False)
+
+
+TModel = TypeVar("TModel", bound=SQLAlchemyBaseModel)
