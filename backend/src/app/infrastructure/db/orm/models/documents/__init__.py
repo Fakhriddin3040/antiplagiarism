@@ -1,8 +1,8 @@
 from .document import Document
-from .text import Text
+from .document_chunk import DocumentChunk
 
 
 __all__ = [
     "Document",
-    "Text",
+    "DocumentChunk",
 ]

@@ -1,13 +1,12 @@
 from .enums import DatabaseTables
 from .types import PlagiarismResultStatusTD
-from .models import User, PlagiarismResult, Document, Text
+from .models import User, PlagiarismCheck, Document
 
 
 __all__ = [
     "DatabaseTables",
     "PlagiarismResultStatusTD",
     "User",
-    "PlagiarismResult",
+    "PlagiarismCheck",
     "Document",
-    "Text",
 ]

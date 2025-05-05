@@ -7,10 +7,12 @@ class DatabaseTables(StrEnum):
 
     # Document
     DOCUMENTS = "documents"
+    DOCUMENT_CHUNKS = "document_chunks"
     TEXTS = "texts"
 
     # Plagiarism result
-    PLAGIARISM_RESULTS = "plagiarism_results"
+    PLAGIARISM_CHECKS = "plagiarism_checks"
+    PLAGIARISM_MATCHES = "plagiarism_matches"
 
     @property
     def as_foreign_key(self):

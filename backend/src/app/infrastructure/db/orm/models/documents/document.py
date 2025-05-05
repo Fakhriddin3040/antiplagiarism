@@ -14,3 +14,4 @@ class Document(SQLAlchemyBaseModel, ChronoModelMixin):
     )
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     description: Mapped[str | None] = mapped_column(TextType, nullable=True)
+    text: Mapped[str] = mapped_column(TextType, nullable=True)
