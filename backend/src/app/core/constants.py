@@ -289,4 +289,5 @@ stop_words_tj = {
 
 ALL_STOP_WORDS = stop_words_en | stop_words_ru | stop_words_tj
 
-NGRAMM_DEFAULT_SIZE = 5
+NGRAM_DEFAULT_SIZE = 5
+NGRAM_DEFAULT_RANGE = (1, 2)

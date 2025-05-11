@@ -9,4 +9,5 @@ __all__ = [
     "User",
     "PlagiarismCheck",
     "Document",
+    "",
 ]

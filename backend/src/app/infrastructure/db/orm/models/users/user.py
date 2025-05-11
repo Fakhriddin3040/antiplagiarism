@@ -2,10 +2,10 @@ from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.app.infrastructure.db.orm.enums import DatabaseTables
-from base.types.orm.models import SQLAlchemyBaseModel
+from base.types.orm.models import SQLAlchemyBaseModel, ChronoModelMixin
 
 
-class User(SQLAlchemyBaseModel):
+class User(SQLAlchemyBaseModel, ChronoModelMixin):
     __tablename__ = DatabaseTables.USERS
 
     username: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)

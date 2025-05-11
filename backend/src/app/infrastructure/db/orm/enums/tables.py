@@ -1,18 +1,20 @@
-from enum import StrEnum
+from enum import StrEnum, auto
 
 
 class DatabaseTables(StrEnum):
     # User
-    USERS = "users"
+    USERS = auto()
 
     # Document
-    DOCUMENTS = "documents"
-    DOCUMENT_CHUNKS = "document_chunks"
-    TEXTS = "texts"
+    DOCUMENTS = auto()
+    DOCUMENTS_AUTHORS = auto()
+    DOCUMENT_CHUNKS = auto()
+    TEXTS = auto()
+    FOLDERS = auto()
 
     # Plagiarism result
-    PLAGIARISM_CHECKS = "plagiarism_checks"
-    PLAGIARISM_MATCHES = "plagiarism_matches"
+    PLAGIARISM_CHECKS = auto()
+    PLAGIARISM_MATCHES = auto()
 
     @property
     def as_foreign_key(self):
