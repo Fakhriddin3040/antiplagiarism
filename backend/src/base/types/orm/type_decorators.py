@@ -1,7 +1,7 @@
 from typing import Optional, Generic, Type
 
 from sqlalchemy import TypeDecorator, Dialect
-from base.types.pytypes import ENUM_T
+from src.base.types.pytypes import ENUM_T
 
 
 class ORMEnumTypeDecorator(TypeDecorator, Generic[ENUM_T]):

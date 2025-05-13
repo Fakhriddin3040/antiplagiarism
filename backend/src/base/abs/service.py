@@ -2,9 +2,9 @@ from typing import Generic, Optional, Any, Sequence, Dict, Union, Type, List
 
 from sqlalchemy.orm.interfaces import ORMOption
 
-from base.abs.repository import TAsyncRepository
-from base.types.orm.models import TModel
-from base.types.pytypes import ID_T, T_SCHEMA
+from src.base.abs.repository import TAsyncRepository
+from src.base.types.orm.models import TModel
+from src.base.types.pytypes import ID_T, T_SCHEMA
 from src.utils.helpers.exceptions import not_found, object_not_found, already_exists
 
 

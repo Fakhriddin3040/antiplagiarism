@@ -4,7 +4,7 @@ from logging.config import fileConfig
 
 from alembic import context
 
-from base.types.orm.models import SQLAlchemyBaseModel
+from src.base.types.orm.models import SQLAlchemyBaseModel
 from src.app.infrastructure.db.orm.setup import async_engine
 from src.config.settings import DATABASE_URL
 

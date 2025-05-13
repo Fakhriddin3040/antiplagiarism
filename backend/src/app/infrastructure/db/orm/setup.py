@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-from base.types.orm.models import SQLAlchemyBaseModel
+from src.base.types.orm.models import SQLAlchemyBaseModel
 from src.config.settings import DATABASE_URL
 
 

@@ -5,8 +5,8 @@ from sqlalchemy import select, exists
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.interfaces import ORMOption
 
-from base.types.orm.models import TModel
-from base.types.pytypes import ID_T
+from src.base.types.orm.models import TModel
+from src.base.types.pytypes import ID_T
 
 
 class AbstractAsyncSQLAlchemyRepository(ABC):

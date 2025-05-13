@@ -2,7 +2,7 @@ from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.app.infrastructure.db.orm.enums import DatabaseTables
-from base.types.orm.models import SQLAlchemyBaseModel, ChronoModelMixin
+from src.base.types.orm.models import SQLAlchemyBaseModel, ChronoModelMixin
 
 
 class User(SQLAlchemyBaseModel, ChronoModelMixin):

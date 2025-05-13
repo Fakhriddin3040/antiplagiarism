@@ -9,5 +9,6 @@ ID_T: TypeAlias = UUID
 ENUM_T = TypeVar("ENUM_T", bound=Enum)
 
 T = TypeVar("T")
+TParams = TypeVar("TParams")
 
 T_SCHEMA = TypeVar("T_SCHEMA", bound=BaseModel)

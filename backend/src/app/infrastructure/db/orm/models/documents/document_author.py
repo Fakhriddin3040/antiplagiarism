@@ -1,7 +1,7 @@
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from base.types.orm.models import (
+from src.base.types.orm.models import (
     SQLAlchemyBaseModel,
     ChronoModelMixin,
     AuditableModelMixin,

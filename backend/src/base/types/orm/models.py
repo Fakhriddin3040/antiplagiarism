@@ -8,8 +8,8 @@ from sqlalchemy.orm import (
 )
 from typing_extensions import TypeVar
 
-from base.defaults import default_id, default_dt
-from base.types.pytypes import ID_T
+from src.base.defaults import default_id, default_dt
+from src.base.types.pytypes import ID_T
 
 
 class SQLAlchemyBaseModel(SQLAlchemyDeclarativeBase):

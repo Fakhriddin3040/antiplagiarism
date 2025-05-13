@@ -3,10 +3,10 @@ from typing import List
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from base.types.pytypes import ID_T
+from src.base.types.pytypes import ID_T
 from src.app.core.enums import PlagiarismResultStatusEnum
 from src.app.infrastructure.db.orm.enums import DatabaseTables
-from base.types.orm.models import (
+from src.base.types.orm.models import (
     SQLAlchemyBaseModel,
     ChronoModelMixin,
     AuditableModelMixin,

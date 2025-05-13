@@ -1,8 +1,8 @@
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
-from base.types.orm.models import SQLAlchemyBaseModel, ChronoModelMixin
-from base.types.pytypes import ID_T
+from src.base.types.orm.models import SQLAlchemyBaseModel, ChronoModelMixin
+from src.base.types.pytypes import ID_T
 from src.app.infrastructure.db.orm import DatabaseTables
 
 
