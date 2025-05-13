@@ -64,3 +64,8 @@ target/
 .ruff_cache/
 .idea/
 .DS_*
+
+
+# MA OWN
+tmp*
+tmp/
