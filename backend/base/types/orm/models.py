@@ -10,7 +10,6 @@ from typing_extensions import TypeVar
 
 from base.defaults import default_id, default_dt
 from base.types.pytypes import ID_T
-from src.app.infrastructure.db.orm import DatabaseTables
 
 
 class SQLAlchemyBaseModel(SQLAlchemyDeclarativeBase):
@@ -24,11 +23,9 @@ class ChronoModelMixin:
 
 class AuditableModelMixin:
     created_by_id: Mapped[ID_T] = mapped_column(
-        ForeignKey(DatabaseTables.USERS), nullable=False, index=True
+        ForeignKey("users"), nullable=False, index=True
     )
-    updated_by_id: Mapped[ID_T] = mapped_column(
-        ForeignKey(DatabaseTables.USERS), nullable=False
-    )
+    updated_by_id: Mapped[ID_T] = mapped_column(ForeignKey("users"), nullable=False)
 
 
 TModel = TypeVar("TModel", bound=SQLAlchemyBaseModel)

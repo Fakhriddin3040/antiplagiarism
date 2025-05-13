@@ -2,7 +2,7 @@ import hashlib
 from typing import Optional, List
 
 from src.app.core.constants import NGRAM_DEFAULT_SIZE
-from src.app.service.tokenizer import TextTokenizer
+from src.app.core.services.antiplagiarism.tokenizer import TextTokenizer
 
 
 class TextIndexer:

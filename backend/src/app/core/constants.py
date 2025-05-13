@@ -291,3 +291,6 @@ ALL_STOP_WORDS = stop_words_en | stop_words_ru | stop_words_tj
 
 NGRAM_DEFAULT_SIZE = 5
 NGRAM_DEFAULT_RANGE = (1, 2)
+
+
+PASSWORD_COST_FACTOR = 12

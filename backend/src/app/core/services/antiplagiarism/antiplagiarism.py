@@ -3,7 +3,7 @@ from typing import Optional
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-from src.app.service.tokenizer import TextTokenizer
+from src.app.core.services.antiplagiarism.tokenizer import TextTokenizer
 
 
 class AntiplagiarismService:
