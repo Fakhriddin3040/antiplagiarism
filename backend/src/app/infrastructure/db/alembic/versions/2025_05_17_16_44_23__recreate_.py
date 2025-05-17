@@ -1,8 +1,8 @@
 """recreate migrations
 
-Revision ID: eabcc8208003
+Revision ID: a36a509f0758
 Revises:
-Create Date: 2025-05-17 10:09:43.721816+03:00
+Create Date: 2025-05-17 16:44:23.352711+03:00
 
 """
 
@@ -14,7 +14,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "eabcc8208003"
+revision: str = "a36a509f0758"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -90,6 +90,7 @@ def upgrade() -> None:
         sa.Column("author_id", sa.Uuid(), nullable=False),
         sa.Column("title", sa.String(length=100), nullable=False),
         sa.Column("description", sa.Text(), nullable=True),
+        sa.Column("file_path", sa.String(), nullable=False),
         sa.Column("text", sa.Text(), nullable=True),
         sa.Column("id", sa.Uuid(), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),

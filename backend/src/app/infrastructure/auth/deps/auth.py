@@ -10,7 +10,7 @@ from src.app.infrastructure.db.orm import User
 from src.app.infrastructure.db.repositories.users.user import UserRepository
 from src.app.infrastructure.deps.repositories import get_user_repository
 from src.app.infrastructure.auth.deps.token import get_jwt_provider
-from src.app.infrastructure.schemas.jwt_bearer import jwt_token_schema
+from src.app.infrastructure.schemes.jwt_bearer import jwt_token_scheme
 from src.utils.constants.exceptions.error_codes import (
     ApiExceptionMessage,
     ApiExceptionStatusCodes,
@@ -45,7 +45,7 @@ def get_user_login_service(
 
 
 async def get_current_user(
-    token: str = Depends(jwt_token_schema),
+    token: str = Depends(jwt_token_scheme),
     user_repository: UserRepository = Depends(get_user_repository),
     token_provider: JwtProvider = Depends(get_jwt_provider),
 ) -> User:

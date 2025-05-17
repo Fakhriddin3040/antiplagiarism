@@ -8,4 +8,4 @@ class JWTBearer(HTTPBearer):
         return credentials.credentials
 
 
-jwt_token_schema = JWTBearer()
+jwt_token_scheme = JWTBearer()

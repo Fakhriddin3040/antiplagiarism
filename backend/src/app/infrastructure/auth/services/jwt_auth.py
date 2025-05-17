@@ -5,8 +5,8 @@ from src.app.infrastructure.db.repositories.users.user import UserRepository
 from src.app.infrastructure.exceptions.authentication_exception import (
     AuthenticationError,
 )
-from src.app.infrastructure.schemes import LoginSchema
-from src.app.infrastructure.schemes.auth.jwt_schemes import JwtAuthResponseSchema
+from src.app.infrastructure.schemas import LoginSchema
+from src.app.infrastructure.schemas.auth.jwt_schemas import JwtAuthResponseSchema
 from src.app.infrastructure.auth.services.jwt_provider import JwtProvider
 from src.app.application.services.auth.password import PasswordService
 from src.utils.constants.exceptions.error_codes import ApiExceptionStatusCodes

@@ -14,8 +14,16 @@ class ApiExceptionStatusCodes(IntEnum):
     # SPECIAL_USE_CASES
     DETAILED_ERROR = auto()  # 5
 
+    # FILES SPECIFIED
+    FILE_SIZE_LIMIT_EXCEEDED = auto()
+    UNSUPPORTED_FILE_FORMAT = auto()
+    INVALID_FILE_FORMAT = auto()
+
 
 class ApiExceptionMessage(StrEnum):
     ACCESS_TOKEN_REQUIRED = "Access token is not provided."
     INVALID_LOGIN_CREDENTIALS = "Invalid login credentials."
     INVALID_TOKEN_PROVIDED = "Invalid access key"
+    FILE_SIZE_LIMIT_EXCEEDED = "File size limit exceeded."
+    UNSUPPORTED_FILE_FORMAT = "Unsupported file format."
+    INVALID_FILE_FORMAT = "Invalid file format."

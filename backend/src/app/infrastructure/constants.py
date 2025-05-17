@@ -26,3 +26,24 @@ JWT_HASH_ALG = "HS256"
 ACCESS_TOKEN_EXPIRATION_SECONDS = (
     60 * 60 * 24
 ) * 1000  # 60 sec * 60 min = 1 hour; * 24 = 1 day
+
+
+MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
+
+
+ALLOWED_MIME_TYPES = {
+    "application/pdf",
+    "application/msword",
+    "application/vnd.oasis.opendocument.text",
+    "application/rtf",
+    "text/plain",
+    "text/markdown",
+}
+
+
+DISALLOWED_EXTENSIONS = {"exe", "dll", "bat", "com", "sh", "py", "bin", "elf"}
+
+
+class FileUploadType(StrEnum):
+    FILE = auto()
+    IMAGE = auto()

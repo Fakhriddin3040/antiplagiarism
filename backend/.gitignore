@@ -66,6 +66,11 @@ target/
 .DS_*
 
 
+# Project files/dirs
+static/
+media/
+
+
 # MA OWN
 tmp*
 tmp/

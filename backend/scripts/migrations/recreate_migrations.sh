@@ -3,6 +3,8 @@
 
 source .env
 
-rm "${MIGRATIONS_PATH}/*"
+echo "Removing migrations from {$MIGRATIONS_PATH}"
+
+rm $MIGRATIONS_PATH/*
 
 alembic revision --autogenerate -m "recreate migrations"

@@ -14,7 +14,7 @@ from src.app.infrastructure.auth.deps.auth import (
     get_user_login_service,
     get_current_user,
 )
-from src.app.infrastructure.schemes.user.user_detail_scheme import UserDetailScheme
+from src.app.infrastructure.schemas.user.user_detail_schemas import UserDetailSchema
 
 router = APIRouter()
 
@@ -53,7 +53,7 @@ async def fuck_you_niga(user=Depends(get_current_user)):
 @router.get(
     "/me",
     status_code=status.HTTP_200_OK,
-    response_model=UserDetailScheme,
+    response_model=UserDetailSchema,
 )
 async def me(
     user=Depends(get_current_user),

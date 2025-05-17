@@ -10,7 +10,7 @@ class DatabaseTables(StrEnum):
     DOCUMENTS = auto()
     DOCUMENTS_AUTHORS = auto()
     DOCUMENT_CHUNKS = auto()
-    FILE = auto()
+    FILES = auto()
     TEXTS = auto()
     FOLDERS = auto()
 

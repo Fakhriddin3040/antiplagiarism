@@ -7,7 +7,7 @@ from src.app.infrastructure.constants import (
     JWT_REQUIRED_PAYLOAD,
 )
 from src.app.infrastructure.db.orm import User
-from src.app.infrastructure.schemes.auth.jwt_schemes import JwtPayloadSchema
+from src.app.infrastructure.schemas.auth.jwt_schemas import JwtPayloadSchema
 from src.base.types.pytypes import PasswordType
 from src.utils.constants.models_fields import UserFields
 from src.utils.functions.datetime import get_current_timestamp
