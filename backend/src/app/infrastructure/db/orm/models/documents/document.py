@@ -20,4 +20,5 @@ class Document(SQLAlchemyBaseModel, ChronoModelMixin, AuditableModelMixin):
     )
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     description: Mapped[str | None] = mapped_column(TextType, nullable=True)
+    file_path: Mapped[str] = mapped_column(nullable=False)
     text: Mapped[str] = mapped_column(TextType, nullable=True)

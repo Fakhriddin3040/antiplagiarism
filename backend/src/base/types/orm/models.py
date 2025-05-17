@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, DateTime
 from sqlalchemy.orm import (
     DeclarativeBase as SQLAlchemyDeclarativeBase,
     Mapped,
@@ -17,15 +17,21 @@ class SQLAlchemyBaseModel(SQLAlchemyDeclarativeBase):
 
 
 class ChronoModelMixin:
-    created_at: Mapped[datetime] = mapped_column(default=default_dt, nullable=False)
-    updated_at: Mapped[datetime] = mapped_column(onupdate=default_dt, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=default_dt,
+        nullable=False,
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), onupdate=default_dt, default=default_dt, nullable=True
+    )
 
 
 class AuditableModelMixin:
     created_by_id: Mapped[ID_T] = mapped_column(
-        ForeignKey("users"), nullable=False, index=True
+        ForeignKey("users.id"), nullable=False, index=True
     )
-    updated_by_id: Mapped[ID_T] = mapped_column(ForeignKey("users"), nullable=False)
+    updated_by_id: Mapped[ID_T] = mapped_column(ForeignKey("users.id"), nullable=False)
 
 
 TModel = TypeVar("TModel", bound=SQLAlchemyBaseModel)

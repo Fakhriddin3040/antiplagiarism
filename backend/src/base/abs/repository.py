@@ -7,6 +7,7 @@ from sqlalchemy.orm.interfaces import ORMOption
 
 from src.base.types.orm.models import TModel
 from src.base.types.pytypes import ID_T
+from src.utils.helpers.exceptions import not_found, object_not_found, already_exists
 
 
 class AbstractAsyncSQLAlchemyRepository(ABC):
@@ -29,8 +30,8 @@ class AbstractAsyncSQLAlchemyRepository(ABC):
 
         return result.scalar_one_or_none()
 
-    async def get_by_id(self, _id: "ID_T") -> Optional["TModel"]:
-        return await self._get_by_field("id", _id)
+    async def get_by_id(self, id_: "ID_T") -> Optional["TModel"]:
+        return await self._get_by_field("id", id_)
 
     async def get_detail(
         self, field: str, value: Any, options: Optional[Sequence[ORMOption]] = None
@@ -148,8 +149,21 @@ class AbstractAsyncSQLAlchemyRepository(ABC):
         )
         return result.scalar_one_or_none()
 
+    async def ensure_exists(self, *args) -> None:
+        if not await self.exists(*args):
+            object_not_found(model=self.model.__name__)
+
     def _field_does_not_exist(self, field: str) -> None:
         raise ValueError(f"Model {self.model} does not have a field named {field}")
+
+    def check_for_none(self, obj: Optional["TModel"], field: str, value: Any) -> None:
+        if not obj:
+            field = field or "id"
+            value = value or obj.id
+            not_found(model=self.model.__name__, field=field, value=value)
+
+    def already_exists(self, field: str):
+        already_exists(model=self.model.__name__, field=field)
 
 
 TAsyncRepository = TypeVar("TAsyncRepository", bound=AbstractAsyncSQLAlchemyRepository)

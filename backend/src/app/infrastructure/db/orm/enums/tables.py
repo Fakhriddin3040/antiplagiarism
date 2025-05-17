@@ -4,11 +4,13 @@ from enum import StrEnum, auto
 class DatabaseTables(StrEnum):
     # User
     USERS = auto()
+    USERS_VERIFICATIONS = auto()
 
     # Document
     DOCUMENTS = auto()
     DOCUMENTS_AUTHORS = auto()
     DOCUMENT_CHUNKS = auto()
+    FILE = auto()
     TEXTS = auto()
     FOLDERS = auto()
 

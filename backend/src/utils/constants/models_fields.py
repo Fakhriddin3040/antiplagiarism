@@ -7,6 +7,7 @@ class UserFields(ModelFieldsEnum):
     ID = auto()
     USERNAME = auto()
     PASSWORD = auto()
+    EMAIL = auto()
     FIRST_NAME = auto()
     LAST_NAME = auto()
     CREATED_AT = auto()

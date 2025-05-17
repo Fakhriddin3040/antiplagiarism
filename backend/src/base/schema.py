@@ -1,10 +1,12 @@
 from typing import Optional, Dict, Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class AbstractPydanticSchema(BaseModel):
-    pass
+    model_config = ConfigDict(
+        from_attributes=True,
+    )
 
 
 class AbstractFilterSchema(BaseModel):

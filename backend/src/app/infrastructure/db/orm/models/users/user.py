@@ -10,5 +10,7 @@ class User(SQLAlchemyBaseModel, ChronoModelMixin):
 
     username: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
     password: Mapped[str] = mapped_column(String(255), nullable=False)
+    email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
     first_name: Mapped[str | None] = mapped_column(String(25), nullable=True)
     last_name: Mapped[str | None] = mapped_column(String(25), nullable=True)
+    confirmed: Mapped[bool] = mapped_column(default=False)

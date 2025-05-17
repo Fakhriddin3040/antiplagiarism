@@ -3,7 +3,6 @@
 
 source .env
 
-rm -rf src/utils/alembic/versions/*
+rm "${MIGRATIONS_PATH}/*"
 
 alembic revision --autogenerate -m "recreate migrations"
-alembic upgrade head

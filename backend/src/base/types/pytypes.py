@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import TypeAlias, TypeVar
+from typing import TypeAlias, TypeVar, Union
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -12,3 +12,5 @@ T = TypeVar("T")
 TParams = TypeVar("TParams")
 
 T_SCHEMA = TypeVar("T_SCHEMA", bound=BaseModel)
+
+PasswordType: TypeAlias = Union[bytes, str]

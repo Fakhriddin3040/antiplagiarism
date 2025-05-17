@@ -1,7 +1,5 @@
-from typing import List
-
 from sqlalchemy import ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column
 
 from src.base.types.pytypes import ID_T
 from src.app.core.enums import PlagiarismResultStatusEnum
@@ -10,9 +8,6 @@ from src.base.types.orm.models import (
     SQLAlchemyBaseModel,
     ChronoModelMixin,
     AuditableModelMixin,
-)
-from src.app.infrastructure.db.orm.models.plagiarism_results.plagiarism_match import (
-    PlagiarismMatch,
 )
 from src.app.infrastructure.db.orm.types.type_decorators.plagiarism_result import (
     PlagiarismResultStatusTD,
@@ -30,7 +25,4 @@ class PlagiarismCheck(SQLAlchemyBaseModel, ChronoModelMixin, AuditableModelMixin
         PlagiarismResultStatusTD,
         nullable=False,
         default=PlagiarismResultStatusEnum.PENDING,
-    )
-    matches: Mapped[List[PlagiarismMatch]] = relationship(
-        DatabaseTables.PLAGIARISM_MATCHES
     )
