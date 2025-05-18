@@ -44,9 +44,7 @@ class UserLoginService:
             )
 
     def raise_exception(self):
-        detail = ApiExceptionDetail(
-            status=ApiExceptionStatusCodes.INVALID_LOGIN_CREDENTIALS
-        )
         raise ApiException(
-            message=ApiExceptionMessage.INVALID_LOGIN_CREDENTIALS, details=detail
+            message=ApiExceptionMessage.INVALID_LOGIN_CREDENTIALS,
+            exception_status=ApiExceptionStatusCodes.INVALID_LOGIN_CREDENTIALS,
         )

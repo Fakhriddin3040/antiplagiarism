@@ -13,16 +13,16 @@ class AbstractFilterSchema(BaseModel):
     limit: int = Field(100, ge=1, le=1000)
     offset: int = Field(0, ge=0)
 
-    def filter_kwargs(self):
-        return self.model_dump(exclude_unset=True, exclude={"offset", "limit"})
+    def parse_filters(self, **kwargs) -> Dict[str, Any]:
+        return self.model_dump(exclude_unset=True, **kwargs)
 
 
-class BaseSearchSchema(BaseModel):
+class AbstractSearchSchema(BaseModel):
     search: Optional[str] = Field(None, description="Поисковый запрос")
 
-    def parse(self, permitted_fields: set[str]) -> Optional[Dict[str, Any]]:
+    def parse_search(self, permitted_fields: set[str]) -> Dict[str, Any]:
         if not self.search:
-            return None
+            return {}
 
         arr = self.search.split(",")
 

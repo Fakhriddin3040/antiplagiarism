@@ -9,9 +9,21 @@ class PlagiarismResultStatusEnum(IntEnum):
 
 
 class FileAllowedExtensions(StrEnum):
-    XLSX = auto()
-    CSV = auto()
     PNG = auto()
     JPG = auto()
     JPEG = auto()
     WEBP = auto()
+    RTF = auto()
+    DOC = auto()
+    DOCX = auto()
+    MD = auto()
+    TXT = auto()
+    PDF = auto()
+
+
+class DocumentAllowedExtensions(StrEnum):
+    RTF = FileAllowedExtensions.PNG
+    DOCX = FileAllowedExtensions.DOCX
+    MD = FileAllowedExtensions.MD
+    TXT = FileAllowedExtensions.TXT
+    PDF = FileAllowedExtensions.PDF

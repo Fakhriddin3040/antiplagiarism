@@ -22,7 +22,12 @@ dependencies = [
     "pyjwt (>=2.10.1,<3.0.0)",
     "pydantic[email] (>=2.11.4,<3.0.0)",
     "filetype (>=1.2.0,<2.0.0)",
-    "python-multipart (>=0.0.20,<0.0.21)"
+    "python-multipart (>=0.0.20,<0.0.21)",
+    "docx-parser (>=1.0.2,<2.0.0)",
+    "markdown (>=3.8,<4.0)",
+    "striprtf (>=0.0.29,<0.0.30)",
+    "bs4 (>=0.0.2,<0.0.3)",
+    "pdfplumber (>=0.11.6,<0.12.0)",
 ]
 
 

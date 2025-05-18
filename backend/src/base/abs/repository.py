@@ -76,8 +76,8 @@ class AbstractAsyncSQLAlchemyRepository(ABC):
 
     async def filter(
         self,
-        limit: Optional[int] = 0,
-        offset: int = 100,
+        limit: Optional[int] = 10,
+        offset: int = 0,
         search: Optional[Dict[str, Any]] = None,
         **filters,
     ) -> Sequence[TModel]:
@@ -98,12 +98,12 @@ class AbstractAsyncSQLAlchemyRepository(ABC):
             else []
         )
 
-        where_filters = [*filter_args, *search_filters]
+        conditions = [*filter_args, *search_filters]
 
         _select = select(self.model).limit(limit).offset(offset)
 
-        if where_filters:
-            _select = _select.where(*where_filters)
+        if conditions:
+            _select = _select.where(*conditions)
 
         result = await self.db.execute(_select)
 

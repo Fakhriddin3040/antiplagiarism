@@ -1,14 +1,25 @@
 from abc import ABC, abstractmethod
-from typing import IO
+from pathlib import Path
+from typing import TextIO
 
 
-class AbstractTextParser(ABC):
+class AbstractParser(ABC):
+    def __init__(self, path: Path | str):
+        self.path = Path(path)
+
     @abstractmethod
-    async def parse(self, io: IO[str]) -> str:
+    def parse(self) -> str:
         pass
 
+    def get_file_content(self, mode=None, encoding=None, **kwargs) -> str:
+        f = self.open(mode, encoding=encoding, **kwargs)
+        content = f.read()
+        f.close()
+        return content
 
-class AbstractBinaryTextParser(ABC):
-    @abstractmethod
-    async def parse(self, io: IO[bytes]) -> str:
-        pass
+    def open(self, mode: str = "r", encoding: str = "utf-8", **kwargs):
+        f = open(self.path, mode, encoding=encoding, **kwargs)
+        return f
+
+    def close(self, file: TextIO):
+        file.close()

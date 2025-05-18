@@ -48,8 +48,8 @@ class AbstractAsyncService(Generic[TModel, TAsyncRepository]):
 
     async def filter(
         self,
-        limit: int = 0,
-        offset: int = 100,
+        limit: int = 10,
+        offset: int = 0,
         search: Optional[Dict[str, Any]] = None,
         **filters,
     ) -> Sequence["TModel"]:
