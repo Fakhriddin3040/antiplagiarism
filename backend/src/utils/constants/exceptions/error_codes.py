@@ -24,6 +24,9 @@ class ApiExceptionStatusCodes(IntEnum):
     OBJECT_NOT_FOUND = auto()
     REQUEST_BODY_IS_EMPTY = auto()
 
+    # ===== UNKNOWN =====
+    UNKNOWN_ERROR = auto()
+
 
 class ApiExceptionMessage(StrEnum):
     NOT_FOUND = "Not found"
@@ -35,3 +38,10 @@ class ApiExceptionMessage(StrEnum):
     INVALID_FILE_FORMAT = "Invalid file format."
     FILE_NOT_FOUND_IN_FS = "File exists in database, but not found in file system."
     REQUEST_BODY_IS_EMPTY = "Request body is empty."
+    UNIQUE_CONSTRAINT = "Unique constraint violated. One or more constraints violated."
+
+    # ===== UNKNOWN =====
+    UNKNOWN_ERROR = "Unknown error."
+
+    # ===== COMMON =====
+    DETAILED_ERROR = "Detailed error. See details."

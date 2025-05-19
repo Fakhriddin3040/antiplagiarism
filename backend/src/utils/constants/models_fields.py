@@ -40,4 +40,17 @@ class DocumentAuthorFields(ModelFieldsEnum):
     CREATED_AT = auto()
     UPDATED_AT = auto()
     CREATED_BY_ID = auto()
-    UPDATED_BY_ID = auto()
+
+    @staticmethod
+    def as_outref() -> str:
+        return "author_id"
+
+
+class FolderFields(ModelFieldsEnum):
+    TITLE = auto()
+    DESCRIPTION = auto()
+    PARENT_ID = auto()
+
+    @staticmethod
+    def as_outref() -> str:
+        return "folder_id"

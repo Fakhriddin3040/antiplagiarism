@@ -1,3 +1,4 @@
+import logging
 from typing import Annotated, Sequence
 
 from fastapi import APIRouter, Query, Body
@@ -25,6 +26,7 @@ from src.utils.constants.exceptions.error_codes import (
 from src.utils.exceptions.api_exception import ApiException
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 
 @router.post(
@@ -35,12 +37,13 @@ async def create(
     author_repo: DocumentAuthorRepository = Depends(get_author_repository),
     user: User = Depends(get_current_user),
 ):
+    logger.info("Creating author %s", data)
     author_data = data.model_dump(exclude_unset=True)
     author_data.update(
         created_by_id=user.id,
-        updated_by_id=user.id,
     )
     author = await author_repo.create(author_data)
+    logger.info(f"Created author {author.id}")
     return author
 
 
@@ -49,7 +52,7 @@ async def create(
     response_model=Sequence[DocumentAuthorListSchema],
     status_code=status.HTTP_200_OK,
 )
-async def list(
+async def list_(
     params: Annotated[DocumentAuthorSearchSchema, Query()],
     author_repo: DocumentAuthorRepository = Depends(get_author_repository),
     user: User = Depends(get_current_user),
@@ -58,6 +61,7 @@ async def list(
         permitted_fields=DOCUMENT_AUTHOR_SEARCH_PERMITTED_FIELDS
     )
     filters = params.parse_filters()
+    logger.debug("Search params: %s, filters: %s for user %s", search, filters, user.id)
     authors = await author_repo.filter(**filters, search=search, created_by_id=user.id)
     return authors
 
@@ -73,19 +77,23 @@ async def update(
     author_repo: DocumentAuthorRepository = Depends(get_author_repository),
     user: User = Depends(get_current_user),
 ):
+    logger.info("Updating author %s", author_id)
     author_data = data.model_dump(exclude_unset=True)
     if not author_data:
+        logger.debug("Data for author %s is not provided.", author_id)
         raise ApiException(
             message=ApiExceptionMessage.REQUEST_BODY_IS_EMPTY,
             status_code=status.HTTP_400_BAD_REQUEST,
             exception_status=ApiExceptionStatusCodes.REQUEST_BODY_IS_EMPTY,
         )
 
+    logger.info("Getting author %s from db", author_id)
     author = await author_repo.get_by_id_and_owner(
         author_id=author_id, owner_id=user.id
     )
 
     if not author:
+        logger.warning("Author %s not found", author_id)
         raise ApiException(
             message=ApiExceptionMessage.NOT_FOUND,
             status_code=status.HTTP_404_NOT_FOUND,
@@ -94,4 +102,43 @@ async def update(
 
     updated_author = await author_repo.update(db_obj=author, obj_in=author_data)
 
+    logger.debug("Updated author %s", updated_author)
+
     return updated_author
+
+
+@router.delete(
+    "/{author_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    response_model=None,
+)
+async def delete(
+    author_id: ID_T,
+    author_repo: DocumentAuthorRepository = Depends(get_author_repository),
+    user: User = Depends(get_current_user),
+) -> None:
+    logger.info("Deleting author %s", author_id)
+
+    if not await author_repo.filter_exists(id=author_id, created_by_id=user.id):
+        logger.warning("Author %s not found for user %s", author_id, user.id)
+        raise ApiException(
+            message=ApiExceptionMessage.NOT_FOUND,
+            status_code=status.HTTP_404_NOT_FOUND,
+            exception_status=ApiExceptionStatusCodes.OBJECT_NOT_FOUND,
+        )
+
+    result = await author_repo.remove(_id=author_id)
+    logger.debug("Delete result: %s", result)
+
+    if result != 1:
+        logger.critical(
+            "Could not delete author %s from db for user %s, but it was found!",
+            author_id,
+            user.id,
+        )
+        raise ApiException(
+            message=ApiExceptionMessage.UNKNOWN_ERROR,
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            exception_status=ApiExceptionStatusCodes.UNKNOWN_ERROR,
+        )
+    logger.debug("Deleted author %s for user %s", author_id, user.id)

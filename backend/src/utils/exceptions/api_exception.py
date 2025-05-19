@@ -1,4 +1,4 @@
-from typing import Optional, List, Any, Mapping
+from typing import Optional, List, Any, Mapping, Union, Sequence
 
 from pydantic import BaseModel, Field
 from starlette import status
@@ -10,6 +10,7 @@ from src.utils.constants.exceptions.error_codes import ApiExceptionStatusCodes
 class ApiExceptionDetail(BaseModel):
     status: ApiExceptionStatusCodes
     field: Optional[ModelFieldsEnum] = None
+    fields: Optional[Sequence[ModelFieldsEnum]] = None
     payload: Optional[Mapping[str, Any]] = Field(default_factory=dict)
 
 
@@ -17,7 +18,7 @@ class ApiException(Exception):
     def __init__(
         self,
         message: str,
-        details: Optional[List[ApiExceptionDetail]] = None,
+        details: Optional[Union[List[ApiExceptionDetail], ApiExceptionDetail]] = None,
         exception_status: Optional[ApiExceptionStatusCodes] = None,
         status_code: Optional[int] = status.HTTP_400_BAD_REQUEST,
     ):
@@ -46,13 +47,6 @@ class ApiException(Exception):
 
         if isinstance(details, ApiExceptionDetail):
             details = [details]
-
-        if not isinstance(details, list) and not isinstance(
-            details[0], ApiExceptionDetail
-        ):
-            raise TypeError(
-                "Unexpected type: {} for handling API Exception".format(type(details))
-            )
 
         self.exception_status = ApiExceptionStatusCodes.DETAILED_ERROR
 

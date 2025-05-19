@@ -5,3 +5,4 @@ class ApiEndpointsTags(StrEnum):
     AUTH = auto()
     FILES = auto()
     AUTHORS = auto()
+    FOLDERS = auto()

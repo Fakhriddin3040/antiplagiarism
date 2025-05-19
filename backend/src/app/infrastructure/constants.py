@@ -4,6 +4,7 @@ from src.utils.constants.models_fields import (
     UserFields,
     FileFields,
     DocumentAuthorFields,
+    FolderFields,
 )
 
 
@@ -67,4 +68,8 @@ FILE_SEARCH_PERMITTED_FIELDS = {FileFields.TITLE, FileFields.DESCRIPTION}
 DOCUMENT_AUTHOR_SEARCH_PERMITTED_FIELDS = {
     DocumentAuthorFields.FIRST_NAME,
     DocumentAuthorFields.LAST_NAME,
+}
+FOLDER_SEARCH_PERMITTED_FIELDS = {
+    FolderFields.TITLE,
+    FolderFields.DESCRIPTION,
 }

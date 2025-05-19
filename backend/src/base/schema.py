@@ -19,7 +19,6 @@ class ChronoSchemaMixin(AbstractPydanticSchema):
 
 class AuditableSchemaMixin(AbstractPydanticSchema):
     created_by_id: Optional[ID_T]
-    updated_by_id: Optional[ID_T]
 
 
 class AbstractPydanticSearchSchema(BaseModel):

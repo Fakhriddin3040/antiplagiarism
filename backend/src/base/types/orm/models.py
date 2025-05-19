@@ -31,7 +31,6 @@ class AuditableModelMixin:
     created_by_id: Mapped[ID_T] = mapped_column(
         ForeignKey("users.id"), nullable=False, index=True
     )
-    updated_by_id: Mapped[ID_T] = mapped_column(ForeignKey("users.id"), nullable=False)
 
 
 TModel = TypeVar("TModel", bound=SQLAlchemyBaseModel)

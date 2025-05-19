@@ -1,7 +1,7 @@
 from abc import ABC
-from typing import Type, Optional, Any, Sequence, TypeVar, Dict
+from typing import Type, Optional, Any, Sequence, TypeVar, Dict, Mapping
 
-from sqlalchemy import select, exists
+from sqlalchemy import select, exists, Select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.interfaces import ORMOption
 
@@ -38,8 +38,8 @@ class AbstractAsyncSQLAlchemyRepository(ABC):
     ) -> Optional["TModel"]:
         raise NotImplementedError()
 
-    async def all(self, skip: int = 0, limit: int = 100) -> Sequence["TModel"]:
-        result = await self.db.execute(select(self.model).offset(skip).limit(limit))
+    async def all(self, offset: int = 0, limit: int = 100) -> Sequence["TModel"]:
+        result = await self.db.execute(select(self.model).offset(offset).limit(limit))
         return result.scalars().all()
 
     async def filter_by(
@@ -74,16 +74,9 @@ class AbstractAsyncSQLAlchemyRepository(ABC):
 
         return result.scalars().all()
 
-    async def filter(
-        self,
-        limit: Optional[int] = 10,
-        offset: int = 0,
-        search: Optional[Dict[str, Any]] = None,
-        **filters,
-    ) -> Sequence[TModel]:
-        if not filters and not search:
-            return await self.all(skip=offset, limit=limit)
-
+    def parse_to_statement(
+        self, search: Optional[Dict[str, Any]] = None, **filters
+    ) -> Optional[Select]:
         filter_args = [
             getattr(self.model, key) == value for key, value in filters.items() if value
         ]
@@ -100,16 +93,42 @@ class AbstractAsyncSQLAlchemyRepository(ABC):
 
         conditions = [*filter_args, *search_filters]
 
-        _select = select(self.model).limit(limit).offset(offset)
+        if not conditions:
+            return None
 
-        if conditions:
-            _select = _select.where(*conditions)
+        _select = select(self.model).where(*conditions)
+        return _select
+
+    async def filter(
+        self,
+        limit: Optional[int] = 10,
+        offset: int = 0,
+        search: Optional[Dict[str, Any]] = None,
+        **filters,
+    ) -> Sequence[TModel]:
+        if not filters and not search:
+            return await self.all(offset=offset, limit=limit)
+
+        _select = self.parse_to_statement(search=search, **filters)
+
+        _select = _select.limit(limit).offset(offset)
 
         result = await self.db.execute(_select)
 
         return result.scalars().all()
 
-    async def create(self, obj_in: dict) -> TModel:
+    async def filter_exists(
+        self, search: Optional[Dict[str, Any]] = None, **filters
+    ) -> bool:
+        _select = self.parse_to_statement(search=search, **filters)
+
+        if _select is None:
+            return False
+
+        result = await self.db.execute(select(exists(_select)))
+        return result.scalar_one_or_none() is True
+
+    async def create(self, obj_in: Mapping[str, Any]) -> TModel:
         db_obj = self.model(**obj_in)
         self.db.add(db_obj)
         await self.db.flush()
@@ -133,11 +152,10 @@ class AbstractAsyncSQLAlchemyRepository(ABC):
         await self.refresh(db_obj)
         return db_obj
 
-    async def remove(self, _id: ID_T) -> None:
-        obj = await self.get_by_id(_id)
-        if obj:
-            await self.db.delete(obj)
-            await self.db.flush()
+    async def remove(self, _id: ID_T) -> "int":
+        stmt = delete(self.model).where(self.model.id == _id)
+        result = await self.db.execute(stmt)
+        return result.rowcount  # noqa
 
     async def exists(self, *args) -> bool:
         result = await self.db.execute(select(exists().where(*args)))

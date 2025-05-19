@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy import ForeignKey, String, Text as TextType
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -20,7 +22,9 @@ class Document(SQLAlchemyBaseModel, ChronoModelMixin, AuditableModelMixin):
     )
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     description: Mapped[str | None] = mapped_column(TextType, nullable=True)
-    text: Mapped[str] = mapped_column(TextType, nullable=True)
+    text: Mapped[str | None] = mapped_column(TextType, nullable=True)
+    is_indexed: Mapped[bool] = mapped_column(default=False)
+    last_indexed_at: Mapped[datetime] = mapped_column(nullable=True)
     file_id: Mapped[ID_T] = mapped_column(
         ForeignKey(DatabaseTables.FILES.as_foreign_key), nullable=False
     )

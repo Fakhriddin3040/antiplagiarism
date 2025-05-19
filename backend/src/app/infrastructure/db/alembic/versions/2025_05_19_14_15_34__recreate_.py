@@ -1,8 +1,8 @@
 """recreate migrations
 
-Revision ID: 280c17d51d09
+Revision ID: 4198c54e93e3
 Revises:
-Create Date: 2025-05-19 09:15:21.085656+03:00
+Create Date: 2025-05-19 14:15:34.417838+03:00
 
 """
 
@@ -14,7 +14,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "280c17d51d09"
+revision: str = "4198c54e93e3"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -42,17 +42,13 @@ def upgrade() -> None:
         "documents_authors",
         sa.Column("first_name", sa.String(length=20), nullable=False),
         sa.Column("last_name", sa.String(length=20), nullable=False),
+        sa.Column("description", sa.String(length=255), nullable=True),
         sa.Column("id", sa.Uuid(), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("created_by_id", sa.Uuid(), nullable=False),
-        sa.Column("updated_by_id", sa.Uuid(), nullable=False),
         sa.ForeignKeyConstraint(
             ["created_by_id"],
-            ["users.id"],
-        ),
-        sa.ForeignKeyConstraint(
-            ["updated_by_id"],
             ["users.id"],
         ),
         sa.PrimaryKeyConstraint("id"),
@@ -92,26 +88,34 @@ def upgrade() -> None:
     op.create_index(op.f("ix_files_title"), "files", ["title"], unique=False)
     op.create_table(
         "folders",
-        sa.Column("name", sa.String(length=30), nullable=False),
+        sa.Column("title", sa.String(length=30), nullable=False),
+        sa.Column("description", sa.String(length=255), nullable=False),
+        sa.Column("parent_id", sa.Uuid(), nullable=True),
         sa.Column("id", sa.Uuid(), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("created_by_id", sa.Uuid(), nullable=False),
-        sa.Column("updated_by_id", sa.Uuid(), nullable=False),
         sa.ForeignKeyConstraint(
             ["created_by_id"],
             ["users.id"],
         ),
         sa.ForeignKeyConstraint(
-            ["updated_by_id"],
-            ["users.id"],
+            ["parent_id"],
+            ["folders.id"],
         ),
         sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("title", "parent_id", name="uq_folder_title_parent"),
     )
     op.create_index(
         op.f("ix_folders_created_by_id"), "folders", ["created_by_id"], unique=False
     )
-    op.create_index(op.f("ix_folders_name"), "folders", ["name"], unique=False)
+    op.create_index(
+        op.f("ix_folders_description"), "folders", ["description"], unique=False
+    )
+    op.create_index(
+        op.f("ix_folders_parent_id"), "folders", ["parent_id"], unique=False
+    )
+    op.create_index(op.f("ix_folders_title"), "folders", ["title"], unique=False)
     op.create_table(
         "documents",
         sa.Column("author_id", sa.Uuid(), nullable=False),
@@ -123,7 +127,6 @@ def upgrade() -> None:
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("created_by_id", sa.Uuid(), nullable=False),
-        sa.Column("updated_by_id", sa.Uuid(), nullable=False),
         sa.ForeignKeyConstraint(
             ["author_id"],
             ["documents_authors.id"],
@@ -135,10 +138,6 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(
             ["file_id"],
             ["files.id"],
-        ),
-        sa.ForeignKeyConstraint(
-            ["updated_by_id"],
-            ["users.id"],
         ),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -174,7 +173,6 @@ def upgrade() -> None:
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("created_by_id", sa.Uuid(), nullable=False),
-        sa.Column("updated_by_id", sa.Uuid(), nullable=False),
         sa.ForeignKeyConstraint(
             ["created_by_id"],
             ["users.id"],
@@ -182,10 +180,6 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(
             ["document_id"],
             ["documents.id"],
-        ),
-        sa.ForeignKeyConstraint(
-            ["updated_by_id"],
-            ["users.id"],
         ),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -232,7 +226,9 @@ def downgrade() -> None:
     op.drop_index(op.f("ix_documents_created_by_id"), table_name="documents")
     op.drop_index(op.f("ix_documents_author_id"), table_name="documents")
     op.drop_table("documents")
-    op.drop_index(op.f("ix_folders_name"), table_name="folders")
+    op.drop_index(op.f("ix_folders_title"), table_name="folders")
+    op.drop_index(op.f("ix_folders_parent_id"), table_name="folders")
+    op.drop_index(op.f("ix_folders_description"), table_name="folders")
     op.drop_index(op.f("ix_folders_created_by_id"), table_name="folders")
     op.drop_table("folders")
     op.drop_index(op.f("ix_files_title"), table_name="files")
