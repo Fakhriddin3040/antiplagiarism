@@ -4,11 +4,11 @@ from typing import Optional
 from fastapi import UploadFile
 from pydantic import Field
 
-from src.app.core.enums import FileAllowedExtensions
+from src.app.core.enums import FileAllowedExtensionEnum
+from src.app.infrastructure.constants import AllowedMimeTypeEnum
 from src.base.schema import (
     AbstractPydanticSchema,
-    AbstractFilterSchema,
-    AbstractSearchSchema,
+    AbstractPydanticFilterSearchSchema,
 )
 from src.base.types.pytypes import ID_T
 
@@ -24,19 +24,11 @@ class FileListSchema(AbstractPydanticSchema):
     title: str
     description: str
     path: str
-    extension: FileAllowedExtensions
+    extension: FileAllowedExtensionEnum
+    mimetype: AllowedMimeTypeEnum
     created_at: datetime
     updated_at: datetime
 
 
-class FileFilterSchema(AbstractFilterSchema):
-    extension: Optional[FileAllowedExtensions] = Field(default=None)
-
-
-class FileSearchSchema(AbstractSearchSchema):
-    pass
-
-
-class FileFilterSearchSchema(FileFilterSchema, FileSearchSchema):
-    def parse_filters(self, **kwargs):
-        return super().parse_filters(exclude={"search"})
+class FileFilterSearchSchema(AbstractPydanticFilterSearchSchema):
+    extension: Optional[FileAllowedExtensionEnum] = Field(default=None)

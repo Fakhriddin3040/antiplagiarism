@@ -2,17 +2,23 @@ from typing import List, Annotated
 
 from fastapi import APIRouter, Depends, Form, UploadFile, File, Query
 from starlette import status
+from starlette.responses import StreamingResponse
 
 from src.app.infrastructure.auth.deps.auth import get_current_user
 from src.app.infrastructure.constants import FILE_SEARCH_PERMITTED_FIELDS
 from src.app.infrastructure.deps.repositories import get_file_repository
-from src.app.infrastructure.deps.services.file import get_file_create_service
+from src.app.infrastructure.deps.services.file import (
+    get_file_create_service,
+    get_file_upload_service,
+)
 from src.app.infrastructure.schemas.document.file_schemas import (
     FileCreateSchema,
     FileListSchema,
     FileFilterSearchSchema,
 )
 from src.app.infrastructure.services.file.file_create_service import FileCreateService
+from src.app.infrastructure.services.file.file_stream_service import FileStreamService
+from src.base.types.pytypes import ID_T
 
 router = APIRouter()
 
@@ -51,6 +57,14 @@ async def get(
     return files
 
 
-@router.get("/{id}/download", status_code=status.HTTP_200_OK)
-async def download_file():
-    pass
+@router.get("/{file_id}/download", status_code=status.HTTP_200_OK)
+async def download_file(
+    file_id: ID_T,
+    stream_service: FileStreamService = Depends(get_file_upload_service),
+    user=Depends(get_current_user),
+):
+    stream, file = await stream_service.get_file(file_id=file_id, owner_id=user.id)
+    headers = {
+        "Content-Disposition": f"attachment; filename={file.title}.{file.extension}"
+    }
+    return StreamingResponse(content=stream, media_type=file.mimetype, headers=headers)

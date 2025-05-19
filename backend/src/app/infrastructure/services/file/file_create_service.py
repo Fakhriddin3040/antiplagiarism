@@ -21,7 +21,7 @@ class FileCreateService:
 
     async def create(self, user: User, params: FileCreateSchema) -> None:
         logger.info(f"Creating file {params.title}")
-        extension = await validate_file_extension(file=params.file)
+        extension, mimetype = await validate_file_extension(file=params.file)
 
         path = self._helper.upload(io=params.file.file)
         data = params.model_dump()
@@ -31,6 +31,7 @@ class FileCreateService:
                 FileFields.PATH: str(path),
                 FileFields.OWNER_ID: user.id,
                 FileFields.EXTENSION: extension,
+                FileFields.MIMETYPE: mimetype,
             },
         )
         logger.info(f"Creating file record on db. Data: {data}")

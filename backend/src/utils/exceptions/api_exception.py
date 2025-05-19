@@ -1,4 +1,4 @@
-from typing import Optional, List, Any, Mapping, Union
+from typing import Optional, List, Any, Mapping
 
 from pydantic import BaseModel, Field
 from starlette import status
@@ -14,17 +14,15 @@ class ApiExceptionDetail(BaseModel):
 
 
 class ApiException(Exception):
-    ERRORS_ITEM_LEN = 2
-
     def __init__(
         self,
         message: str,
-        details: Optional[Union[List[ApiExceptionDetail], ApiExceptionDetail]] = None,
-        exception_status: Optional[int] = None,
+        details: Optional[List[ApiExceptionDetail]] = None,
+        exception_status: Optional[ApiExceptionStatusCodes] = None,
         status_code: Optional[int] = status.HTTP_400_BAD_REQUEST,
     ):
         """
-        :param errors: Array of tuples describing the errors encountered
+        :param details: Array of tuples describing the errors encountered
             indexes explains:
                 1: Status codes from ApiExceptionStatusCodes
                 2: Key value pair format

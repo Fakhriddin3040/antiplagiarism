@@ -14,3 +14,4 @@ class DocumentAuthor(SQLAlchemyBaseModel, ChronoModelMixin, AuditableModelMixin)
 
     first_name: Mapped[str] = mapped_column(String(20), nullable=False)
     last_name: Mapped[str] = mapped_column(String(20), nullable=False)
+    description: Mapped[str] = mapped_column(String(255), nullable=True)

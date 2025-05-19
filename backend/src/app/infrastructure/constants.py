@@ -1,6 +1,10 @@
 from enum import StrEnum, auto
 
-from src.utils.constants.models_fields import UserFields, FileFields
+from src.utils.constants.models_fields import (
+    UserFields,
+    FileFields,
+    DocumentAuthorFields,
+)
 
 
 class JwtKeys(StrEnum):
@@ -31,7 +35,7 @@ ACCESS_TOKEN_EXPIRATION_SECONDS = (
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
 
 
-class AllowedMimeType(StrEnum):
+class AllowedMimeTypeEnum(StrEnum):
     PDF = "application/pdf"
     DOC = "application/msword"
     DOCX = "application/vnd.openxmlformats.wordprocessingml.document"
@@ -41,12 +45,12 @@ class AllowedMimeType(StrEnum):
 
 
 ALLOWED_MIME_TYPES = {
-    AllowedMimeType.PDF,
-    AllowedMimeType.DOC,
-    AllowedMimeType.DOCX,
-    AllowedMimeType.RTF,
-    AllowedMimeType.TXT,
-    AllowedMimeType.MD,
+    AllowedMimeTypeEnum.PDF,
+    AllowedMimeTypeEnum.DOC,
+    AllowedMimeTypeEnum.DOCX,
+    AllowedMimeTypeEnum.RTF,
+    AllowedMimeTypeEnum.TXT,
+    AllowedMimeTypeEnum.MD,
 }
 
 
@@ -60,3 +64,7 @@ class FileUploadType(StrEnum):
 
 # ===== API =====
 FILE_SEARCH_PERMITTED_FIELDS = {FileFields.TITLE, FileFields.DESCRIPTION}
+DOCUMENT_AUTHOR_SEARCH_PERMITTED_FIELDS = {
+    DocumentAuthorFields.FIRST_NAME,
+    DocumentAuthorFields.LAST_NAME,
+}

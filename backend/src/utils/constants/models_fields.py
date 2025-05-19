@@ -25,9 +25,19 @@ class FileFields(ModelFieldsEnum):
     OWNER_ID = auto()
     PATH = auto()
     EXTENSION = auto()
+    MIMETYPE = auto()
     CREATED_AT = auto()
     UPDATED_AT = auto()
 
     @staticmethod
     def as_outref() -> str:
         return "file_id"
+
+
+class DocumentAuthorFields(ModelFieldsEnum):
+    FIRST_NAME = auto()
+    LAST_NAME = auto()
+    CREATED_AT = auto()
+    UPDATED_AT = auto()
+    CREATED_BY_ID = auto()
+    UPDATED_BY_ID = auto()

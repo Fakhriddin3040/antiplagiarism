@@ -22,6 +22,7 @@ class ApiExceptionStatusCodes(IntEnum):
 
     # ===== COMMON =====
     OBJECT_NOT_FOUND = auto()
+    REQUEST_BODY_IS_EMPTY = auto()
 
 
 class ApiExceptionMessage(StrEnum):
@@ -33,3 +34,4 @@ class ApiExceptionMessage(StrEnum):
     UNSUPPORTED_FILE_FORMAT = "Unsupported file format."
     INVALID_FILE_FORMAT = "Invalid file format."
     FILE_NOT_FOUND_IN_FS = "File exists in database, but not found in file system."
+    REQUEST_BODY_IS_EMPTY = "Request body is empty."

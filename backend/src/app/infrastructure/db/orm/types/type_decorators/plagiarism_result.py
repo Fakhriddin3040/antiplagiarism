@@ -1,11 +1,11 @@
 from sqlalchemy import Integer
 
-from src.base.types.orm.type_decorators import ORMEnumTypeDecorator
+from src.base.types.orm.type_decorators import SQLAlchemyEnumTypeDecorator
 from src.app.core.enums import PlagiarismResultStatusEnum
 
 
 class PlagiarismResultStatusTD(
-    ORMEnumTypeDecorator[PlagiarismResultStatusEnum], Integer
+    SQLAlchemyEnumTypeDecorator[PlagiarismResultStatusEnum], Integer
 ):
     impl = Integer
     choices = PlagiarismResultStatusEnum

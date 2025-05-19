@@ -4,7 +4,7 @@ from sqlalchemy import TypeDecorator, Dialect
 from src.base.types.pytypes import ENUM_T
 
 
-class ORMEnumTypeDecorator(TypeDecorator, Generic[ENUM_T]):
+class SQLAlchemyEnumTypeDecorator(TypeDecorator, Generic[ENUM_T]):
     impl: Dialect
     choices: Type[ENUM_T]
 

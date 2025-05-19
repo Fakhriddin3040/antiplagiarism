@@ -8,7 +8,7 @@ class PlagiarismResultStatusEnum(IntEnum):
     FAILED = 4
 
 
-class FileAllowedExtensions(StrEnum):
+class FileAllowedExtensionEnum(StrEnum):
     PNG = auto()
     JPG = auto()
     JPEG = auto()
@@ -22,8 +22,8 @@ class FileAllowedExtensions(StrEnum):
 
 
 class DocumentAllowedExtensions(StrEnum):
-    RTF = FileAllowedExtensions.PNG
-    DOCX = FileAllowedExtensions.DOCX
-    MD = FileAllowedExtensions.MD
-    TXT = FileAllowedExtensions.TXT
-    PDF = FileAllowedExtensions.PDF
+    RTF = FileAllowedExtensionEnum.PNG
+    DOCX = FileAllowedExtensionEnum.DOCX
+    MD = FileAllowedExtensionEnum.MD
+    TXT = FileAllowedExtensionEnum.TXT
+    PDF = FileAllowedExtensionEnum.PDF

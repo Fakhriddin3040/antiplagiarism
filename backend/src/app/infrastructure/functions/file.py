@@ -1,4 +1,5 @@
 import logging
+from typing import Tuple
 
 import filetype
 from fastapi import UploadFile, status
@@ -15,7 +16,7 @@ from src.utils.exceptions.api_exception import ApiException
 logger = logging.getLogger(__name__)
 
 
-async def validate_file_extension(file: UploadFile) -> str:
+async def validate_file_extension(file: UploadFile) -> Tuple[str, str]:
     logger.info(f"Starting validating file {file.filename}")
     content = await file.read()
     kind = filetype.guess(content)
@@ -23,7 +24,7 @@ async def validate_file_extension(file: UploadFile) -> str:
     if kind is None:
         logger.info("File has no file extension. Setting default 'txt' and returning.")
         if is_probably_text(content):
-            return "txt"
+            return "txt", "text/plain"
 
         logger.error(
             "File has no file extension and also is not a text. Throwing Api exception."
@@ -54,7 +55,7 @@ async def validate_file_extension(file: UploadFile) -> str:
         )
 
     logger.info(f"File format is valid. Returning extension: {ext}")
-    return ext
+    return ext, kind.mime
 
 
 def is_probably_text(data: bytes) -> bool:
