@@ -29,14 +29,14 @@ class FileStreamService:
                 yield chunk
 
     async def get_file(
-        self, file_id: ID_T, owner_id: ID_T, chunk_size: int = 8192
+        self, file_id: ID_T, created_by_id: ID_T, chunk_size: int = 8192
     ) -> Tuple[Generator[bytes, None, None], File]:
-        logger.info(f"Getting file {file_id} from database for owner {owner_id}")
+        logger.info(f"Getting file {file_id} from database for owner {created_by_id}")
         file = await self.file_repo.get_by_id_and_owner(
-            file_id=file_id, owner_id=owner_id
+            file_id=file_id, created_by_id=created_by_id
         )
         if not file:
-            logger.warning(f"File {file_id} not found for user {owner_id}")
+            logger.warning(f"File {file_id} not found for user {created_by_id}")
             raise ApiException(
                 message=ApiExceptionMessage.NOT_FOUND,
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -45,7 +45,7 @@ class FileStreamService:
 
         if not os.path.exists(file.path):
             logger.critical(
-                f"File {file_id} of user {owner_id} exists in database, but not found in file system."
+                f"File {file_id} of user {created_by_id} exists in database, but not found in file system."
             )
             raise ApiException(
                 message=ApiExceptionMessage.FILE_NOT_FOUND_IN_FS,

@@ -1,5 +1,5 @@
 import re
-from typing import Optional, List
+from typing import Optional, List, Tuple
 
 from src.app.core.constants import ALL_STOP_WORDS
 
@@ -9,21 +9,21 @@ class TextTokenizer:
 
     def text_into_ngrams(
         self, text: str, ngram_size: int, clear: Optional[bool] = True
-    ) -> List[str]:
+    ) -> Tuple[str, ...]:
         """
         :param text: Text to be split
         :param ngram_size: Chunk size by words
         :param clear: Clear text before splitting
-        :return: List of words(str)
+        :return: Tuple of words(str)
         """
         tokens = self.simple_tokenize(text=text)
         if clear:
             tokens = self.clean_tokens(tokens)
 
-        ngrams = [
+        ngrams = tuple(
             " ".join(tokens[i : i + ngram_size])
             for i in range(0, len(tokens) - ngram_size + 1)
-        ]
+        )
         return ngrams
 
     def tokens_into_ngrams(

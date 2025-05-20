@@ -36,7 +36,7 @@ class FolderUpdateService:
 
     async def validate_and_get(self, folder_id: ID_T, user: User) -> Folder:
         folder = await self.folder_repo.get_by_id_and_owner(
-            folder_id=folder_id, owner_id=user.id
+            folder_id=folder_id, created_by_id=user.id
         )
         if not folder:
             logger.info(f"Folder {folder_id} not found for user {user.id}")

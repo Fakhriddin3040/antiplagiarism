@@ -6,3 +6,4 @@ class ApiEndpointsTags(StrEnum):
     FILES = auto()
     AUTHORS = auto()
     FOLDERS = auto()
+    DOCUMENTS = auto()

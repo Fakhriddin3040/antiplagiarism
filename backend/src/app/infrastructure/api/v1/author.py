@@ -89,7 +89,7 @@ async def update(
 
     logger.info("Getting author %s from db", author_id)
     author = await author_repo.get_by_id_and_owner(
-        author_id=author_id, owner_id=user.id
+        author_id=author_id, created_by_id=user.id
     )
 
     if not author:

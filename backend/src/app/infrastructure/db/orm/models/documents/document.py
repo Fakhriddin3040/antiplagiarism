@@ -1,8 +1,10 @@
 from datetime import datetime
 
-from sqlalchemy import ForeignKey, String, Text as TextType
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import ForeignKey, String, Text as TextType, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from src.app.infrastructure.db.orm.models.documents.folder import Folder
+from src.app.infrastructure.db.orm.models.documents.file import File
 from src.base.types.pytypes import ID_T
 from src.app.infrastructure.db.orm.enums import DatabaseTables
 from src.base.types.orm.models import (
@@ -27,4 +29,14 @@ class Document(SQLAlchemyBaseModel, ChronoModelMixin, AuditableModelMixin):
     last_indexed_at: Mapped[datetime] = mapped_column(nullable=True)
     file_id: Mapped[ID_T] = mapped_column(
         ForeignKey(DatabaseTables.FILES.as_foreign_key), nullable=False
+    )
+    folder_id: Mapped[ID_T] = mapped_column(
+        ForeignKey(DatabaseTables.FOLDERS.as_foreign_key), nullable=False, index=True
+    )
+    file: Mapped[File] = relationship("File", lazy="noload")
+    folder: Mapped[Folder] = relationship("Folder", lazy="noload")
+
+    __table_args__ = (
+        UniqueConstraint("author_id", "title", name="unique_document_author_title"),
+        UniqueConstraint("file_id", name="unique_document_file_id"),
     )

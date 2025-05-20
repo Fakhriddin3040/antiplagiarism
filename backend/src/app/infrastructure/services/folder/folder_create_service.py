@@ -11,7 +11,7 @@ from src.utils.constants.exceptions.error_codes import (
     ApiExceptionStatusCodes,
     ApiExceptionMessage,
 )
-from src.utils.constants.models_fields import FolderFields
+from src.utils.constants.models_fields import FolderField
 from src.utils.exceptions.api_exception import ApiExceptionDetail, ApiException
 
 logger = logging.getLogger(__name__)
@@ -32,13 +32,13 @@ class FolderCreateService:
         return folder
 
     async def _validate_and_create(self, data: Mapping[str, Any], user: User) -> Folder:
-        if parent_id := data.get(FolderFields.PARENT_ID):
+        if parent_id := data.get(FolderField.PARENT_ID):
             if not await self.folder_repo.filter_exists(
                 parent_id=parent_id, created_by_id=user.id
             ):
                 exc_detail = ApiExceptionDetail(
                     status=ApiExceptionStatusCodes.OBJECT_NOT_FOUND,
-                    field=FolderFields.PARENT_ID,
+                    field=FolderField.PARENT_ID,
                 )
                 raise ApiException(
                     message=ApiExceptionMessage.DETAILED_ERROR,
@@ -56,7 +56,7 @@ class FolderCreateService:
             )
             exc_detail = ApiExceptionDetail(
                 status=ApiExceptionStatusCodes.UNIQUE_CONSTRAINT,
-                fields=(FolderFields.TITLE, FolderFields.PARENT_ID),
+                fields=(FolderField.TITLE, FolderField.PARENT_ID),
             )
             raise ApiException(
                 message=ApiExceptionMessage.DETAILED_ERROR,

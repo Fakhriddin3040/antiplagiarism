@@ -1,4 +1,5 @@
-from sqlalchemy import ForeignKey, Text
+from pgvector.sqlalchemy import Vector
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import mapped_column, Mapped
 
 from src.base.types.orm.models import SQLAlchemyBaseModel, ChronoModelMixin
@@ -12,6 +13,5 @@ class DocumentChunk(SQLAlchemyBaseModel, ChronoModelMixin):
     document_id: Mapped[ID_T] = mapped_column(
         ForeignKey(DatabaseTables.DOCUMENTS.as_foreign_key), nullable=False
     )
-    content: Mapped[str] = mapped_column(Text, nullable=False)
-    hash: Mapped[str] = mapped_column(nullable=False)
+    vector = mapped_column(Vector, index=True)
     updated_at = None

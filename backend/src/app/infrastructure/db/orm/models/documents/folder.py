@@ -10,7 +10,7 @@ from src.base.types.orm.models import (
 )
 from src.app.infrastructure.db.orm import DatabaseTables
 from src.base.types.pytypes import ID_T
-from src.utils.constants.models_fields import FolderFields
+from src.utils.constants.models_fields import FolderField
 
 
 class Folder(SQLAlchemyBaseModel, ChronoModelMixin, AuditableModelMixin):
@@ -21,7 +21,7 @@ class Folder(SQLAlchemyBaseModel, ChronoModelMixin, AuditableModelMixin):
     parent_id: Mapped[ID_T] = mapped_column(
         ForeignKey(DatabaseTables.FOLDERS.as_foreign_key, ondelete="CASCADE"),
         nullable=True,
-        index=True
+        index=True,
     )
     parent: Mapped["Folder"] = relationship(
         "Folder", remote_side="Folder.id", back_populates="children", lazy="noload"
@@ -35,6 +35,6 @@ class Folder(SQLAlchemyBaseModel, ChronoModelMixin, AuditableModelMixin):
 
     __table_args__ = (
         UniqueConstraint(
-            FolderFields.TITLE, FolderFields.PARENT_ID, name="uq_folder_title_parent"
+            FolderField.TITLE, FolderField.PARENT_ID, name="uq_folder_title_parent"
         ),
     )

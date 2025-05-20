@@ -9,8 +9,8 @@ from src.utils.constants.exceptions.error_codes import ApiExceptionStatusCodes
 
 class ApiExceptionDetail(BaseModel):
     status: ApiExceptionStatusCodes
-    field: Optional[ModelFieldsEnum] = None
-    fields: Optional[Sequence[ModelFieldsEnum]] = None
+    field: Optional[ModelFieldsEnum | str] = None
+    fields: Optional[Sequence[ModelFieldsEnum | str]] = None
     payload: Optional[Mapping[str, Any]] = Field(default_factory=dict)
 
 

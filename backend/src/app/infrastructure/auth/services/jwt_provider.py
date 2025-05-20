@@ -9,7 +9,7 @@ from src.app.infrastructure.constants import (
 from src.app.infrastructure.db.orm import User
 from src.app.infrastructure.schemas.auth.jwt_schemas import JwtPayloadSchema
 from src.base.types.pytypes import PasswordType
-from src.utils.constants.models_fields import UserFields
+from src.utils.constants.models_fields import UserField
 from src.utils.functions.datetime import get_current_timestamp
 
 
@@ -60,7 +60,7 @@ class JwtProvider:
             return None
 
     def payload_from_user(self, user: User) -> Dict[str, str]:
-        return {UserFields.as_outref(): getattr(user, UserFields.ID)}
+        return {UserField.as_outref(): getattr(user, UserField.ID)}
 
     def get_payload(self, **kwargs) -> JwtPayloadSchema:
         iat = get_current_timestamp()

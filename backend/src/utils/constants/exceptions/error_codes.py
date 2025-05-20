@@ -27,6 +27,9 @@ class ApiExceptionStatusCodes(IntEnum):
     # ===== UNKNOWN =====
     UNKNOWN_ERROR = auto()
 
+    # ===== DOCUMENT SPECIFIED =====
+    TOO_SHORT_CONTENT = auto()
+
 
 class ApiExceptionMessage(StrEnum):
     NOT_FOUND = "Not found"
@@ -45,3 +48,6 @@ class ApiExceptionMessage(StrEnum):
 
     # ===== COMMON =====
     DETAILED_ERROR = "Detailed error. See details."
+
+    # ===== DOCUMENT SPECIFIED =====
+    TOO_SHORT_CONTENT = "File content is too short."

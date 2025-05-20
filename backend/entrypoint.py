@@ -12,6 +12,7 @@ from src.app.infrastructure.api import (
     file_router,
     document_author_router,
     folder_router,
+    document_router,
 )
 from src.utils.constants.exceptions.api import ApiEndpointsTags
 
@@ -44,6 +45,9 @@ app.include_router(
     document_author_router, prefix="/documents/authors", tags=[ApiEndpointsTags.AUTHORS]
 )
 app.include_router(folder_router, prefix="/folders", tags=[ApiEndpointsTags.FOLDERS])
+app.include_router(
+    document_router, prefix="/documents", tags=[ApiEndpointsTags.DOCUMENTS]
+)
 
 
 if __name__ == "__main__":

@@ -11,7 +11,7 @@ class AbstractParser(ABC):
     def parse(self) -> str:
         pass
 
-    def get_file_content(self, mode=None, encoding=None, **kwargs) -> str:
+    def get_file_content(self, mode="r", encoding="utf-8", **kwargs) -> str:
         f = self.open(mode, encoding=encoding, **kwargs)
         content = f.read()
         f.close()

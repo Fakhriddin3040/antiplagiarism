@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Type, Optional, Any, Sequence, TypeVar, Dict, Mapping
+from typing import Type, Optional, Any, Sequence, TypeVar, Dict, Mapping, Tuple
 
 from sqlalchemy import select, exists, Select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -138,11 +138,22 @@ class AbstractAsyncSQLAlchemyRepository(ABC):
     async def refresh(self, db_obj: TModel) -> None:
         await self.db.refresh(db_obj)
 
-    async def bulk_create(self, objs_in: Sequence[Dict[str, Any]]) -> Sequence[TModel]:
-        db_objs = [self.model(**obj_in) for obj_in in objs_in]
-        self.db.add_all(db_objs)
+    async def bulk_create(
+        self, objs_in: Tuple[Dict[str, Any], ...], batch_size: int, **kwargs
+    ) -> None:
+        offset = 0
+        total = len(objs_in)
+
+        while total > offset:
+            current_batch_size = min(batch_size, total - offset)
+            objs = [
+                self.model(**objs_in[i], **kwargs)
+                for i in range(offset, offset + current_batch_size)
+            ]
+            self.db.add_all(objs)
+            offset += current_batch_size
+
         await self.db.flush()
-        return db_objs
 
     async def update(self, *, db_obj: TModel, obj_in: dict) -> TModel:
         for field, value in obj_in.items():

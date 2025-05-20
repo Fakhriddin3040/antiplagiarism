@@ -8,7 +8,7 @@ from src.utils.constants.exceptions.error_codes import (
     ApiExceptionStatusCodes,
     ApiExceptionMessage,
 )
-from src.utils.constants.models_fields import FolderFields
+from src.utils.constants.models_fields import FolderField
 from src.utils.exceptions.api_exception import ApiExceptionDetail, ApiException
 
 
@@ -23,7 +23,7 @@ async def edit_folder_async(callback: Callable, *args, **kwargs) -> Folder:
         logger.error("Folder with given name and parent already exists")
         detail = ApiExceptionDetail(
             status=ApiExceptionStatusCodes.UNIQUE_CONSTRAINT,
-            fields=(FolderFields.TITLE, FolderFields.PARENT_ID),
+            fields=(FolderField.TITLE, FolderField.PARENT_ID),
         )
         raise ApiException(
             message=ApiExceptionMessage.UNIQUE_CONSTRAINT,

@@ -1,10 +1,21 @@
 from enum import StrEnum, auto
+from typing import Dict, Type
 
+from src.app.core.abstracts.text_parser import AbstractParser
+from src.app.core.enums import FileAllowedExtensionEnum
+from src.app.infrastructure.parsers.content_parsers.docx_parser import DocxParser
+from src.app.infrastructure.parsers.content_parsers.markdown_parser import (
+    MarkdownParser,
+)
+from src.app.infrastructure.parsers.content_parsers.pdf_parser import PdfParser
+from src.app.infrastructure.parsers.content_parsers.rtf_parser import RtfParser
+from src.app.infrastructure.parsers.content_parsers.txt_parser import TxtParser
 from src.utils.constants.models_fields import (
-    UserFields,
-    FileFields,
-    DocumentAuthorFields,
-    FolderFields,
+    UserField,
+    FileField,
+    DocumentAuthorField,
+    FolderField,
+    DocumentField,
 )
 
 
@@ -21,7 +32,7 @@ class JwtType(StrEnum):
 
 
 JWT_REQUIRED_PAYLOAD = {
-    UserFields.as_outref(),
+    UserField.as_outref(),
     JwtKeys.IAT,
     JwtKeys.EXP,
 }
@@ -64,12 +75,26 @@ class FileUploadType(StrEnum):
 
 
 # ===== API =====
-FILE_SEARCH_PERMITTED_FIELDS = {FileFields.TITLE, FileFields.DESCRIPTION}
+FILE_SEARCH_PERMITTED_FIELDS = {FileField.TITLE, FileField.DESCRIPTION}
 DOCUMENT_AUTHOR_SEARCH_PERMITTED_FIELDS = {
-    DocumentAuthorFields.FIRST_NAME,
-    DocumentAuthorFields.LAST_NAME,
+    DocumentAuthorField.FIRST_NAME,
+    DocumentAuthorField.LAST_NAME,
 }
 FOLDER_SEARCH_PERMITTED_FIELDS = {
-    FolderFields.TITLE,
-    FolderFields.DESCRIPTION,
+    FolderField.TITLE,
+    FolderField.DESCRIPTION,
+}
+DOCUMENT_SEARCH_PERMITTED_FIELDS = {
+    DocumentField.TITLE,
+    DocumentField.DESCRIPTION,
+}
+
+
+EXTENSION_CONTENT_PARSER_MAP: Dict[FileAllowedExtensionEnum, Type[AbstractParser]] = {
+    FileAllowedExtensionEnum.DOCX: DocxParser,
+    FileAllowedExtensionEnum.PDF: PdfParser,
+    FileAllowedExtensionEnum.DOC: DocxParser,
+    FileAllowedExtensionEnum.RTF: RtfParser,
+    FileAllowedExtensionEnum.TXT: TxtParser,
+    FileAllowedExtensionEnum.MD: MarkdownParser,
 }

@@ -1,4 +1,5 @@
 from fastapi import Depends
+from src.app.infrastructure.db.orm.models import DocumentChunk
 from src.app.infrastructure.db.orm.models.documents import Folder
 
 from src.app.infrastructure.db.orm import User, Document
@@ -7,6 +8,9 @@ from src.app.infrastructure.db.orm.models.documents.file import File
 from src.app.infrastructure.db.repositories.documents.document import DocumentRepository
 from src.app.infrastructure.db.repositories.documents.document_author import (
     DocumentAuthorRepository,
+)
+from src.app.infrastructure.db.repositories.documents.document_chunk import (
+    DocumentChunkRepository,
 )
 from src.app.infrastructure.db.repositories.documents.file import FileRepository
 from src.app.infrastructure.db.repositories.documents.folder import FolderRepository
@@ -32,3 +36,7 @@ def get_folder_repository(db=Depends(get_db)) -> FolderRepository:
 
 def get_document_repository(db=Depends(get_db)) -> DocumentRepository:
     return DocumentRepository(db=db, model=Document)
+
+
+def get_document_chunk_repository(db=Depends(get_db)) -> DocumentChunkRepository:
+    return DocumentChunkRepository(db=db, model=DocumentChunk)

@@ -9,7 +9,7 @@ from src.app.infrastructure.db.orm.enums.models import DatabaseModels
 from src.app.infrastructure.db.repositories.users.user import UserRepository
 from src.utils.constants.exceptions.common import VALIDATION_ERR_MESSAGE
 from src.utils.constants.exceptions.error_codes import ApiExceptionStatusCodes
-from src.utils.constants.models_fields import UserFields
+from src.utils.constants.models_fields import UserField
 from src.utils.exceptions.api_exception import ApiException, ApiExceptionDetail
 
 
@@ -48,14 +48,14 @@ class UserRegisterService:
             errors.append(
                 ApiExceptionDetail(
                     status=ApiExceptionStatusCodes.UNIQUE_CONSTRAINT,
-                    field=UserFields.EMAIL,
+                    field=UserField.EMAIL,
                 )
             )
         if await self.user_repo.exists(DatabaseModels.USERS.username == data.username):
             errors.append(
                 ApiExceptionDetail(
                     status=ApiExceptionStatusCodes.UNIQUE_CONSTRAINT,
-                    field=UserFields.USERNAME,
+                    field=UserField.USERNAME,
                 )
             )
         if errors:

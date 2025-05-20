@@ -36,7 +36,7 @@ async def create_file(
         description=description,
         file=file,
     )
-    await service.create(user=user, params=params)
+    await service.create(user=user, schema=params)
 
 
 @router.get(
@@ -52,7 +52,7 @@ async def get(
     search_params = params.parse_search(FILE_SEARCH_PERMITTED_FIELDS)
     filter_params = params.parse_filters()
     files = await file_repo.filter(
-        **filter_params, search=search_params, owner_id=user.id
+        **filter_params, search=search_params, created_by_id=user.id
     )
     return files
 
@@ -63,7 +63,7 @@ async def download_file(
     stream_service: FileStreamService = Depends(get_file_upload_service),
     user=Depends(get_current_user),
 ):
-    stream, file = await stream_service.get_file(file_id=file_id, owner_id=user.id)
+    stream, file = await stream_service.get_file(file_id=file_id, created_by_id=user.id)
     headers = {
         "Content-Disposition": f"attachment; filename={file.title}.{file.extension}"
     }
