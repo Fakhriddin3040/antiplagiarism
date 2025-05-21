@@ -19,12 +19,14 @@ class TextIndexer:
         )
 
     def to_ngrams(
-        self, text: str, ngram_size: Optional[int] = NGRAM_DEFAULT_SIZE
+        self,
+        text: str,
+        ngram_size: Optional[int] = NGRAM_DEFAULT_SIZE,
+        clean: bool = False,
+        lower: bool = True,
     ) -> Tuple[str, ...]:
         ngrams = self.tokenizer.text_into_ngrams(
-            text=text,
-            ngram_size=ngram_size,
-            clear=True,
+            text=text, ngram_size=ngram_size, clean=clean, lower=lower
         )
         return ngrams
 

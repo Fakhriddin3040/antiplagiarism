@@ -3,6 +3,7 @@ from typing import Optional
 
 from fastapi import UploadFile, Form, File
 
+from src.app.core.enums import PlagiarismCheckVerdictEnum
 from src.app.infrastructure.schemas.document.file_schemas import FileListSchema
 from src.base.schema import AbstractPydanticSchema, AbstractPydanticFilterSearchSchema
 from src.base.types.pytypes import ID_T
@@ -48,7 +49,10 @@ class DocumentListSchema(AbstractPydanticSchema):
     author_id: ID_T
     title: str
     is_indexed: bool
-    last_indexed_at: Optional[datetime]
+    indexed_at: Optional[datetime]
+    checked: bool
+    checked_at: Optional[datetime]
+    verdict: Optional[PlagiarismCheckVerdictEnum]
     folder_id: ID_T
     description: Optional[str]
     file: FileListSchema
@@ -58,6 +62,8 @@ class DocumentFilterSearchParamsSchema(AbstractPydanticFilterSearchSchema):
     is_indexed: Optional[bool] = None
     folder_id: Optional[ID_T] = None
     author_id: Optional[ID_T] = None
+    verdict: Optional[PlagiarismCheckVerdictEnum] = None
+    checked: Optional[bool] = None
 
 
 """

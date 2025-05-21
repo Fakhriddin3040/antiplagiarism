@@ -1,6 +1,7 @@
 from fastapi import Depends
 
 from src.app.core.services import TextIndexer
+from src.app.core.services.text.noice_cleaner import TextNoiseCleaner
 from src.app.infrastructure.db.repositories.documents.document import DocumentRepository
 from src.app.infrastructure.db.repositories.documents.document_author import (
     DocumentAuthorRepository,
@@ -21,28 +22,54 @@ from src.app.infrastructure.deps.repositories import (
 from src.app.infrastructure.deps.services.file import get_file_create_service
 from src.app.infrastructure.deps.services.text_services import get_text_indexer
 from src.app.infrastructure.parsers.file_content_parser import FileContentParser
+from src.app.infrastructure.services.document.document_chunks_create_service import (
+    DocumentChunksCreateService,
+)
 from src.app.infrastructure.services.document.document_create_service import (
     DocumentCreateService,
 )
 from src.app.infrastructure.services.document.document_index_service import (
     DocumentIndexService,
 )
+from src.app.infrastructure.services.document.text_chunker import TextChunker
 from src.app.infrastructure.services.file.file_create_service import FileCreateService
 
 
-def get_document_index_service(
+def get_text_noise_cleaner() -> TextNoiseCleaner:
+    return TextNoiseCleaner()
+
+
+def get_text_chunker(
     indexer: TextIndexer = Depends(get_text_indexer),
-    document_repo: DocumentRepository = Depends(get_document_repository),
+    noice_cleaner: TextNoiseCleaner = Depends(get_text_noise_cleaner),
+) -> TextChunker:
+    return TextChunker(
+        cleaner=noice_cleaner,
+        indexer=indexer,
+    )
+
+
+def get_document_chunks_create_service(
     document_chunk_repo: DocumentChunkRepository = Depends(
         get_document_chunk_repository
     ),
+    chunker: TextChunker = Depends(get_text_chunker),
+) -> DocumentChunksCreateService:
+    return DocumentChunksCreateService(
+        chunker=chunker,
+        doc_chunk_repo=document_chunk_repo,
+    )
+
+
+def get_document_index_service(
     content_parser: FileContentParser = Depends(get_file_content_parser),
+    document_chunks_create_service: DocumentChunksCreateService = Depends(
+        get_document_chunks_create_service
+    ),
 ) -> DocumentIndexService:
     return DocumentIndexService(
-        document_repo=document_repo,
-        document_chunk_repo=document_chunk_repo,
-        text_indexer_service=indexer,
         content_parser=content_parser,
+        chunks_create_service=document_chunks_create_service,
     )
 
 

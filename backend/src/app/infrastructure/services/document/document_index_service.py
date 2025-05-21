@@ -2,18 +2,15 @@ import logging
 
 from starlette import status
 
-from src.app.core.services import TextIndexer
 from src.app.infrastructure.db.orm import Document
-from src.app.infrastructure.db.repositories.documents.document import DocumentRepository
-from src.app.infrastructure.db.repositories.documents.document_chunk import (
-    DocumentChunkRepository,
-)
 from src.app.infrastructure.parsers.file_content_parser import FileContentParser
+from src.app.infrastructure.services.document.document_chunks_create_service import (
+    DocumentChunksCreateService,
+)
 from src.utils.constants.exceptions.error_codes import (
     ApiExceptionStatusCodes,
     ApiExceptionMessage,
 )
-from src.utils.constants.models_fields import DocumentChunkField
 from src.utils.exceptions.api_exception import ApiException
 
 logger = logging.getLogger(__name__)
@@ -22,15 +19,11 @@ logger = logging.getLogger(__name__)
 class DocumentIndexService:
     def __init__(
         self,
-        document_repo: DocumentRepository,
-        document_chunk_repo: DocumentChunkRepository,
         content_parser: FileContentParser,
-        text_indexer_service: TextIndexer,
+        chunks_create_service: DocumentChunksCreateService,
     ):
-        self.document_repo = document_repo
-        self.document_chunk_repo = document_chunk_repo
-        self.text_indexer_service = text_indexer_service
         self.content_parser = content_parser
+        self.chunks_create_service = chunks_create_service
 
     async def index(self, document: Document) -> None:
         path = document.file.path
@@ -39,8 +32,8 @@ class DocumentIndexService:
         file_content = self.content_parser.parse_content(
             extension=document.file.extension, path=path
         )
-        if not file_content or len(file_content) < 100:
-            msg = "File %s is empty maan, wtf?!" % path
+        if not file_content or len(file_content.strip()) < 100:
+            msg = "File should have at least 100 words" % path
             logger.critical(msg)
             raise ApiException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -48,9 +41,6 @@ class DocumentIndexService:
                 message=ApiExceptionMessage.TOO_SHORT_CONTENT,
             )
 
-        vector = self.text_indexer_service.index_vector(text=file_content)
-        to_create = {
-            DocumentChunkField.DOCUMENT_ID: document.id,
-            DocumentChunkField.VECTOR: vector,
-        }
-        await self.document_chunk_repo.create(obj_in=to_create)
+        await self.chunks_create_service.create(
+            content=file_content, document_id=document.id
+        )

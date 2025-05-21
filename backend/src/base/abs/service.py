@@ -70,7 +70,7 @@ class AbstractAsyncService(Generic[TModel, TAsyncRepository]):
         Create multiple records using a Pydantic schema and the repository.
         """
         objs_in_data = [obj_in.model_dump() for obj_in in objs_in]
-        return await self._repository.bulk_create(objs_in=objs_in_data)
+        return await self._repository.batch_create(objs_in=objs_in_data)
 
     async def update(self, _id: ID_T, obj_in: Union["T_SCHEMA"]) -> "TModel":
         """

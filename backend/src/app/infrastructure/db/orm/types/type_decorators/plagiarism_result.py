@@ -1,11 +1,18 @@
 from sqlalchemy import Integer
 
 from src.base.types.orm.type_decorators import SQLAlchemyEnumTypeDecorator
-from src.app.core.enums import PlagiarismResultStatusEnum
+from src.app.core.enums import PlagiarismCheckStatusEnum, PlagiarismCheckVerdictEnum
 
 
-class PlagiarismResultStatusTD(
-    SQLAlchemyEnumTypeDecorator[PlagiarismResultStatusEnum], Integer
+class PlagiarismCheckStatusTD(
+    SQLAlchemyEnumTypeDecorator[PlagiarismCheckStatusEnum], Integer
 ):
     impl = Integer
-    choices = PlagiarismResultStatusEnum
+    choices = PlagiarismCheckStatusEnum
+
+
+class PlagiarismCheckVerdictTD(
+    SQLAlchemyEnumTypeDecorator[PlagiarismCheckVerdictEnum], Integer
+):
+    impl = Integer
+    choices = PlagiarismCheckVerdictEnum

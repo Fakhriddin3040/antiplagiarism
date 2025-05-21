@@ -8,33 +8,28 @@ class TextTokenizer:
     STOP_WORDS = ALL_STOP_WORDS
 
     def text_into_ngrams(
-        self, text: str, ngram_size: int, clear: Optional[bool] = True
+        self,
+        text: str,
+        ngram_size: int,
+        clean: Optional[bool] = True,
+        lower: Optional[bool] = True,
     ) -> Tuple[str, ...]:
         """
         :param text: Text to be split
         :param ngram_size: Chunk size by words
-        :param clear: Clear text before splitting
+        :param clean: Clear text before splitting
         :return: Tuple of words(str)
         """
         tokens = self.simple_tokenize(text=text)
-        if clear:
+        if clean:
             tokens = self.clean_tokens(tokens)
+        if lower:
+            tokens = [item.lower() for item in tokens]
 
         ngrams = tuple(
             " ".join(tokens[i : i + ngram_size])
             for i in range(0, len(tokens) - ngram_size + 1)
         )
-        return ngrams
-
-    def tokens_into_ngrams(
-        self, tokens: List[str], ngram_size: int, clean: Optional[bool] = False
-    ) -> List[str]:
-        if clean:
-            tokens = self.clean_tokens(tokens)
-        ngrams = [
-            " ".join(tokens[i : i + ngram_size])
-            for i in range(0, len(tokens) - ngram_size + 1)
-        ]
         return ngrams
 
     def simple_tokenize(self, text) -> List[str]:

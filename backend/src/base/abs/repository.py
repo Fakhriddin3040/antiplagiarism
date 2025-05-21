@@ -138,8 +138,8 @@ class AbstractAsyncSQLAlchemyRepository(ABC):
     async def refresh(self, db_obj: TModel) -> None:
         await self.db.refresh(db_obj)
 
-    async def bulk_create(
-        self, objs_in: Tuple[Dict[str, Any], ...], batch_size: int, **kwargs
+    async def batch_create_from_dict(
+        self, objs_in: Tuple[Dict[str, Any], ...], batch_size: int = 200, **kwargs
     ) -> None:
         offset = 0
         total = len(objs_in)
@@ -155,6 +155,19 @@ class AbstractAsyncSQLAlchemyRepository(ABC):
 
         await self.db.flush()
 
+    async def batch_create(
+        self, objs_in: Sequence[TModel], batch_size: int = 200
+    ) -> None:
+        offset = 0
+        total = len(objs_in)
+
+        while total > offset:
+            current_batch_size = min(batch_size, total - offset)
+            self.db.add_all(objs_in[offset : offset + current_batch_size])
+            offset += current_batch_size
+
+        await self.db.flush()
+
     async def update(self, *, db_obj: TModel, obj_in: dict) -> TModel:
         for field, value in obj_in.items():
             setattr(db_obj, field, value)
@@ -162,6 +175,22 @@ class AbstractAsyncSQLAlchemyRepository(ABC):
         await self.db.flush()
         await self.refresh(db_obj)
         return db_obj
+
+    async def save(self, db_obj: TModel) -> None:
+        self.db.add(db_obj)
+        await self.db.flush()
+
+    async def batch_save(
+        self, db_objs: Sequence[TModel], batch_size: int = 200
+    ) -> None:
+        offset = 0
+        total = len(db_objs)
+        while total > offset:
+            current_batch_size = min(batch_size, total - offset)
+            self.db.add_all(db_objs[offset : offset + current_batch_size])
+            offset += current_batch_size
+
+        await self.db.flush()
 
     async def remove(self, _id: ID_T) -> "int":
         stmt = delete(self.model).where(self.model.id == _id)

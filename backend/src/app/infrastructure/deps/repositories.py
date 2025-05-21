@@ -1,8 +1,8 @@
 from fastapi import Depends
-from src.app.infrastructure.db.orm.models import DocumentChunk
+from src.app.infrastructure.db.orm.models import DocumentChunk, PlagiarismMatch
 from src.app.infrastructure.db.orm.models.documents import Folder
 
-from src.app.infrastructure.db.orm import User, Document
+from src.app.infrastructure.db.orm import User, Document, PlagiarismCheck
 from src.app.infrastructure.db.orm.models import DocumentAuthor
 from src.app.infrastructure.db.orm.models.documents.file import File
 from src.app.infrastructure.db.repositories.documents.document import DocumentRepository
@@ -14,6 +14,12 @@ from src.app.infrastructure.db.repositories.documents.document_chunk import (
 )
 from src.app.infrastructure.db.repositories.documents.file import FileRepository
 from src.app.infrastructure.db.repositories.documents.folder import FolderRepository
+from src.app.infrastructure.db.repositories.plagiarism_results.plagiarism_check import (
+    PlagiarismCheckRepository,
+)
+from src.app.infrastructure.db.repositories.plagiarism_results.plagiarism_match import (
+    PlagiarismMatchRepository,
+)
 from src.app.infrastructure.db.repositories.users.user import UserRepository
 from src.app.infrastructure.deps import get_db
 
@@ -40,3 +46,11 @@ def get_document_repository(db=Depends(get_db)) -> DocumentRepository:
 
 def get_document_chunk_repository(db=Depends(get_db)) -> DocumentChunkRepository:
     return DocumentChunkRepository(db=db, model=DocumentChunk)
+
+
+def get_plagiarism_check_repository(db=Depends(get_db)) -> PlagiarismCheckRepository:
+    return PlagiarismCheckRepository(db=db, model=PlagiarismCheck)
+
+
+def get_plagiarism_match_repository(db=Depends(get_db)) -> PlagiarismMatchRepository:
+    return PlagiarismMatchRepository(db=db, model=PlagiarismMatch)

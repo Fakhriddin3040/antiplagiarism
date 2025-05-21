@@ -1,10 +1,13 @@
 from datetime import datetime
 
-from sqlalchemy import ForeignKey, String, Text as TextType, UniqueConstraint
+from sqlalchemy import ForeignKey, String, Text as TextType, UniqueConstraint, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.app.infrastructure.db.orm.models.documents.folder import Folder
 from src.app.infrastructure.db.orm.models.documents.file import File
+from src.app.infrastructure.db.orm.types.type_decorators.plagiarism_result import (
+    PlagiarismCheckVerdictTD,
+)
 from src.base.types.pytypes import ID_T
 from src.app.infrastructure.db.orm.enums import DatabaseTables
 from src.base.types.orm.models import (
@@ -25,8 +28,14 @@ class Document(SQLAlchemyBaseModel, ChronoModelMixin, AuditableModelMixin):
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     description: Mapped[str | None] = mapped_column(TextType, nullable=True)
     text: Mapped[str | None] = mapped_column(TextType, nullable=True)
-    is_indexed: Mapped[bool] = mapped_column(default=False)
-    last_indexed_at: Mapped[datetime] = mapped_column(nullable=True)
+    checked: Mapped[bool] = mapped_column(default=False)
+    verdict: Mapped[PlagiarismCheckVerdictTD.choices] = mapped_column(
+        PlagiarismCheckVerdictTD,
+        nullable=True,
+    )
+    idexed_at: Mapped[datetime] = mapped_column(nullable=True)
+    is_indexed: Mapped[bool] = mapped_column(default=False, nullable=True)
+    checked_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
     file_id: Mapped[ID_T] = mapped_column(
         ForeignKey(DatabaseTables.FILES.as_foreign_key), nullable=False
     )

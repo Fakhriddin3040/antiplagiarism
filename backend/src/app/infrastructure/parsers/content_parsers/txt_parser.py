@@ -3,5 +3,8 @@ from src.app.core.abstracts.text_parser import AbstractParser
 
 class TxtParser(AbstractParser):
     def parse(self) -> str:
-        content = self.get_file_content()
-        return content
+        lines = list(self.read_text().splitlines())
+        common = self.scan_common(lines)
+
+        cleaned = [ln for ln in lines if ln and ln not in common and not ln.isdigit()]
+        return "\n".join(cleaned)

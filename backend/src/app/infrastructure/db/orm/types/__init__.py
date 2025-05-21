@@ -1,6 +1,6 @@
-from .type_decorators.plagiarism_result import PlagiarismResultStatusTD
+from .type_decorators.plagiarism_result import PlagiarismCheckStatusTD
 
 
 __all__ = [
-    "PlagiarismResultStatusTD",
+    "PlagiarismCheckStatusTD",
 ]

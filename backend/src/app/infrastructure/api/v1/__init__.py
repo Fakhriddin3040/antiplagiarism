@@ -3,6 +3,7 @@ from .file import router as file_router
 from .author import router as document_author_router
 from .folder import router as folder_router
 from .document import router as document_router
+from .plagiarism_result import router as plagiarism_result_router
 
 
 __all__ = [
@@ -11,4 +12,5 @@ __all__ = [
     "document_author_router",
     "folder_router",
     "document_router",
+    "plagiarism_result_router",
 ]

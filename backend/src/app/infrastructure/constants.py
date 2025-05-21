@@ -98,3 +98,9 @@ EXTENSION_CONTENT_PARSER_MAP: Dict[FileAllowedExtensionEnum, Type[AbstractParser
     FileAllowedExtensionEnum.TXT: TxtParser,
     FileAllowedExtensionEnum.MD: MarkdownParser,
 }
+
+
+# ===== ANTIPLAGIARISM ======
+SIMILARITY_THRESHOLD = 0.8
+MIN_COVERAGE = 0.3
+TOP_K_CHUNKS = 5

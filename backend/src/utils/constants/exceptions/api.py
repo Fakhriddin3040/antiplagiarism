@@ -7,3 +7,4 @@ class ApiEndpointsTags(StrEnum):
     AUTHORS = auto()
     FOLDERS = auto()
     DOCUMENTS = auto()
+    PLAGIARISM_CHECKS = auto()

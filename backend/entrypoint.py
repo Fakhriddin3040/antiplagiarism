@@ -13,6 +13,7 @@ from src.app.infrastructure.api import (
     document_author_router,
     folder_router,
     document_router,
+    plagiarism_result_router,
 )
 from src.utils.constants.exceptions.api import ApiEndpointsTags
 
@@ -47,6 +48,9 @@ app.include_router(
 app.include_router(folder_router, prefix="/folders", tags=[ApiEndpointsTags.FOLDERS])
 app.include_router(
     document_router, prefix="/documents", tags=[ApiEndpointsTags.DOCUMENTS]
+)
+app.include_router(
+    plagiarism_result_router, prefix="", tags=[ApiEndpointsTags.PLAGIARISM_CHECKS]
 )
 
 
