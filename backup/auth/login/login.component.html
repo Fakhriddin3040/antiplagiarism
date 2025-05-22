@@ -1,0 +1,22 @@
+<!-- login.component.html -->
+<div class="auth-container">
+  <h2>Вход</h2>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="fill">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" type="email" required>
+      <mat-error *ngIf="loginForm.get('email').invalid">Введите корректный email</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Пароль</mat-label>
+      <input matInput formControlName="password" type="password" required>
+      <mat-error *ngIf="loginForm.get('password').invalid">Введите пароль</mat-error>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid">
+      Войти
+    </button>
+  </form>
+  <p>Нет аккаунта? <a routerLink="/register">Регистрация</a></p>
+</div>

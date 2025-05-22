@@ -1,0 +1,35 @@
+<!-- dashboard.component.html (фрагмент) -->
+<div class="dashboard-container">
+  <h1>Дашборд</h1>
+  <mat-grid-list cols="4" gutterSize="16px" rowHeight="100px">
+    <!-- Карточки с основными показателями -->
+    <mat-grid-tile colspan="1" rowspan="1">
+      <mat-card>
+        <mat-card-title>Документы</mat-card-title>
+        <mat-card-content>
+          <div class="stat-number">{{ stats.totalDocuments }}</div>
+          <div class="stat-label">Всего загружено</div>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="1" rowspan="1">
+      <mat-card>
+        <mat-card-title>Проверки</mat-card-title>
+        <mat-card-content>
+          <div class="stat-number">{{ stats.totalChecks }}</div>
+          <div class="stat-label">Проведено</div>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+    <!-- ... далее карточки для других показателей ... -->
+  </mat-grid-list>
+
+  <!-- Пример графика или списка последних проверок -->
+  <div class="recent-checks">
+    <h2>Последние проверки</h2>
+    <mat-table [dataSource]="latestChecks">
+      <!-- Определение колонок таблицы: Документ, Дата, Процент плагиата -->
+      <!-- ... -->
+    </mat-table>
+  </div>
+</div>

@@ -1,0 +1,50 @@
+<!-- document-list.component.html -->
+<div class="documents-header">
+  <h2>Документы папки "{{ folder?.name }}"</h2>
+  <div class="actions">
+    <button mat-raised-button color="primary" (click)="openAddDocument()">Добавить документ</button>
+    <mat-form-field appearance="standard" class="search-field">
+      <mat-label>Поиск</mat-label>
+      <input matInput [(ngModel)]="filterQuery" (keyup.enter)="onSearch()" placeholder="Название...">
+      <button mat-icon-button matSuffix (click)="onSearch()">
+        <mat-icon>search</mat-icon>
+      </button>
+    </mat-form-field>
+  </div>
+</div>
+
+<mat-table [dataSource]="documents" class="documents-table" *ngIf="documents">
+  <!-- Определяем колонки -->
+  <ng-container matColumnDef="title">
+    <mat-header-cell *matHeaderCellDef> Название </mat-header-cell>
+    <mat-cell *matCellDef="let doc"> {{ doc.title }} </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="author">
+    <mat-header-cell *matHeaderCellDef> Автор </mat-header-cell>
+    <mat-cell *matCellDef="let doc"> {{ getAuthorName(doc.authorId) }} </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="date">
+    <mat-header-cell *matHeaderCellDef> Дата </mat-header-cell>
+    <mat-cell *matCellDef="let doc"> {{ doc.uploadDate | date:'shortDate' }} </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="status">
+    <mat-header-cell *matHeaderCellDef> Статус </mat-header-cell>
+    <mat-cell *matCellDef="let doc">
+      <span [ngClass]="doc.status">{{ doc.status === 'CHECKED' ? (doc.plagiarismPercent + '%') : 'не проверен' }}</span>
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="actions">
+    <mat-header-cell *matHeaderCellDef> Действия </mat-header-cell>
+    <mat-cell *matCellDef="let doc">
+      <button mat-button (click)="runCheck(doc)">Проверить</button>
+      <button mat-button (click)="selectForCompare(doc)">Сравнить</button>
+      <!-- возможно, кнопки редактировать/удалить -->
+    </mat-cell>
+  </ng-container>
+
+  <!-- Header and row declarations -->
+  <mat-header-row *matHeaderRowDef="['title','author','date','status','actions']"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: ['title','author','date','status','actions'];"></mat-row>
+</mat-table>
+
+<p *ngIf="documents.length === 0">Документов нет.</p>

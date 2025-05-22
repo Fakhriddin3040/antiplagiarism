@@ -1,0 +1,21 @@
+<!-- register.component.html (упрощенно) -->
+<div class="auth-container">
+  <h2>Регистрация</h2>
+  <form [formGroup]="regForm" (ngSubmit)="onSubmit()">
+    <!-- поля: имя, email, пароль, подтверждение пароля -->
+    <mat-form-field appearance="fill">
+      <mat-label>Имя</mat-label>
+      <input matInput formControlName="name" required>
+    </mat-form-field>
+    <!-- ... поля email, password ... -->
+    <mat-form-field appearance="fill">
+      <mat-label>Подтвердите пароль</mat-label>
+      <input matInput formControlName="passwordConfirm" type="password" required>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit" [disabled]="regForm.invalid">
+      Создать аккаунт
+    </button>
+  </form>
+  <p>Уже есть аккаунт? <a routerLink="/login">Вход</a></p>
+</div>

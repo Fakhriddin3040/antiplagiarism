@@ -1,0 +1,23 @@
+<!-- document-form.component.html -->
+<h2 mat-dialog-title>Новый документ</h2>
+<div mat-dialog-content [formGroup]="docForm">
+  <mat-form-field appearance="fill">
+    <mat-label>Название документа</mat-label>
+    <input matInput formControlName="title" required>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Автор</mat-label>
+    <mat-select formControlName="authorId" required>
+      <mat-option *ngFor="let author of authors" [value]="author.id">{{ author.name }}</mat-option>
+    </mat-select>
+    <button mat-button (click)="openAuthorDialog()">+ Новый автор</button>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Файл</mat-label>
+    <input matInput formControlName="file" type="file" (change)="onFileSelected($event)" required>
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button mat-dialog-close>Отмена</button>
+  <button mat-button [disabled]="docForm.invalid" (click)="save()">Создать</button>
+</div>

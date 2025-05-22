@@ -1,0 +1,23 @@
+<!-- folder-tree.component.html -->
+<mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="folder-tree">
+  <!-- Узел листа (нет дочерних папок) -->
+  <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
+    <button mat-icon-button disabled></button>
+    <span (click)="selectFolder(node)">{{ node.name }}</span>
+  </mat-tree-node>
+  <!-- Узел с дочерними папками -->
+  <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
+    <div class="mat-tree-node">
+      <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.name">
+        <mat-icon class="mat-icon-rtl-mirror">
+          {{ treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right' }}
+        </mat-icon>
+      </button>
+      <span (click)="selectFolder(node)">{{ node.name }}</span>
+      <!-- Можно добавить контекстное меню или кнопки для создания/удаления папки -->
+    </div>
+    <div [class.tree-invisible]="!treeControl.isExpanded(node)">
+      <ng-container matTreeNodeOutlet></ng-container>
+    </div>
+  </mat-nested-tree-node>
+</mat-tree>

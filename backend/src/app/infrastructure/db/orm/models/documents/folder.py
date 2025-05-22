@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import List
 
 from sqlalchemy import String, ForeignKey, UniqueConstraint
@@ -38,3 +39,10 @@ class Folder(SQLAlchemyBaseModel, ChronoModelMixin, AuditableModelMixin):
             FolderField.TITLE, FolderField.PARENT_ID, name="uq_folder_title_parent"
         ),
     )
+class En(Enum):
+    A = (1, "A")
+    B = (2, "B")
+
+
+for item in En.__members__.values():
+    print(item)
