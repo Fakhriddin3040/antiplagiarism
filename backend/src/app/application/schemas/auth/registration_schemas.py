@@ -4,7 +4,6 @@ from src.base.schema import AbstractPydanticSchema
 
 
 class UserRegisterSchema(AbstractPydanticSchema):
-    username: str
     first_name: str
     last_name: str
     password: str

@@ -1,4 +1,5 @@
 from fastapi import FastAPI, APIRouter
+from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from starlette import status
@@ -28,31 +29,38 @@ async def lifespan(app: FastAPI):  # noqa
 app = FastAPI()
 
 
-healthcheck_router = APIRouter()
+app.add_middleware(ApiHttpExceptionHandlerMiddleware)
+
+router = APIRouter()
 
 
-@healthcheck_router.get(path="/", status_code=status.HTTP_200_OK)
+@app.get(path="/healthcheck", status_code=status.HTTP_200_OK)
 async def healthcheck():
     return {"message": "OK"}
 
 
-app.add_middleware(ApiHttpExceptionHandlerMiddleware)
-
-
-app.include_router(healthcheck_router, prefix="/healthcheck", tags=["healthcheck"])
-app.include_router(user_router, prefix="/auth", tags=[ApiEndpointsTags.AUTH])
-app.include_router(file_router, prefix="/files", tags=[ApiEndpointsTags.FILES])
-app.include_router(
+router.include_router(user_router, prefix="/auth", tags=[ApiEndpointsTags.AUTH])
+router.include_router(file_router, prefix="/files", tags=[ApiEndpointsTags.FILES])
+router.include_router(
     document_author_router, prefix="/documents/authors", tags=[ApiEndpointsTags.AUTHORS]
 )
-app.include_router(folder_router, prefix="/folders", tags=[ApiEndpointsTags.FOLDERS])
-app.include_router(
+router.include_router(folder_router, prefix="/folders", tags=[ApiEndpointsTags.FOLDERS])
+router.include_router(
     document_router, prefix="/documents", tags=[ApiEndpointsTags.DOCUMENTS]
 )
-app.include_router(
+router.include_router(
     plagiarism_result_router, prefix="", tags=[ApiEndpointsTags.PLAGIARISM_CHECKS]
 )
 
+
+app.include_router(router, prefix="/api", tags=[ApiEndpointsTags.API])
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 if __name__ == "__main__":
     import uvicorn

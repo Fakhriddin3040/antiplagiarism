@@ -4,7 +4,6 @@ from src.base.schema import AbstractPydanticSchema
 
 
 class UserDetailSchema(AbstractPydanticSchema):
-    username: str
     email: str
     first_name: str
     last_name: str

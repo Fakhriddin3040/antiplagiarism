@@ -5,7 +5,6 @@ from src.base.enums import ModelFieldsEnum
 
 class UserField(ModelFieldsEnum):
     ID = auto()
-    USERNAME = auto()
     PASSWORD = auto()
     EMAIL = auto()
     FIRST_NAME = auto()

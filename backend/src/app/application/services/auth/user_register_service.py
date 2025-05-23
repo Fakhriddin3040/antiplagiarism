@@ -51,12 +51,5 @@ class UserRegisterService:
                     field=UserField.EMAIL,
                 )
             )
-        if await self.user_repo.exists(DatabaseModels.USERS.username == data.username):
-            errors.append(
-                ApiExceptionDetail(
-                    status=ApiExceptionStatusCodes.UNIQUE_CONSTRAINT,
-                    field=UserField.USERNAME,
-                )
-            )
         if errors:
             raise ApiException(message=VALIDATION_ERR_MESSAGE, details=errors)

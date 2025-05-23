@@ -7,6 +7,7 @@ import {MatButton} from '@angular/material/button';
 
 @Component({
   selector: 'app-login',
+  standalone: true,
   imports: [
     MatLabel,
     MatInput,
@@ -16,7 +17,7 @@ import {MatButton} from '@angular/material/button';
     MatFormField
   ],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  styleUrl: './login.component.scss',
 })
 export class LoginComponent implements OnInit {
   form!: FormGroup;
@@ -37,10 +38,13 @@ export class LoginComponent implements OnInit {
   submit() {
     if (this.form.invalid) return;
 
-    const { email, password } = this.form.value;
-    this.auth.login(email, password).subscribe({
+    const request = this.form.value;
+    this.auth.login(request).subscribe({
       next: () => this.router.navigate(['/dashboard']),
-      error: () => alert('Неверный логин или пароль')
+      error: () => {
+        this.form.reset();
+        alert('Неверный логин или пароль');
+      },
     });
   }
 }

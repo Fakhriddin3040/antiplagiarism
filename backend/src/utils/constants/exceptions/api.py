@@ -8,3 +8,4 @@ class ApiEndpointsTags(StrEnum):
     FOLDERS = auto()
     DOCUMENTS = auto()
     PLAGIARISM_CHECKS = auto()
+    API = auto()
