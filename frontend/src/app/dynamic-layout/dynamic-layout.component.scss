@@ -1,0 +1,35 @@
+/* dynamic-layout.component.scss */
+app-dynamic-layout {
+  margin-left: var(--sidebar-width);
+}
+
+.table-container {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Заголовок */
+.header-row {
+  display: flex;
+  align-items: center;
+  background-color: #f5f5f5;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #ccc;
+}
+
+.header-cell {
+  padding: 0.5rem;
+  flex: 1 1 0;
+  /* базовые отступы и рамка уже заданы в родителе */
+}
+
+.header-cell.checkbox-cell {
+  flex: 0 0 40px;
+}
+
+.header-cell.actions-cell {
+  flex: 0 0 40px;
+  text-align: right;
+}

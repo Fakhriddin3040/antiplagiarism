@@ -1,4 +1,6 @@
-from typing import Optional
+from typing import Optional, List
+
+from pydantic import Field
 
 from src.base.schema import (
     AbstractPydanticSchema,
@@ -14,19 +16,20 @@ class FolderListSchema(ChronoSchemaMixin, AuditableSchemaMixin):
     title: str
     description: Optional[str]
     parent_id: Optional[ID_T]
+    children: Optional[List["FolderListSchema"]]
 
 
 class FolderCreateSchema(AbstractPydanticSchema):
-    title: str
+    title: str = Field(max_length=20, min_length=1)
     description: Optional[str]
     parent_id: Optional[ID_T] = None
 
 
 class FolderUpdateSchema(AbstractPydanticSchema):
-    title: Optional[str]
+    title: Optional[str] = Field(max_length=20, min_length=1)
     description: Optional[str]
     parent_id: Optional[ID_T] = None
 
 
 class FolderFilterSearchSchema(AbstractPydanticFilterSearchSchema):
-    pass
+    parent_id: Optional[ID_T] = None

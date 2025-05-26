@@ -49,7 +49,7 @@ class DocumentListSchema(AbstractPydanticSchema):
     author_id: ID_T
     title: str
     is_indexed: bool
-    indexed_at: Optional[datetime]
+    indexed_at: Optional[datetime] = None
     checked: bool
     checked_at: Optional[datetime]
     verdict: Optional[PlagiarismCheckVerdictEnum]

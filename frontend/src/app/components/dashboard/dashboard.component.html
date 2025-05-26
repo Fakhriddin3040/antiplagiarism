@@ -1,0 +1,11 @@
+<!-- dashboard.component.html -->
+<div class="dashboard-container" [class.sidebar-collapsed]="!sidebarOpen">
+  <app-folder-sidebar
+    (toggle)="sidebarOpen = $event">        <!-- эмит «true/false» -->
+  </app-folder-sidebar>
+
+  <!-- всё, что меняется по роуту -->
+  <div class="dash-content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

@@ -1,0 +1,6 @@
+:host {
+  display: block;
+  padding: 1.5rem;
+  height: 100%;          /* чтобы dash-content могла скроллить */
+  box-sizing: border-box;
+}

@@ -34,7 +34,7 @@ class FolderCreateService:
     async def _validate_and_create(self, data: Mapping[str, Any], user: User) -> Folder:
         if parent_id := data.get(FolderField.PARENT_ID):
             if not await self.folder_repo.filter_exists(
-                parent_id=parent_id, created_by_id=user.id
+                id=parent_id, created_by_id=user.id
             ):
                 exc_detail = ApiExceptionDetail(
                     status=ApiExceptionStatusCodes.OBJECT_NOT_FOUND,

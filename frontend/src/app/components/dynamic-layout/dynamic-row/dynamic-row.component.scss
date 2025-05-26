@@ -1,0 +1,36 @@
+/* row.component.scss */
+.row {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s;
+}
+.row:hover {
+  background-color: #fafafa;
+}
+
+.cell {
+  padding: 0.5rem;
+  flex: 1 1 0;
+}
+
+.checkbox-cell {
+  flex: 0 0 40px;
+}
+
+.actions-cell {
+  flex: 0 0 40px;
+  text-align: right;
+}
+
+.status-pill {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  background-color: #eee;
+  font-size: 0.875em;
+  /* Здесь можно добавить стили по статусу, напр.:
+     &.Active { background: #c8e6c9; color: #256029; }
+     &.Inactive { background: #ffcdd2; color: #c62828; }
+  */
+}

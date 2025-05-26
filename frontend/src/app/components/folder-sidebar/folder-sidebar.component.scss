@@ -1,0 +1,62 @@
+.folder-sidebar-container {
+  position: fixed;
+  /* ставим ВПРИТЫК к левому краю */
+  left: 0;
+  top: var(--container-top, 32px);
+  bottom: var(--container-bottom, 32px);
+
+  width: var(--sidebar-width);
+  display: flex;
+  flex-direction: column;
+
+  background: var(--c-bg-sidebar);
+  border: 1px solid var(--c-border-sidebar);
+  border-radius: var(--radius-base);
+  box-shadow: var(--c-shadow-card);
+  overflow: visible;
+  transition: transform .25s ease;
+
+  /* 32-пиксельный “зазор” в открытом состоянии */
+  transform: translateX(32px);
+
+  &.hidden {
+    /* уезжаем влево, но оставляем toggle = ширина панели - ушко */
+    transform: translateX(calc(-1 * (var(--sidebar-width) - var(--toggle-width))));
+  }
+}
+
+.folder-sidebar {
+  transform: translateX(0);
+  transition: transform .25s ease;   /* плавно уезжает */
+}
+
+.toggle-btn {
+  position: absolute;
+  top: 12px;
+  right: calc(-1 * var(--toggle-width));
+  width: var(--toggle-width);
+  height: 40px;
+
+  border: 1px solid var(--c-border-sidebar);
+  border-left: none;
+  border-radius: 0 var(--radius-base) var(--radius-base) 0;
+  background: var(--c-bg-sidebar);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+}
+
+/* шапка */
+.folder-sidebar__header {
+  padding: 16px var(--sidebar-gap);
+  font-weight: var(--font-weight-bold);
+  border-bottom: 1px solid var(--c-border-sidebar);
+}
+
+/* корневой список */
+.root-folder-tree {
+  margin: 0;
+  padding: 8px 0 16px;
+  list-style: none;
+  overflow-y: auto;
+  flex: 1;
+}

@@ -1,0 +1,46 @@
+<section class="auth-screen">
+  <div class="auth-card fade-in">
+    <h1 class="auth-title">Регистрация</h1>
+    <form [formGroup]="form" (ngSubmit)="submit()" >
+
+      <mat-form-field class="w-100" appearance="fill" >
+        <mat-label>Имя</mat-label>
+        <input matInput formControlName="firstName" required>
+      </mat-form-field>
+
+      <mat-form-field class="w-100" appearance="fill" >
+        <mat-label>Фамилия</mat-label>
+        <input matInput formControlName="lastName" required>
+      </mat-form-field>
+
+      <mat-form-field class="w-100" appearance="fill" >
+        <mat-label>E-mail</mat-label>
+        <input matInput formControlName="email" type="email" required>
+      </mat-form-field>
+
+      <mat-form-field class="w-100" appearance="fill" >
+        <mat-label>Пароль</mat-label>
+        <input matInput formControlName="password" type="password" required>
+      </mat-form-field>
+
+      <mat-form-field class="w-100" appearance="fill" >
+        <mat-label>Подтверждение пароля</mat-label>
+        <input matInput formControlName="passwordConfirm" type="password" required>
+      </mat-form-field>
+
+      <small class="c-danger mt-1"
+           *ngIf="form.errors?.['passwordMismatch'] && getFormTouched()"
+      >
+        Пароли не совпадают
+      </small>
+
+      <button mat-raised-button color="primary" [disabled]="form.invalid">
+        {{ loading ? 'Создаём' : 'Создать аккаунт' }}
+      </button>
+    </form>
+
+    <p class="auth-extra mt-2">
+      Уже есть учётная запись? <a routerLink="/auth/login">Войти</a>
+    </p>
+  </div>
+</section>

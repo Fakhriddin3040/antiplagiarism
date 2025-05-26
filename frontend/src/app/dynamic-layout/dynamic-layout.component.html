@@ -1,0 +1,25 @@
+<!-- dynamic-layout.component.html -->
+<div class="table-container">
+  <!-- Заголовок таблицы -->
+  <div class="header-row">
+    <!-- Чекбокс в заголовке (можно использовать для "выделить все") -->
+    <div class="header-cell checkbox-cell">
+      <input type="checkbox" (change)="onToggleAll($event)">
+    </div>
+    <!-- Колонки: отрисовываем название из конфигурации -->
+    <div *ngFor="let col of columns" class="header-cell" [style.width]="col.width">
+      {{ col.label }}
+    </div>
+    <!-- Столбец действий -->
+    <div class="header-cell actions-cell">...</div>
+  </div>
+
+  <!-- Строки таблицы -->
+  <app-row
+    *ngFor="let row of data"
+    [columns]="columns"
+    [row]="row"
+    (select)="onRowSelect($event)"
+    (action)="onRowAction($event)">
+  </app-row>
+</div>

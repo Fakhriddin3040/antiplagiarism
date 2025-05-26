@@ -1,7 +1,7 @@
 import logging
 from typing import Sequence
 
-from fastapi import APIRouter, Depends, Body
+from fastapi import APIRouter, Depends, Body, HTTPException
 from starlette import status
 
 from src.app.infrastructure.auth.deps.auth import get_current_user
@@ -67,8 +67,33 @@ async def list_(
     return folders
 
 
+@router.get(
+    "/{folder_id}/", response_model=FolderListSchema, status_code=status.HTTP_200_OK
+)
+async def get(
+    folder_id: ID_T,
+    folder_repo: FolderRepository = Depends(get_folder_repository),
+    user: User = Depends(get_current_user),
+) -> Folder:
+    if not await folder_repo.filter_exists(id=folder_id, created_by_id=user.id):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
+    return await folder_repo.get_with_children(id=folder_id)
+
+
+@router.get(
+    "/roots", response_model=Sequence[FolderListSchema], status_code=status.HTTP_200_OK
+)
+async def roots(
+    folder_repo: FolderRepository = Depends(get_folder_repository),
+    user: User = Depends(get_current_user),
+):
+    return await folder_repo.get_roots(created_by_id=user.id)
+
+
 @router.patch(
-    "/{folder_id}", response_model=FolderListSchema, status_code=status.HTTP_200_OK
+    "/{folder_id}/", response_model=FolderListSchema, status_code=status.HTTP_200_OK
 )
 async def update(
     folder_id: ID_T,
@@ -80,7 +105,7 @@ async def update(
 
 
 @router.delete(
-    "/{folder_id}", response_model=None, status_code=status.HTTP_204_NO_CONTENT
+    "/{folder_id}/", response_model=None, status_code=status.HTTP_204_NO_CONTENT
 )
 async def delete(
     folder_id: ID_T,

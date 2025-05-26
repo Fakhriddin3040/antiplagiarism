@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+
 // main.ts
 
 
@@ -5,26 +7,46 @@ import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent } from './app/app.component';
 import {provideRouter} from '@angular/router';
 import {importProvidersFrom} from '@angular/core';
-import {HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import {NgbModalModule} from '@ng-bootstrap/ng-bootstrap';
+import {NavigationComponent} from './app/components/navigation/navigation.component';
+import {AuthInterceptor} from './app/interceptors/auth/auth.interceptor';
 
 bootstrapApplication(AppComponent, {
   providers: [
-    importProvidersFrom(HttpClientModule),
+    importProvidersFrom(HttpClientModule, NgbModalModule),
     provideRouter([
       {
-        path: '',
-        redirectTo: 'auth/login',
+        path: 'layout',
+        loadComponent: () => import('./app/components/document-layout/document-layout.component').then(m => m.DocumentLayoutComponent)
+      },
+      {
+        path: 'dashboard',
+        redirectTo: 'dashboard',
         pathMatch: 'full'
       },
       {
         path: 'auth',
         loadChildren: () =>
-          import('./app/auth/auth.routes').then((m) => m.AUTH_ROUTES)
+          import('./app/routes/auth-routes').then((m) => m.AUTH_ROUTES)
       },
       {
         path: 'dashboard',
-        loadChildren: () => import('./app/dashboard/dashboard.routes').then(m => m.routes)
+        loadChildren: () => import('./app/routes/common-routes').then(m => m.routes)
+      },
+      {
+        path: 'navbar',
+        component: NavigationComponent
+      },
+      // {
+      //   path: 'author',
+      //   component: AuthorComponent
+      // },
+    ]),
+      {
+        provide: HTTP_INTERCEPTORS,
+        useClass: AuthInterceptor,
+        multi: true
       }
-    ])
   ]
 });
