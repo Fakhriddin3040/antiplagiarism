@@ -14,7 +14,7 @@ import {DatePipe, NgForOf, NgSwitch, NgSwitchCase, NgSwitchDefault} from '@angul
     NgForOf,
     NgSwitchCase,
     NgSwitchDefault,
-    DatePipe
+    DatePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })

@@ -9,9 +9,13 @@
  * ------------------------------------------------- */
 :root {
   /* Colors */
-  --c-primary:        #2f80ed;
+  --c-primary: #2b2d42;      /* темно-синий */
+  --c-secondary: #4a4e69;    /* серо-синий */
+  --c-accent: #8d99ae;       /* серо-голубой */
+  --c-background: #f4f5f7;   /* светло-серый фон */
+  --c-surface: #ffffff;      /* белый для карточек */
+  --c-border: rgba(0, 0, 0, 0.08);
   --c-primary-dark:   #1c60b8;
-  --c-secondary:      #27ae60;
   --c-danger:         #e03e3e;
   --c-bg:             #f9f9f9;
   --c-muted:          #666;
@@ -48,9 +52,9 @@
 
   --c-text:           #202124;
 
-  --radius-base:      10px;
 
   --font-weight-bold: 600;
+  --radius-base: 8px;
 
 
   /* sidebar */
@@ -66,7 +70,6 @@
   --c-border-sidebar: #e0e0e0;
   --c-bg-hover: #f3f3f3;
   --c-bg-active: #e8f0fe;   /* когда нужно подсветить выбранную папку */
-  --c-text: #202124;
 }
 
 $custom-primary: (
@@ -187,7 +190,7 @@ html, body {
 
 body {
   background: var(--c-bg-page);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell;
   color: var(--c-text);
   font-family: var(--font-main);
   font-size: var(--font-size-base);

@@ -21,6 +21,7 @@
     "@angular/router": "^19.2.0",
     "@ng-bootstrap/ng-bootstrap": "^18.0.0",
     "@popperjs/core": "^2.11.8",
+    "angular-svg-icon": "^19.1.1",
     "bootstrap": "^5.3.6",
     "guid-typescript": "^1.0.9",
     "modern-normalize": "^3.0.1",

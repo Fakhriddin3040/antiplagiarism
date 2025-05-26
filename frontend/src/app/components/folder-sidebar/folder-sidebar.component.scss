@@ -1,27 +1,34 @@
 .folder-sidebar-container {
   position: fixed;
-  /* ставим ВПРИТЫК к левому краю */
-  left: 0;
-  top: var(--container-top, 32px);
-  bottom: var(--container-bottom, 32px);
-
+  left: 32px; // Отступ от края экрана
+  top: 56px;
+  bottom: 56px;
   width: var(--sidebar-width);
   display: flex;
   flex-direction: column;
-
   background: var(--c-bg-sidebar);
-  border: 1px solid var(--c-border-sidebar);
   border-radius: var(--radius-base);
-  box-shadow: var(--c-shadow-card);
-  overflow: visible;
-  transition: transform .25s ease;
-  margin-right: 20px;
-  /* 32-пиксельный “зазор” в открытом состоянии */
-  transform: translateX(32px);
+  transition: transform 0.25s ease;
+  z-index: 1000; // Убедимся, что сайдбар поверх контента
+  background: linear-gradient(195deg, #f8f9fa 0%, #e9ecef 100%);
+  border: none;
+  background: var(--c-surface);
+  box-shadow:
+    16px 0 32px rgba(0, 0, 0, 0.08),
+    inset -1px 0 0 rgba(0, 0, 0, 0.05);
+
+  .folder-sidebar__header {
+    color: var(--c-primary);
+    font-family: 'Segoe UI', system-ui;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(4px);
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  }
 
   &.hidden {
-    /* уезжаем влево, но оставляем toggle = ширина панели - ушко */
-    transform: translateX(calc(-1 * (var(--sidebar-width) - var(--toggle-width))));
+    transform: translateX(calc(-100% + var(--toggle-width)));
   }
 }
 
@@ -31,18 +38,15 @@
 }
 
 .toggle-btn {
-  position: absolute;
-  top: 12px;
-  right: calc(-1 * var(--toggle-width));
-  width: var(--toggle-width);
-  height: 40px;
+  background: linear-gradient(to right, #ffffff 0%, #f8f9fa 100%);
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
+  color: #4a4e69;
+  transition: all 0.3s ease;
 
-  border: 1px solid var(--c-border-sidebar);
-  border-left: none;
-  border-radius: 0 var(--radius-base) var(--radius-base) 0;
-  background: var(--c-bg-sidebar);
-  font-size: var(--font-size-sm);
-  cursor: pointer;
+  &:hover {
+    color: #2b2d42;
+    transform: translateX(2px);
+  }
 }
 
 /* шапка */
@@ -54,9 +58,23 @@
 
 /* корневой список */
 .root-folder-tree {
-  margin: 0;
-  padding: 8px 0 16px;
-  list-style: none;
-  overflow-y: auto;
-  flex: 1;
+  li {
+    margin: 2px 12px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.6);
+      transform: translateX(4px);
+    }
+
+    &.active {
+      background: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+  }
+}
+
+.root-folder-tree li.active {
+  background: rgba(141, 153, 174, 0.1); /* ← акцентный цвет */
 }

@@ -20,8 +20,19 @@
 }
 
 .actions-cell {
-  flex: 0 0 40px;
-  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+
+  svg {
+    color: var(--c-accent);
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--c-primary);
+    }
+  }
 }
 
 .status-pill {

@@ -6,16 +6,20 @@
 import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent } from './app/app.component';
 import {provideRouter} from '@angular/router';
-import {importProvidersFrom} from '@angular/core';
-import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import {importProvidersFrom, provideZoneChangeDetection} from '@angular/core';
+import {HTTP_INTERCEPTORS, HttpClientModule, provideHttpClient} from '@angular/common/http';
 import {NgbModalModule} from '@ng-bootstrap/ng-bootstrap';
 import {NavigationComponent} from './app/components/navigation/navigation.component';
 import {AuthInterceptor} from './app/interceptors/auth/auth.interceptor';
 import {DashboardComponent} from './app/components/dashboard/dashboard.component';
+import {provideAngularSvgIcon} from 'angular-svg-icon';
 
 bootstrapApplication(AppComponent, {
   providers: [
     importProvidersFrom(HttpClientModule, NgbModalModule),
+    provideHttpClient(),
+    provideAngularSvgIcon(),
+    provideZoneChangeDetection({eventCoalescing: true}),
     provideRouter([
       {
         path: 'layout',

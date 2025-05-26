@@ -1,3 +1,4 @@
+import {AngularSvgIconModule, SvgIconComponent, SvgIconRegistryService} from 'angular-svg-icon';
 import {Component, inject, OnInit} from '@angular/core';
 import {Document} from '../../core/models/document.interface';
 import {DocumentService} from '../../core/services/document.service';
@@ -9,7 +10,9 @@ import {DocumentDlcConfig} from '../../core/constants/dynamic-layout-column/docu
   selector: 'app-document-layout',
   standalone: true,
   imports: [
-    DynamicLayoutComponent
+    DynamicLayoutComponent,
+    AngularSvgIconModule,
+    SvgIconComponent
   ],
   templateUrl: './document-layout.component.html',
   styleUrl: './document-layout.component.scss'

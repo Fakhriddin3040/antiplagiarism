@@ -3,6 +3,7 @@ import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from 
 import {ColumnConfig} from '../core/configs/dynamic-layout-column.config';
 import {NgForOf} from '@angular/common';
 import {RowComponent} from '../components/dynamic-layout/dynamic-row/dynamic-row.component';
+import {AngularSvgIconModule, SvgIconComponent} from 'angular-svg-icon';
 
 @Component({
   selector: 'app-dynamic-layout',
@@ -11,7 +12,9 @@ import {RowComponent} from '../components/dynamic-layout/dynamic-row/dynamic-row
   styleUrls: ['./dynamic-layout.component.scss'],
   imports: [
     NgForOf,
-    RowComponent
+    RowComponent,
+    SvgIconComponent,
+    AngularSvgIconModule
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })

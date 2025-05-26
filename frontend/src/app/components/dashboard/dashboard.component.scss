@@ -1,26 +1,26 @@
-:host { height: 100vh; }
+:host {
+  height: 100vh;
+  display: block;
+  background: var(--c-background); /* ← основной фон страницы */
+}
 
-/* GRID с двумя колонками */
 .dashboard-container {
-  display: grid;
-  grid-template-columns: var(--sidebar-width) 1fr;
   height: 100%;
 }
 
-.dashboard-container.sidebar-collapsed {
-  grid-template-columns: 0 1fr;
-}
-
-/* ВАЖНО: дать ячейке право сжиматься */
 .dash-content {
-  min-width: 0;   /* ← чтобы колонка не выпирала */
-  min-height: 0;  /* ← чтобы grid не «обнулял» высоту */
+  background: var(--c-background);
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+  margin-left: calc(32px + var(--sidebar-width) + 20px);
+  margin-top: 32px;
+  margin-bottom: 32px;
+  height: calc(100vh - 64px); // Учитываем отступы сверху и снизу
+  transition: margin-left 0.25s ease;
   overflow: auto;
 }
 
-/* DocumentLayout внутри */
-:host ::ng-deep app-document-layout,
-:host ::ng-deep .document-layout-wrapper {
-  display: block;
-  height: 100%;
+.dashboard-container.sidebar-collapsed .dash-content {
+  margin-left: calc(32px + var(--toggle-width) + 20px);
 }

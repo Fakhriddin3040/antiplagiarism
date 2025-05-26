@@ -7,12 +7,12 @@ import {Guid} from 'guid-typescript';
 
 @Component({
   selector: 'li[app-folder-node]',
+  standalone: true,
   imports: [
     NgForOf,
     NgIf
   ],
   templateUrl: './folder-node.component.html',
-  standalone: true,
   styleUrl: './folder-node.component.scss'
 })
 export class FolderNodeComponent {
