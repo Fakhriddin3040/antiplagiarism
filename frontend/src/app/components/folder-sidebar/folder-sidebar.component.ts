@@ -64,7 +64,7 @@ export class FolderSidebarComponent implements OnInit {
     modalRef.componentInstance.mode = 'create';
     this.selectedFolder = folder;
     modalRef.componentInstance.submitted.subscribe((data: FolderRequest) => {
-      this.handleModalCreate(data, modalRef.componentInstance.mode);
+      this.handleModalCreate(data, folder);
     });
   }
 

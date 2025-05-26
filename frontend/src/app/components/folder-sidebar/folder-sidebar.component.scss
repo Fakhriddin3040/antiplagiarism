@@ -15,7 +15,7 @@
   box-shadow: var(--c-shadow-card);
   overflow: visible;
   transition: transform .25s ease;
-
+  margin-right: 20px;
   /* 32-пиксельный “зазор” в открытом состоянии */
   transform: translateX(32px);
 

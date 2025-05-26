@@ -11,6 +11,7 @@ import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {NgbModalModule} from '@ng-bootstrap/ng-bootstrap';
 import {NavigationComponent} from './app/components/navigation/navigation.component';
 import {AuthInterceptor} from './app/interceptors/auth/auth.interceptor';
+import {DashboardComponent} from './app/components/dashboard/dashboard.component';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -21,8 +22,8 @@ bootstrapApplication(AppComponent, {
         loadComponent: () => import('./app/components/document-layout/document-layout.component').then(m => m.DocumentLayoutComponent)
       },
       {
-        path: 'dashboard',
-        redirectTo: 'dashboard',
+        path: '',
+        redirectTo: 'dashboard/documents',
         pathMatch: 'full'
       },
       {
@@ -32,7 +33,13 @@ bootstrapApplication(AppComponent, {
       },
       {
         path: 'dashboard',
-        loadChildren: () => import('./app/routes/common-routes').then(m => m.routes)
+        component: DashboardComponent,
+        children: [
+          {
+            path: 'documents',
+            loadComponent: () => import('./app/components/document-layout/document-layout.component').then(m => m.DocumentLayoutComponent)
+          }
+        ]
       },
       {
         path: 'navbar',
