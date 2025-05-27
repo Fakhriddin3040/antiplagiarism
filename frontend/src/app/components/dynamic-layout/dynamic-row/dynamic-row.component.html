@@ -6,7 +6,7 @@
   </div>
   <!-- Динамические колонки -->
   <ng-container *ngFor="let col of columns">
-    <div class="cell" [style.width]="col.width">
+    <div class="cell" [style.flex]="'0 0 ' + col.width">
       <ng-container [ngSwitch]="col.type">
         <!-- Текст -->
         <span *ngSwitchCase="'text'">{{ row[col.key] }}</span>

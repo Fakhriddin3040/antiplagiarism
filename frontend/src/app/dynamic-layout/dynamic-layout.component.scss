@@ -1,23 +1,28 @@
 .table-container {
+  overflow: hidden;
   border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 12px;
-  background: #ffffff;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+  height: 90vh;
+  margin-top: 11.9px;
+  border-radius: var(--radius-base);
 }
 
 .header-row {
+  display: flex;
+  flex-direction: row;
   background: linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 100%);
   padding: 0.75rem 1.5rem;
   border-radius: 12px 12px 0 0;
 
   .header-cell {
+    flex-shrink: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     color: var(--c-primary);
     font-weight: 600;
     font-size: 0.9rem;
     letter-spacing: 0.3px;
-    white-space: nowrap; /* ← предотвращаем перенос текста */
-    overflow: hidden;
-    text-overflow: ellipsis; /* ← добавляем многоточие при переполнении */
 
     &:not(:first-child) {
       margin-left: 15px; /* ← отступы между колонками */
@@ -25,7 +30,7 @@
   }
 
   .checkbox-cell {
-    padding-right: 8px; /* ← выравнивание чекбокса */
+    flex: 0 0 40px;
   }
 }
 
@@ -39,6 +44,10 @@
   app-row:nth-child(even) {
     background: rgba(245, 245, 245, 0.5);
   }
+}
+
+.actions-cell {
+  flex: 0 0 60px;
 }
 
 /* Обновленные стили строк */

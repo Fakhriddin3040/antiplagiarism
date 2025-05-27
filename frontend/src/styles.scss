@@ -1,22 +1,12 @@
-/* --------------------------------------------------
- *  Global reset + Material theme configuration
- * ------------------------------------------------- */
-@use "modern-normalize";
-@use '@angular/material' as mat;
-
-/* --------------------------------------------------
- *  1. CSS Variables - Unified palette and spacing
- * ------------------------------------------------- */
 :root {
-  /* Colors */
   --c-primary: #2f80ed;
   --c-bg: #f4f7fb;
   --c-text: #222;
   --c-muted: #999;
-  --c-secondary: #4a4e69;    /* серо-синий */
-  --c-accent: #8d99ae;       /* серо-голубой */
-  --c-background: #f4f5f7;   /* светло-серый фон */
-  --c-surface: #ffffff;      /* белый для карточек */
+  --c-secondary: #4a4e69;
+  --c-accent: #8d99ae;
+  --c-background: #f4f5f7;
+  --c-surface: #ffffff;
   --c-border: rgba(0, 0, 0, 0.08);
   --c-primary-dark:   #1c60b8;
   --c-danger:         #e03e3e;
@@ -48,137 +38,33 @@
   --shadow-m: 0 3px 6px rgba(0, 0, 0, 0.15);
 
 
-  --c-bg-page:        #f5f6f8;  /* сероватый фон под всю страницу */
+  --c-bg-page:        #f5f6f8;
   --c-shadow-card:    0 4px 16px rgba(0, 0, 0, .06);
 
   --font-weight-bold: 600;
   --radius-base: 8px;
 
 
-  /* sidebar */
   --sidebar-width: 280px;
   --toggle-width:  50px;
   --sidebar-gap: 8px;
   --radius-sm: 6px;
 
-  /* Scrollbar */
   --c-scrollbar-thumb: rgba(0, 0, 0, 0.25);
   --c-scrollbar-thumb-hover: rgba(0, 0, 0, 0.4);
   --c-bg-sidebar: #fafafa;
   --c-border-sidebar: #e0e0e0;
   --c-bg-hover: #f3f3f3;
-  --c-bg-active: #e8f0fe;   /* когда нужно подсветить выбранную папку */
+  --c-bg-active: #e8f0fe;
 }
 
-$custom-primary: (
-  50: #e3f0ff,
-  100: #bad9ff,
-  200: #8fc2ff,
-  300: #61aaff,
-  400: #3693ff,
-  500: #2f80ed, // Main color
-  600: #266edb,
-  700: #1c60b8, // Dark color
-  800: #13509c,
-  900: #0a3d7a,
-  contrast: (
-    50: rgba(0, 0, 0, 0.87),
-    100: rgba(0, 0, 0, 0.87),
-    200: rgba(0, 0, 0, 0.87),
-    300: rgba(0, 0, 0, 0.87),
-    400: rgba(0, 0, 0, 0.87),
-    500: white,
-    600: white,
-    700: white,
-    800: white,
-    900: white,
-  )
-);
-
-// Custom warn palette
-$custom-warn: (
-  50: #ffebee,
-  100: #ffcdd2,
-  200: #ef9a9a,
-  300: #e57373,
-  400: #ef5350,
-  500: #e03e3e, // Main danger color
-  600: #d32f2f,
-  700: #c62828,
-  800: #b71c1c,
-  900: #8b0000,
-  contrast: (
-    500: white,
-    600: white,
-    700: white,
-    800: white,
-    900: white,
-  )
-);
-
-/* --------------------------------------------------
- *  2. Angular Material Theme Configuration (v19)
- * ------------------------------------------------- */
-
-// Include core styles (typography, ripples, etc.)
-@include mat.core();
-
-// **Define Material 3 color palettes for the theme**
-// (Using built-in palettes; can be custom-defined if needed)
-$primary-color: mat.$blue-palette;
-$accent-color: mat.$orange-palette; // Material 3 uses 'tertiary' in place of legacy accent
-$density-config: (
-  scale: 0
-);
-
-// **Configure light and dark theme maps** using Material 3 theming API
-$light-theme-config: (
-  color: (
-    theme-type: light,
-    primary: $primary-color,
-    tertiary: $accent-color,
-    use-system-variables: true,
-    system-variables-prefix: mat-sys
-  ),
-  typography: (
-    use-system-variables: true
-  ),
-  density: $density-config
-);
-
-$dark-theme-config: (
-  color: (
-    theme-type: dark,
-    primary: $primary-color,
-    tertiary: $accent-color,
-    use-system-variables: true,
-    system-variables-prefix: mat-sys
-  ),
-  typography: (
-    use-system-variables: true
-  ),
-  density: $density-config
-);
-
-// **Apply the light theme globally** (default)
 html {
-  color-scheme: light;  // ensures correct scrollbars, form controls, etc. for light mode
-  @include mat.theme($light-theme-config);
-  @include mat.all-component-themes( mat.define-theme($light-theme-config) );
+  color-scheme: light;
 ;
 }
 
-// **Apply the dark theme** (wrapped in a utility class for easy toggle)
-.dark-theme {
-  color-scheme: dark;
-  @include mat.theme($dark-theme-config);
-  @include mat.all-component-themes( mat.define-theme($light-theme-config) );
-}
-
-/* --------------------------------------------------
- *  3. Base styles & utilities
- * ------------------------------------------------- */
 *, *::before, *::after {
+
   box-sizing: border-box;
 }
 
@@ -191,22 +77,11 @@ body {
   font-size: var(--font-size-base);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  background: url('/public/bg.webp') no-repeat center center fixed;
+  background: url('/bg.webp') no-repeat center center fixed;
   background-size: cover;
   color: #222;
-
 }
 
-/* Improved focus states for custom components */
-button:focus,
-input:focus,
-.btn:focus,
-.field__input:focus {
-  outline: 2px solid var(--c-primary);
-  outline-offset: 2px;
-}
-
-/* Typography */
 h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   line-height: 1.2;
@@ -241,31 +116,6 @@ a {
   }
 }
 
-/* --------------------------------------------------
- *  4. UI Components
- * ------------------------------------------------- */
-.btn {
-  display: flex;
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius);
-  font-weight: 600;
-  transition: all 0.2s ease;
-
-  &--primary {
-    background: var(--c-primary);
-    color: white;
-
-    &:hover {
-      background: var(--c-primary-dark);
-    }
-
-    &:disabled {
-      background: var(--c-muted);
-      opacity: 0.7;
-    }
-  }
-}
-
 .auth-screen {
   display: flex;
   justify-content: center;
@@ -295,14 +145,6 @@ a {
   }
 }
 
-/* Utilities */
-.container {
-  width: 100%;
-  max-width: 1280px;
-  margin-inline: auto;
-  padding-inline: var(--space-3);
-}
-
 .fade-in {
   animation: fade-in 0.3s ease-out forwards;
 }
@@ -317,6 +159,3 @@ ul li {
   from { opacity: 0; }
   to { opacity: 1; }
 }
-
-/* Importing Bootstrap SCSS file. */
-@import 'bootstrap/scss/bootstrap';

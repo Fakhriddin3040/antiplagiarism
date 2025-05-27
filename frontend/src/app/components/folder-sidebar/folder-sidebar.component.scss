@@ -1,8 +1,8 @@
 .folder-sidebar-container {
   position: fixed;
-  left: 32px; // Отступ от края экрана
-  top: 56px;
-  bottom: 56px;
+  left: 32px;
+  top: 8vh;
+  bottom: 11vh;
   width: var(--sidebar-width);
   display: flex;
   flex-direction: column;
@@ -16,7 +16,7 @@
   border-right: 1px solid #e0e0e0;
   padding: 1rem;
   background: rgba(255,255,255,0.9);
-  height: 100vh;
+  height: 87.5vh;
   box-shadow:
     16px 0 32px rgba(0, 0, 0, 0.08),
     inset -1px 0 0 rgba(0, 0, 0, 0.05);

@@ -6,6 +6,7 @@
   align-items: center;
   border-bottom: 1px solid #eee;
   transition: background-color 0.2s;
+  height: 6%;
 }
 .row:hover {
   background: #f9f9f9;
@@ -13,7 +14,10 @@
 
 .cell {
   padding: 0.5rem;
-  flex: 1 1 0;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .checkbox-cell {
