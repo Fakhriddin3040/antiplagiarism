@@ -18,7 +18,7 @@
     </thead>
     <tbody>
     <tr *ngFor="let row of data; let even = even"
-        class="row"
+        class="dynamic-row"
         [class.even-row]="even"
         [class.selected]="row.selected">
       <td class="cell checkbox-cell">
@@ -28,8 +28,6 @@
       </td>
       <td *ngFor="let col of columns"
           class="cell"
-          [ngClass]="col.type"
-          [style.text-align]="getAlignment(col.type)"
           [ngSwitch]="col.type">
         <span *ngSwitchCase="'text'">{{ row[col.key] }}</span>
         <span *ngSwitchCase="'datetime'">{{ row[col.key] | date:'short' }}</span>

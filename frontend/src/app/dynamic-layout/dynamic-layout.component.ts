@@ -1,7 +1,7 @@
 // dynamic-layout.component.ts
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { ColumnConfig } from '../core/configs/dynamic-layout-column.config';
-import {DatePipe, NgClass, NgForOf, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault} from '@angular/common';
+import {DatePipe, NgForOf, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault} from '@angular/common';
 
 @Component({
   selector: 'app-dynamic-layout',
@@ -13,8 +13,7 @@ import {DatePipe, NgClass, NgForOf, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefaul
     NgSwitchCase,
     NgSwitchDefault,
     NgIf,
-    DatePipe,
-    NgClass
+    DatePipe
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -58,16 +57,5 @@ export class DynamicLayoutComponent {
   handleMenuAction(row: any, action: { value: string }): void {
     row.showMenu = false;
     this.rowAction.emit({ row, action: action.value });
-  }
-
-  getAlignment(type: ColumnConfig['type']): string {
-    switch (type) {
-      case 'datetime':
-        return 'right';
-      case 'status':
-        return 'center';
-      default:
-        return 'left';
-    }
   }
 }

@@ -11,7 +11,7 @@
 .table-container {
   width: 100%;
   border-collapse: collapse;
-  background: linear-gradient(195deg, #f8f9fa 0%, #e9ecef 100%);
+  background: white;
   font-size: 14px;
 }
 
@@ -28,14 +28,6 @@
     color: #2c3e50;
     border-bottom: 2px solid #e0e0e0;
 
-    &.datetime,
-    &.numeric {
-      text-align: right !important;
-    }
-
-    &.status {
-      text-align: center !important;
-    }
     &.checkbox-cell {
       width: 40px;
       padding-left: 16px;
@@ -43,12 +35,9 @@
   }
 }
 
-.row {
-  width: 100%;
+.dynamic-row {
   border-bottom: 1px solid #eee;
   transition: background-color 0.2s;
-  display: flex;
-  flex-direction: row;
 
   &:hover {
     background-color: #f8f9fa !important;
@@ -68,30 +57,13 @@
     overflow: hidden;
     text-overflow: ellipsis;
 
-    /* Выравнивание по типам */
-    &.datetime {
-      text-align: right;
-      font-variant-numeric: tabular-nums;
-    }
-
-    &.status {
-      text-align: center;
-    }
-
-    /* Для числовых данных можно добавить */
-    &.numeric {
-      text-align: right;
-      font-family: monospace;
+    &.checkbox-cell {
+      width: 40px;
     }
   }
 }
 
 .actions-cell {
-  text-align: right;
-
-  .menu-trigger {
-    margin-left: auto;
-  }
   position: relative;
   width: 80px;
 }
@@ -137,8 +109,6 @@
 
 .status-pill {
   display: inline-block;
-  min-width: 80px;
-  text-align: center;
   padding: 4px 8px;
   border-radius: 12px;
   font-size: 12px;
