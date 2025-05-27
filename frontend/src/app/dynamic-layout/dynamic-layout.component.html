@@ -1,26 +1,54 @@
 <!-- dynamic-layout.component.html -->
-<div class="table-container">
-  <!-- Заголовок таблицы -->
-  <div class="header-row">
-    <!-- Чекбокс в заголовке (можно использовать для "выделить все") -->
-    <div class="header-cell checkbox-cell">
-    </div>
-    <!-- Колонки: отрисовываем название из конфигурации -->
-    <div *ngFor="let col of columns" class="header-cell" [style.flex]="'0 0' + col.width">
-      {{ col.label }}
-    </div>
-    <!-- Столбец действий -->
-    <div class="header-cell actions-cell">
-      <svg-icon name="more-actions" ></svg-icon>
-    </div>
-  </div>
-
-  <!-- Строки таблицы -->
-  <app-row
-    *ngFor="let row of data"
-    [columns]="columns"
-    [row]="row"
-    (select)="onRowSelect($event)"
-    (action)="onRowAction($event)">
-  </app-row>
+<div class="table-wrapper">
+  <table class="table-container">
+    <thead>
+    <tr class="header-row">
+      <th class="header-cell checkbox-cell">
+        <input type="checkbox"
+               [checked]="isAllSelected()"
+               (change)="onToggleAll($event)">
+      </th>
+      <th *ngFor="let col of columns"
+          class="header-cell"
+          [style.width]="col.width">
+        {{ col.label }}
+      </th>
+      <th class="header-cell actions-cell"></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let row of data; let even = even"
+        class="row"
+        [class.even-row]="even"
+        [class.selected]="row.selected">
+      <td class="cell checkbox-cell">
+        <input type="checkbox"
+               [checked]="row.selected"
+               (change)="toggleRowSelect(row, $event)">
+      </td>
+      <td *ngFor="let col of columns"
+          class="cell"
+          [ngClass]="col.type"
+          [style.text-align]="getAlignment(col.type)"
+          [ngSwitch]="col.type">
+        <span *ngSwitchCase="'text'">{{ row[col.key] }}</span>
+        <span *ngSwitchCase="'datetime'">{{ row[col.key] | date:'short' }}</span>
+        <span *ngSwitchCase="'status'">
+            <span class="status-pill">{{ row[col.key] }}</span>
+          </span>
+        <span *ngSwitchDefault>{{ row[col.key] }}</span>
+      </td>
+      <td class="cell actions-cell">
+        <button class="menu-trigger"
+                (click)="toggleMenu(row); $event.stopPropagation()">⋮</button>
+        <div class="dropdown-menu" *ngIf="row.showMenu">
+          <button *ngFor="let action of menuActions"
+                  (click)="handleMenuAction(row, action)">
+            {{ action.label }}
+          </button>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
 </div>

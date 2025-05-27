@@ -1,28 +1,29 @@
 <!-- row.component.html -->
-<div class="row">
-  <!-- Чекбокс -->
-  <div class="cell checkbox-cell">
-    <input type="checkbox" [checked]="isSelected" (change)="toggleSelect()">
-  </div>
-  <!-- Динамические колонки -->
-  <ng-container *ngFor="let col of columns">
-    <div class="cell" [style.flex]="'0 0 ' + col.width">
-      <ng-container [ngSwitch]="col.type">
-        <!-- Текст -->
-        <span *ngSwitchCase="'text'">{{ row[col.key] }}</span>
-        <!-- Дата/Время -->
-        <span *ngSwitchCase="'datetime'">{{ row[col.key] | date:'short' }}</span>
-        <!-- Статус (можно стилизовать специальным лейблом) -->
-        <span *ngSwitchCase="'status'">
-          <span class="status-pill">{{ row[col.key] }}</span>
-        </span>
-        <!-- По умолчанию: отобразим значение текстом -->
-        <span *ngSwitchDefault>{{ row[col.key] }}</span>
-      </ng-container>
-    </div>
-  </ng-container>
-  <!-- Кнопка действий -->
-  <div class="cell actions-cell">
+<tr class="row">
+  <td class="cell checkbox-cell">
+    <input
+      type="checkbox"
+      [checked]="isSelected"
+      (change)="toggleSelect()"
+    >
+  </td>
+
+  <td
+    *ngFor="let col of columns"
+    class="cell"
+    [style.width]="col.width"
+  >
+    <ng-container [ngSwitch]="col.type">
+      <span *ngSwitchCase="'text'">{{ row[col.key] }}</span>
+      <span *ngSwitchCase="'datetime'">{{ row[col.key] | date:'short' }}</span>
+      <span *ngSwitchCase="'status'">
+        <span class="status-pill">{{ row[col.key] }}</span>
+      </span>
+      <span *ngSwitchDefault>{{ row[col.key] }}</span>
+    </ng-container>
+  </td>
+
+  <td class="cell actions-cell">
     <button (click)="triggerAction()">⋮</button>
-  </div>
-</div>
+  </td>
+</tr>
