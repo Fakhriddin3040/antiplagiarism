@@ -1,20 +1,20 @@
 // dynamic-layout.component.ts
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
-import {ColumnConfig} from '../core/configs/dynamic-layout-column.config';
-import {NgForOf} from '@angular/common';
-import {RowComponent} from '../components/dynamic-layout/dynamic-row/dynamic-row.component';
-import {AngularSvgIconModule, SvgIconComponent} from 'angular-svg-icon';
+import { ColumnConfig } from '../core/configs/dynamic-layout-column.config';
+import {DatePipe, NgClass, NgForOf, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault} from '@angular/common';
 
 @Component({
   selector: 'app-dynamic-layout',
-  standalone: true,
   templateUrl: './dynamic-layout.component.html',
   styleUrls: ['./dynamic-layout.component.scss'],
   imports: [
     NgForOf,
-    RowComponent,
-    SvgIconComponent,
-    AngularSvgIconModule
+    NgSwitch,
+    NgSwitchCase,
+    NgSwitchDefault,
+    NgIf,
+    DatePipe,
+    NgClass
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -22,20 +22,52 @@ export class DynamicLayoutComponent {
   @Input() columns: ColumnConfig[] = [];
   @Input() data: any[] = [];
   @Output() rowSelected = new EventEmitter<{ row: any, selected: boolean }>();
-  @Output() rowAction = new EventEmitter<any>();
+  @Output() rowAction = new EventEmitter<{ row: any, action: string }>();
 
-  // Обработчики событий от RowComponent:
-  onRowSelect(event: { row: any, selected: boolean }) {
-    this.rowSelected.emit(event);
-  }
-  onRowAction(row: any) {
-    this.rowAction.emit(row);
+  menuActions = [
+    { label: 'Edit', value: 'edit' },
+    { label: 'Delete', value: 'delete' },
+    { label: 'Clone', value: 'clone' }
+  ];
+
+  toggleRowSelect(row: any, event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    row.selected = checked;
+    this.rowSelected.emit({ row, selected: checked });
   }
 
-  onToggleAll(event: Event) {
+  onToggleAll(event: Event): void {
     const checked = (event.target as HTMLInputElement).checked;
     this.data.forEach(row => {
-      this.onRowSelect({row: row, selected: checked});
-    })
+      row.selected = checked;
+      this.rowSelected.emit({ row, selected: checked });
+    });
+  }
+
+  isAllSelected(): boolean {
+    return this.data.length > 0 && this.data.every(row => row.selected);
+  }
+
+  toggleMenu(row: any): void {
+    this.data.forEach(r => {
+      if (r !== row) r.showMenu = false;
+    });
+    row.showMenu = !row.showMenu;
+  }
+
+  handleMenuAction(row: any, action: { value: string }): void {
+    row.showMenu = false;
+    this.rowAction.emit({ row, action: action.value });
+  }
+
+  getAlignment(type: ColumnConfig['type']): string {
+    switch (type) {
+      case 'datetime':
+        return 'right';
+      case 'status':
+        return 'center';
+      default:
+        return 'left';
+    }
   }
 }

@@ -16,7 +16,6 @@
   margin-bottom: 32px;
   height: calc(100vh - 64px); // Учитываем отступы сверху и снизу
   transition: margin-left 0.25s ease;
-  overflow: auto;
 }
 
 .dashboard-container.sidebar-collapsed .dash-content {

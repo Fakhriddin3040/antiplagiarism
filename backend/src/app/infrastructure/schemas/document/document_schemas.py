@@ -5,7 +5,7 @@ from fastapi import UploadFile, Form, File
 
 from src.app.core.enums import PlagiarismCheckVerdictEnum
 from src.app.infrastructure.schemas.document.file_schemas import FileListSchema
-from src.base.schema import AbstractPydanticSchema, AbstractPydanticFilterSearchSchema
+from src.base.schema import AbstractPydanticSchema, AbstractPydanticFilterSearchSchema, ChronoSchemaMixin
 from src.base.types.pytypes import ID_T
 
 
@@ -44,7 +44,7 @@ class DocumentUpdateSchema(AbstractPydanticSchema):
     author_id: Optional[ID_T] = None
 
 
-class DocumentListSchema(AbstractPydanticSchema):
+class DocumentListSchema(ChronoSchemaMixin):
     id: ID_T
     author_id: ID_T
     title: str

@@ -27,10 +27,15 @@ export class DocumentLayoutComponent implements OnInit {
     this.setDocuments();
   }
 
+  set _data(docs: Document[]) {
+    this.data = docs;
+  }
+
   setDocuments() {
     return this.documentService.getAllDocuments()
       .subscribe({
-        next: (docs) => this.data = docs
+        next: (docs) => this._data = docs,
+        error: (error) => console.log(`Error occurred: ${error.message}`)
       })
   }
 

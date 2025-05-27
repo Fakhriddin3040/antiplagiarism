@@ -5,18 +5,18 @@ export const DocumentDlcConfig: ColumnConfig[] = [
     key: 'title',
     label: 'Назавние',
     type: 'text',
-    width: '20px',
+    width: '300px',
   },
   {
     key: 'createdAt',
     label: 'Создан',
     type: 'datetime',
-    width: '30px'
+    width: '300px'
   },
   {
     key: 'updatedAt',
     label: 'Обновлен',
     type: 'datetime',
-    width: '30px',
+    width: '300px',
   }
 ]
