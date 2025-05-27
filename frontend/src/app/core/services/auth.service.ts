@@ -7,7 +7,6 @@ import {RegisterApiRequest, RegisterRequest} from '../models/register.interface'
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private isLoggedInSubject = new BehaviorSubject<boolean>(false);
   public static accessTokenKey = 'accessToken';
 
   constructor(private http: HttpClient) {}
@@ -44,15 +43,14 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem(AuthService.accessTokenKey);
-    this.isLoggedInSubject.next(false);
   }
 
   isAuthenticated(): boolean {
-    return !!localStorage.getItem(AuthService.accessTokenKey);
+    return !!this.getToken();
   }
 
-  isLoggedIn$(): Observable<boolean> {
-    return this.isLoggedInSubject.asObservable();
+  getToken(): string | null {
+    return localStorage.getItem(AuthService.accessTokenKey);
   }
 
   private adaptRegisterRequest(request: RegisterRequest): RegisterApiRequest {

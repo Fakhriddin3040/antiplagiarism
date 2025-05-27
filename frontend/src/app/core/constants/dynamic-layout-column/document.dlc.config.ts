@@ -8,6 +8,12 @@ export const DocumentDlcConfig: ColumnConfig[] = [
     width: '300px',
   },
   {
+    key: 'checked',
+    label: 'Проверен',
+    type: 'status',
+    width: '150px',
+  },
+  {
     key: 'createdAt',
     label: 'Создан',
     type: 'datetime',

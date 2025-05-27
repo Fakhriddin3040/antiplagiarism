@@ -1,5 +1,13 @@
 // dynamic-layout.component.ts
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectionStrategy,
+  inject,
+  ChangeDetectorRef
+} from '@angular/core';
 import { ColumnConfig } from '../core/configs/dynamic-layout-column.config';
 import {DatePipe, NgForOf, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault} from '@angular/common';
 
@@ -23,10 +31,11 @@ export class DynamicLayoutComponent {
   @Output() rowSelected = new EventEmitter<{ row: any, selected: boolean }>();
   @Output() rowAction = new EventEmitter<{ row: any, action: string }>();
 
+  private cdr = inject(ChangeDetectorRef);
+
   menuActions = [
-    { label: 'Edit', value: 'edit' },
-    { label: 'Delete', value: 'delete' },
-    { label: 'Clone', value: 'clone' }
+    { label: 'Изменить', value: 'edit' },
+    { label: 'Удалить', value: 'delete' },
   ];
 
   toggleRowSelect(row: any, event: Event): void {
@@ -44,14 +53,17 @@ export class DynamicLayoutComponent {
   }
 
   isAllSelected(): boolean {
-    return this.data.length > 0 && this.data.every(row => row.selected);
+    return this.data?.length > 0 && this.data.every(row => row.selected);
   }
 
   toggleMenu(row: any): void {
-    this.data.forEach(r => {
-      if (r !== row) r.showMenu = false;
-    });
-    row.showMenu = !row.showMenu;
+    const wasOpen = row.showMenu;
+
+    this.data.forEach(r => r.showMenu = false);
+    row.showMenu = !wasOpen;
+
+    this.data = [...this.data];
+    this.cdr.detectChanges();
   }
 
   handleMenuAction(row: any, action: { value: string }): void {

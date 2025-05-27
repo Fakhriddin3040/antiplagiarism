@@ -8,6 +8,7 @@ import {findFolderInTree} from '../../helpers/functions/folder';
 import {FolderModalComponent} from '../../folder-sidebar/folder-modal/folder-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ModalMode} from '../../core/abstracts/abstract-generic-modal';
+import {FolderModalService} from '../../core/services/folder-modal.service';
 
 @Component({
   selector: 'app-folder-sidebar',
@@ -29,7 +30,7 @@ export class FolderSidebarComponent implements OnInit {
   @Output() toggle = new EventEmitter<boolean>();
 
   folderService = inject(FolderService);
-  modalService = inject(NgbModal);
+  folderModalService = inject(FolderModalService)
 
   ngOnInit() {
     this.setFolders();
@@ -56,33 +57,22 @@ export class FolderSidebarComponent implements OnInit {
 
   onAdd(folder: Folder): void {
     console.log("Button 'Add' triggered")
-    const modalRef = this.modalService.open(FolderModalComponent, {
-      backdrop: 'static',
-      size: 'lg',
-      centered: true,
-    })
-    modalRef.componentInstance.mode = 'create';
     this.selectedFolder = folder;
-    modalRef.componentInstance.submitted.subscribe((data: FolderRequest) => {
+    this.folderModalService.openForCreate((data: FolderRequest) => {
       this.handleModalCreate(data, folder);
     });
   }
 
   onEdit(folder: Folder)   {
-    const modalRef = this.modalService.open(FolderModalComponent, {
-      backdrop: 'static',
-      size: 'lg',
-      centered: true,
-    });
-    modalRef.componentInstance.mode = 'update';
-    modalRef.componentInstance.initialData = {
+    const initialData = {
       title: folder.title,
       description: folder?.description
     };
-    modalRef.componentInstance.submitted.subscribe((data: FolderRequest) => {
+    this.folderModalService.openForUpdate((data: FolderRequest) => {
       this.handleModalUpdate(data, folder);
-      modalRef.close();
-    });
+      },
+      initialData
+      );
   }
   onDelete(folder: Folder) {
     this.folderService.delete(folder.id)

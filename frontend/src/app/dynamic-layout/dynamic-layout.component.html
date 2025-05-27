@@ -39,7 +39,7 @@
       <td class="cell actions-cell">
         <button class="menu-trigger"
                 (click)="toggleMenu(row); $event.stopPropagation()">⋮</button>
-        <div class="dropdown-menu" *ngIf="row.showMenu">
+        <div class="dynamic-dropdown-menu" *ngIf="row.showMenu">
           <button *ngFor="let action of menuActions"
                   (click)="handleMenuAction(row, action)">
             {{ action.label }}

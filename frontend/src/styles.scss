@@ -1,6 +1,7 @@
 :root {
   --c-primary: #2f80ed;
-  --c-bg: #f4f7fb;
+  --c-bg: rgba(255,255,255,0.9);
+  --c-header-bg: linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 100%);
   --c-text: #222;
   --c-muted: #999;
   --c-secondary: #4a4e69;
@@ -56,6 +57,9 @@
   --c-border-sidebar: #e0e0e0;
   --c-bg-hover: #f3f3f3;
   --c-bg-active: #e8f0fe;
+
+
+  --border: 1px solid rgba(0, 0, 0, 0.08)
 }
 
 html {
@@ -69,7 +73,8 @@ html {
 }
 
 html, body {
-  height: 100%;
+  overflow: hidden !important;
+  height: 100% !important;
 }
 
 body {

@@ -1,23 +1,49 @@
-<!-- dynamic-form-modal.component.html -->
-<div class="modal-header">
-  <h5 class="modal-title">{{ title }}</h5>
-  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
-</div>
-<div class="modal-body">
-  <form [formGroup]="form">
-    <div *ngFor="let field of fields" class="mb-3">
-      <label [for]="field.key" class="form-label">{{ field.label }}</label>
-      <!-- В зависимости от типа поля отображаем либо input, либо textarea, etc. -->
-      <input *ngIf="field.type !== 'textarea'" [id]="field.key" [type]="field.type" class="form-control"
-             [formControlName]="field.key" [required]="field.required">
-      <textarea *ngIf="field.type === 'textarea'" [id]="field.key" rows="3" class="form-control"
-                [formControlName]="field.key" [required]="field.required"></textarea>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="modal-header">
+    <h4 class="modal-title">{{ mode === 'create' ? titleCreate : titleUpdate }}</h4>
+  </div>
+  <div class="modal-body">
+    <div *ngFor="let field of formFieldSchema" class="mb-3">
+      <label [for]="field.key">{{ field.label }}</label>
+      <ng-container [ngSwitch]="field.type">
+        <input *ngSwitchCase="'text'" [id]="field.key" type="text"
+               [formControlName]="field.key" class="form-control">
+        <textarea *ngSwitchCase="'textarea'" [id]="field.key"
+                  [formControlName]="field.key" class="form-control"></textarea>
+        <input *ngSwitchCase="'number'" [id]="field.key" type="number"
+               [formControlName]="field.key" class="form-control">
+        <select *ngSwitchCase="'select'" [id]="field.key"
+                [formControlName]="field.key" class="form-control">
+          <option *ngFor="let opt of field.options" [value]="opt.value">{{ opt.label }}</option>
+        </select>
+        <div *ngSwitchCase="'checkbox'" class="form-check">
+          <input [id]="field.key" type="checkbox" class="form-check-input"
+                 [formControlName]="field.key">
+        </div>
+        <div *ngSwitchCase="'file-drop'">
+          <input [id]="field.key" type="file" class="form-control-file"
+                 (change)="onFileChange($event, field.key)">
+        </div>
+<!--        <div *ngSwitchCase="'array-dnd'" [formArrayName]="field.key">-->
+<!--          <div *ngFor="let ctrl of form.get(field.key)['controls']; let i = index" class="d-flex align-items-center mb-2">-->
+<!--            <input [formControlName]="i" type="text" class="form-control me-2">-->
+<!--            <button type="button" class="btn btn-danger btn-sm"-->
+<!--                    (click)="removeArrayItem(field.key, i)">Remove</button>-->
+<!--          </div>-->
+<!--          <button type="button" class="btn btn-secondary btn-sm"-->
+<!--                  (click)="addArrayItem(field.key)">Add Item</button>-->
+<!--        </div>-->
+      </ng-container>
+      <div *ngIf="form.get(field.key)!.invalid && (form.get(field.key)!.dirty || form.get(field.key)!.touched)"
+           class="text-danger">
+        {{ field.label }} is invalid
+      </div>
     </div>
-  </form>
-</div>
-<div class="modal-footer">
-  <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Отмена</button>
-  <button type="button" class="btn btn-primary" [disabled]="form.invalid" (click)="submit()">
-    Добавить
-  </button>
-</div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="onCancel()">Закрыть</button>
+    <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
+      {{ mode === 'create' ? submitLabelCreate : submitLabelUpdate }}
+    </button>
+  </div>
+</form>

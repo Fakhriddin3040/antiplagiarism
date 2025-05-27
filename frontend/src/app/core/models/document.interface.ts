@@ -13,7 +13,8 @@ export interface Document extends BaseModelInterface, ChronoInterface {
   verdict?: Number,
   folderId: Guid;
   description?: string;
-  file: FileModel
+  file: FileModel,
+  showMenu?: boolean;
 }
 
 

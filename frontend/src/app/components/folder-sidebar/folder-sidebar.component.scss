@@ -1,5 +1,6 @@
 .folder-sidebar-container {
   position: fixed;
+  border: 1px solid rgba(0, 0, 0, 0.08);
   left: 32px;
   top: 8vh;
   bottom: 11vh;
@@ -11,11 +12,10 @@
   transition: transform 0.25s ease;
   z-index: 1000; // Убедимся, что сайдбар поверх контента
   background: linear-gradient(195deg, #f8f9fa 0%, #e9ecef 100%);
-  border: none;
   background: var(--c-surface);
   border-right: 1px solid #e0e0e0;
   padding: 1rem;
-  background: rgba(255,255,255,0.9);
+  background: var(--c-bg);
   height: 87.5vh;
   box-shadow:
     16px 0 32px rgba(0, 0, 0, 0.08),
@@ -24,8 +24,9 @@
   .folder-sidebar__header {
     color: var(--c-primary);
     font-family: 'Segoe UI', system-ui;
-    background: rgba(255, 255, 255, 0.7);
+    background: var(--c-bg);
     backdrop-filter: blur(4px);
+    text-align: center;
     font-size: 1.1rem;
     letter-spacing: 0.5px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
@@ -48,7 +49,7 @@
   font-weight: 600;
   color: #2f80ed;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: var(--radius);
   transition: background 0.2s;
 
   &:hover {
@@ -65,8 +66,10 @@
 
 /* корневой список */
 .root-folder-tree {
+  padding-left: 1rem;
   li {
-    margin: 2px 12px;
+    color: var(--c-primary-dark);
+    margin: 2px 0;
     border-radius: 6px;
     transition: all 0.2s ease;
 

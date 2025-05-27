@@ -37,9 +37,6 @@ FROM document_chunks AS self
 
 WHERE self.document_id = '98c68a9d-0f90-4ac9-bee4-5a930f49ce64'
   AND self.size >= 50
-
--- финальная чистка (можно оставить для последующей фильтрации)
--- можно обернуть во VIEW или сделать WHERE similarity >= 0.78
 ORDER BY similarity DESC;
 
 

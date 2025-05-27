@@ -13,6 +13,7 @@ import {NavigationComponent} from './app/components/navigation/navigation.compon
 import {AuthInterceptor} from './app/interceptors/auth/auth.interceptor';
 import {DashboardComponent} from './app/components/dashboard/dashboard.component';
 import {provideAngularSvgIcon} from 'angular-svg-icon';
+import {AuthGuard} from './app/guards/auth/auth.guard';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -38,6 +39,7 @@ bootstrapApplication(AppComponent, {
       {
         path: 'dashboard',
         component: DashboardComponent,
+        canActivate: [AuthGuard],
         children: [
           {
             path: 'documents',

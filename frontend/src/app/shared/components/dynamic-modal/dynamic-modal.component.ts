@@ -1,95 +1,111 @@
-import {
-  Directive,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  inject, Component,
-} from '@angular/core';
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, FormArray, ReactiveFormsModule } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import {FormFieldConfig} from '../../../core/configs/form-field.interface';
-import {NgForOf, NgIf} from '@angular/common';
 
-export type ModalMode = 'create' | 'update';
 
 @Component({
-  selector: 'app-dynamic-modal',
-  standalone: true,
-  imports: [
-    FormsModule,
-    NgForOf,
-    NgIf,
-    ReactiveFormsModule
-  ],
+  selector: 'app-generic-modal',
   templateUrl: './dynamic-modal.component.html',
-  styleUrl: './dynamic-modal.component.scss',
+  styleUrls: ['./dynamic-modal.component.scss'],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
 })
-export class DynamicModal implements OnInit {
-  @Input() mode: ModalMode = 'create';
+export class DynamicModal<T> implements OnInit {
+  @Input() mode: 'create' | 'update' = 'create';
+  @Input() initialData?: Partial<T>;
+  @Input() titleCreate!: string;
+  @Input() titleUpdate!: string;
+  @Input() submitLabelCreate: string = 'Создать';
+  @Input() submitLabelUpdate: string = 'Сохранить';
+  @Input() formFieldSchema: FormFieldConfig[] = [];
 
-  @Input() initialData?: Partial<any>;
-
-  @Input() titleCreate = 'Создать';
-  @Input() titleUpdate = 'Изменить';
-  @Input() submitLabelCreate = 'Создать';
-  @Input() submitLabelUpdate = 'Сохранить';
-  @Input() formFieldSchema!: FormFieldConfig[];
-
-  @Output() submitted = new EventEmitter<any>();
-  @Output() closed = new EventEmitter<any>();
-
-  fb = inject(FormBuilder);
-  modal = inject(NgbActiveModal);
-
+  @Output() submitted = new EventEmitter<T>();
 
   form!: FormGroup;
 
-  ngOnInit(): void {
+  constructor(public modal: NgbActiveModal, private fb: FormBuilder) {}
+
+  ngOnInit() {
     this.buildForm();
-    if (this.initialData) {
-      this.form.patchValue(this.initialData);
+  }
+
+  private buildForm() {
+    const group: { [key: string]: any } = {};
+
+    for (let field of this.formFieldSchema) {
+      let value: any = null;
+      if (this.initialData && (this.initialData as any)[field.key] !== undefined) {
+        value = (this.initialData as any)[field.key];
+      } else if (field.default !== undefined) {
+        value = field.default;
+      } else {
+        switch (field.type) {
+          case 'checkbox':
+            value = false;
+            break;
+          case 'array-dnd':
+            value = [];
+            break;
+          default:
+            value = '';
+        }
+      }
+
+      const validators = field.validators ? [...field.validators] : [];
+      if (field.required) {
+        validators.push(Validators.required);
+      }
+
+      if (field.type === 'array-dnd') {
+        const arr = this.fb.array([]);
+        if (Array.isArray(value) && value.length) {
+          for (let item of value) {
+            arr.push(this.fb.control(item, validators));
+          }
+        } else {
+          arr.push(this.fb.control('', validators));
+        }
+        group[field.key] = arr;
+      } else {
+        group[field.key] = this.fb.control(value, validators);
+      }
     }
+
+    this.form = this.fb.group(group);
   }
 
   get isCreate(): boolean {
     return this.mode === 'create';
   }
 
-  get title(): string {
-    return this.isCreate ? this.titleCreate : this.titleUpdate;
-  }
-
-  get submitLabel(): string {
-    return this.isCreate ? this.submitLabelCreate : this.submitLabelUpdate;
-  }
-
-  submit(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
+  onSubmit() {
+    if (this.form.valid) {
+      const result = this.form.value as T;
+      this.modal.close(result);
+      this.submitted.emit(result);
     }
-
-    const result = this.form.value;
-
-    this.submitted.emit(result);
-    this.modal.close(result)
   }
 
-  cancel(): void {
-    this.closed.emit(this.form.value);
-    this.modal.dismiss('cancel');
+  onCancel() {
+    this.modal.dismiss();
   }
 
-  buildForm(): void {
-    const group: Record<string, any> = {};
-
-    for (const f of this.formFieldSchema) {
-      const base = f.default ?? '';
-      const validators = f.validators ?? (f.required ? [Validators.required] : []);
-      group[f.key] = [base, validators];
+  onFileChange(event: any, key: string) {
+    const file = event.target.files[0];
+    if (file) {
+      this.form.get(key)?.setValue(file);
     }
+  }
 
-    this.form = this.fb.group(group);
+  addArrayItem(key: string) {
+    const control = this.form.get(key) as FormArray;
+    control.push(this.fb.control(''));
+  }
+
+  removeArrayItem(key: string, index: number) {
+    const control = this.form.get(key) as FormArray;
+    control.removeAt(index);
   }
 }
