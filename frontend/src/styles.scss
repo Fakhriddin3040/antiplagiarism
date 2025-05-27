@@ -9,7 +9,10 @@
  * ------------------------------------------------- */
 :root {
   /* Colors */
-  --c-primary: #2b2d42;      /* темно-синий */
+  --c-primary: #2f80ed;
+  --c-bg: #f4f7fb;
+  --c-text: #222;
+  --c-muted: #999;
   --c-secondary: #4a4e69;    /* серо-синий */
   --c-accent: #8d99ae;       /* серо-голубой */
   --c-background: #f4f5f7;   /* светло-серый фон */
@@ -17,8 +20,6 @@
   --c-border: rgba(0, 0, 0, 0.08);
   --c-primary-dark:   #1c60b8;
   --c-danger:         #e03e3e;
-  --c-bg:             #f9f9f9;
-  --c-muted:          #666;
   --c-bg-card:        #fff;
   --c-input-bg:       #fff;
   --c-input-border:   rgba(0, 0, 0, 0.18);
@@ -49,9 +50,6 @@
 
   --c-bg-page:        #f5f6f8;  /* сероватый фон под всю страницу */
   --c-shadow-card:    0 4px 16px rgba(0, 0, 0, .06);
-
-  --c-text:           #202124;
-
 
   --font-weight-bold: 600;
   --radius-base: 8px;
@@ -189,14 +187,14 @@ html, body {
 }
 
 body {
-  background: var(--c-bg-page);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell;
-  color: var(--c-text);
-  font-family: var(--font-main);
   font-size: var(--font-size-base);
   line-height: 1.5;
-  background: var(--c-bg);
   -webkit-font-smoothing: antialiased;
+  background: url('/public/bg.webp') no-repeat center center fixed;
+  background-size: cover;
+  color: #222;
+
 }
 
 /* Improved focus states for custom components */

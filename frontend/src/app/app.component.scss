@@ -1,3 +1,13 @@
 html body {
   height: 100%;
 }
+
+app-root {
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 2rem auto;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
