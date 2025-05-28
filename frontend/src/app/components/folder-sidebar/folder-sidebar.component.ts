@@ -8,7 +8,7 @@ import {findFolderInTree} from '../../helpers/functions/folder';
 import {FolderModalComponent} from '../../folder-sidebar/folder-modal/folder-modal.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ModalMode} from '../../core/abstracts/abstract-generic-modal';
-import {FolderModalService} from '../../core/services/folder-modal.service';
+import {FolderModalService} from '../../core/services/modal-services/folder-modal.service';
 
 @Component({
   selector: 'app-folder-sidebar',

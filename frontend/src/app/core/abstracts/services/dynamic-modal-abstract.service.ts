@@ -7,7 +7,7 @@ import {DynamicModal} from '../../../shared/components/dynamic-modal/dynamic-mod
 export abstract class DynamicModalAbstractService<T> {
   protected modal = inject(NgbModal);
 
-  protected abstract formFieldConfig: FormFieldConfig[];
+  protected abstract formFieldConfig: FormFieldConfig<T>[];
 
   protected openModal(
     modalTitle: string,

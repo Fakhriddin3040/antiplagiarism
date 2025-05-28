@@ -3,5 +3,8 @@
   [columns]="columnConfigs"
   (rowSelected)="onRowSelect($event)"
   (rowAction)="onRowAction($event)"
+  (create)="onCreate()"
+  (update)="onUpdate($event)"
+  (delete)="onDelete($event)"
 >
 </app-dynamic-layout>

@@ -1,5 +1,11 @@
 <!-- dynamic-layout.component.html -->
 <div class="table-wrapper">
+  <button class="btn btn-sm btn-primary create-button"
+    (click)="onCreate()">
+    <i class="bi bi-plus-circle"></i>
+    <span>Создать</span>
+  </button>
+
   <table class="table-container">
     <thead>
     <tr class="header-row">
@@ -32,7 +38,7 @@
         <span *ngSwitchCase="'text'">{{ row[col.key] }}</span>
         <span *ngSwitchCase="'datetime'">{{ row[col.key] | date:'short' }}</span>
         <span *ngSwitchCase="'status'">
-            <span class="status-pill">{{ row[col.key] }}</span>
+            <span class="status-pill" [ngClass]="getStatusClass(row[col.key])">{{ getStatusLabel(row[col.key]) }}</span>
           </span>
         <span *ngSwitchDefault>{{ row[col.key] }}</span>
       </td>

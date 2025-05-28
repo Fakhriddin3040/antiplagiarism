@@ -9,7 +9,7 @@ import {
   ChangeDetectorRef
 } from '@angular/core';
 import { ColumnConfig } from '../core/configs/dynamic-layout-column.config';
-import {DatePipe, NgForOf, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault} from '@angular/common';
+import {DatePipe, NgClass, NgForOf, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault} from '@angular/common';
 
 @Component({
   selector: 'app-dynamic-layout',
@@ -21,7 +21,8 @@ import {DatePipe, NgForOf, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault} from '
     NgSwitchCase,
     NgSwitchDefault,
     NgIf,
-    DatePipe
+    DatePipe,
+    NgClass
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -30,6 +31,9 @@ export class DynamicLayoutComponent {
   @Input() data: any[] = [];
   @Output() rowSelected = new EventEmitter<{ row: any, selected: boolean }>();
   @Output() rowAction = new EventEmitter<{ row: any, action: string }>();
+  @Output() create = new EventEmitter<null>();
+  @Output() update = new EventEmitter<any>();
+  @Output() delete = new EventEmitter<any>();
 
   private cdr = inject(ChangeDetectorRef);
 
@@ -69,5 +73,33 @@ export class DynamicLayoutComponent {
   handleMenuAction(row: any, action: { value: string }): void {
     row.showMenu = false;
     this.rowAction.emit({ row, action: action.value });
+  }
+
+  getStatusClass(value: any): string {
+    if (typeof(value) === 'boolean') {
+      return value ? 'true' : 'false';
+    }
+    else {
+      return value
+    }
+  }
+
+  getStatusLabel(value: any): string {
+    if (typeof(value) === 'boolean') {
+      return value ? 'Да' : 'Нет';
+    }
+    return value;
+  }
+
+  onCreate() {
+    this.create.emit();
+  }
+
+  onUpdate(row: any) {
+    this.update.emit(row);
+  }
+
+  onDelete(row: any) {
+    this.delete.emit(row);
   }
 }

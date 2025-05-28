@@ -47,4 +47,16 @@ export class DocumentLayoutComponent implements OnInit {
   onRowAction(row: any) {
     console.log(`Action on app document layout. The row is: `, row);
   }
+
+  onCreate() {
+    console.log('Create new document');
+  }
+
+  onUpdate(row: Document) {
+    console.log(`Update document with id ${row.id}`);
+  }
+
+  onDelete(row: Document) {
+    console.log(`Delete document with id ${row.id}`);
+  }
 }

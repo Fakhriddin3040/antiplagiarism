@@ -1,7 +1,7 @@
 import {FieldType} from '../types/modal-field-type';
 
-export interface FormFieldConfig {
-  key: string;
+export interface FormFieldConfig<T> {
+  key: keyof T;
   label: string;
   type: FieldType;
   required?: boolean;

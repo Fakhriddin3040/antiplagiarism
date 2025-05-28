@@ -40,3 +40,13 @@ export interface DocumentApiRequest {
   folder_id: Guid;
   author_id: Guid;
 }
+
+
+export interface DocumentRequest {
+  title: string;
+  description?: string;
+  file: File;
+  indexIt?: boolean;
+  folderId: Guid;
+  authorId: Guid;
+}

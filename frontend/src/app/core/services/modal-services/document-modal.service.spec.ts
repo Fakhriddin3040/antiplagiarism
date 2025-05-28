@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { FolderModalService } from './folder-modal.service';
+import { DocumentModalService } from './document-modal.service';
 
-describe('FolderModalService', () => {
-  let service: FolderModalService;
+describe('DocumentModalService', () => {
+  let service: DocumentModalService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(FolderModalService);
+    service = TestBed.inject(DocumentModalService);
   });
 
   it('should be created', () => {

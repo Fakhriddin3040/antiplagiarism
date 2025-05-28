@@ -1,5 +1,6 @@
 /* dynamic-layout.component.scss */
 .table-wrapper {
+  position: relative;
   border: var(--border);
   background: var(--c-bg);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
@@ -117,7 +118,14 @@
   font-size: 12px;
 
   &.true { background: #e8f5e9; color: #2e7d32; }
-  &.inactive { background: #ffebee; color: #c62828; }
+  &.false { background: #ffebee; color: #c62828; }
+}
+
+.create-button {
+  top: 0;
+  right: 0; // ← ВОТ ЭТО надо
+  margin: 8px;
+  z-index: 10;
 }
 
 input[type="checkbox"] {

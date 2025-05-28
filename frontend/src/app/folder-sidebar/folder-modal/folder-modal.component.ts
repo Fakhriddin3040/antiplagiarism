@@ -23,7 +23,7 @@ import {FolderFormFieldsConfig} from '../../core/constants/form-field-configs/fo
   styleUrl: './folder-modal.component.scss'
 })
 export class FolderModalComponent extends AbstractGenericModal<FolderRequest> {
-  override formFieldSchema: FormFieldConfig[] = FolderFormFieldsConfig;
+  override formFieldSchema: FormFieldConfig<FolderRequest>[] = FolderFormFieldsConfig;
 
   override mapFormToResult(value: FolderRequest): FolderRequest {
     return value;

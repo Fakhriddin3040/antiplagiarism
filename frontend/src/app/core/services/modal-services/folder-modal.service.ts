@@ -1,14 +1,15 @@
 import {Injectable} from '@angular/core';
-import {FormFieldConfig} from '../configs/form-field.interface';
-import {Folder, FolderRequest} from '../models/folder.interface';
-import {FolderFormFieldsConfig} from '../constants/form-field-configs/folder-ff-configs';
-import {DynamicModalAbstractService} from '../abstracts/services/dynamic-modal-abstract.service';
+import {FormFieldConfig} from '../../configs/form-field.interface';
+import {Folder, FolderRequest} from '../../models/folder.interface';
+import {FolderFormFieldsConfig} from '../../constants/form-field-configs/folder-ff-configs';
+import {DynamicModalAbstractService} from '../../abstracts/services/dynamic-modal-abstract.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FolderModalService extends DynamicModalAbstractService<FolderRequest> {
-  protected override formFieldConfig: FormFieldConfig[] = FolderFormFieldsConfig;
+  // @ts-ignore
+  protected override formFieldConfig: FormFieldConfig<FolderRequest>[] = FolderFormFieldsConfig;
 
   override openForCreate(callback: (value: FolderRequest) => void): void {
     const modalRef = this.openModal('Создать директорию', 'create', 'Создать');
