@@ -9,7 +9,7 @@ import {DynamicModalAbstractService} from '../../abstracts/services/dynamic-moda
 })
 export class FolderModalService extends DynamicModalAbstractService<FolderRequest> {
   // @ts-ignore
-  protected override formFieldConfig: FormFieldConfig<FolderRequest>[] = FolderFormFieldsConfig;
+  protected override formFieldConfig: FormFieldConfig[] = FolderFormFieldsConfig;
 
   override openForCreate(callback: (value: FolderRequest) => void): void {
     const modalRef = this.openModal('Создать директорию', 'create', 'Создать');

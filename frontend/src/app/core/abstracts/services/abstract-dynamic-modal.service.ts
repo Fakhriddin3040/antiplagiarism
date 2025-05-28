@@ -4,7 +4,7 @@ import { FormGroup } from '@angular/forms';
 
 @Directive()
 export abstract class AbstractDynamicModalService {
-  abstract formFieldSchema: FormFieldConfig<any>[];
+  abstract formFieldSchema: FormFieldConfig[];
   abstract mapFormToResult(value: any): any;
 
   protected form = new FormGroup({});

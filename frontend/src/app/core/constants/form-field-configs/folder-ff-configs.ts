@@ -3,7 +3,7 @@ import {MaxLengthValidator, Validators} from '@angular/forms';
 import {FieldType} from '../../types/modal-field-type';
 import {Folder, FolderRequest} from '../../models/folder.interface';
 
-export const FolderFormFieldsConfig: FormFieldConfig<FolderRequest>[] = [
+export const FolderFormFieldsConfig: FormFieldConfig[] = [
   {
     key: "title",
     label: "Название",

@@ -19,7 +19,7 @@ export class DynamicModal<T> implements OnInit {
   @Input() titleUpdate!: string;
   @Input() submitLabelCreate: string = 'Создать';
   @Input() submitLabelUpdate: string = 'Сохранить';
-  @Input() formFieldSchema: FormFieldConfig<T>[] = [];
+  @Input() formFieldSchema: FormFieldConfig[] = [];
 
   @Output() submitted = new EventEmitter<T>();
 

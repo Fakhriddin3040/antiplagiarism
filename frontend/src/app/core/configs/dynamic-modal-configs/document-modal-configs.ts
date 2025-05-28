@@ -2,7 +2,7 @@ import {FormFieldConfig} from '../form-field.interface';
 import {Validators} from '@angular/forms';
 import {Document} from '../../models/document.interface';
 
-export const DocumentModalConfig: FormFieldConfig<DocumentRequest>[] = [
+export const DocumentModalConfig: FormFieldConfig[] = [
   {
     key: 'title',
     type: 'text',
@@ -34,6 +34,9 @@ export const DocumentModalConfig: FormFieldConfig<DocumentRequest>[] = [
     type: 'select',
     label: 'Автор документа',
     required: true,
+    options: [
+      {"value": 13, "label": "Иванов Иван Иванович"},
+    ]
   },
   {
     key: 'folderId',

@@ -5,6 +5,7 @@ import {DocumentService} from '../../core/services/document.service';
 import {DynamicLayoutComponent} from '../../dynamic-layout/dynamic-layout.component';
 import {ColumnConfig} from '../../core/configs/dynamic-layout-column.config';
 import {DocumentDlcConfig} from '../../core/constants/dynamic-layout-column/document.dlc.config';
+import {DocumentModalService} from '../../core/services/modal-services/document-modal.service';
 
 @Component({
   selector: 'app-document-layout',
@@ -19,9 +20,11 @@ import {DocumentDlcConfig} from '../../core/constants/dynamic-layout-column/docu
 })
 export class DocumentLayoutComponent implements OnInit {
   documentService = inject(DocumentService);
+  documentModalService = inject(DocumentModalService);
 
   data!: Document[];
   columnConfigs: ColumnConfig[] = DocumentDlcConfig;
+
 
   ngOnInit() {
     this.setDocuments();
@@ -49,7 +52,10 @@ export class DocumentLayoutComponent implements OnInit {
   }
 
   onCreate() {
-    console.log('Create new document');
+    this.documentModalService.openForCreate((doc) => {
+      console.log(`Document created with id ${doc.title}`);
+      this.documentService.getAllDocuments();
+    });
   }
 
   onUpdate(row: Document) {

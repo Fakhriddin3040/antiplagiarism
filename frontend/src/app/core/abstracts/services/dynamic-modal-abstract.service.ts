@@ -4,10 +4,10 @@ import {FormFieldConfig} from '../../configs/form-field.interface';
 import {DynamicModal} from '../../../shared/components/dynamic-modal/dynamic-modal.component';
 
 @Directive()
-export abstract class DynamicModalAbstractService<T> {
+export abstract class DynamicModalAbstractService<T, R = T> {
   protected modal = inject(NgbModal);
 
-  protected abstract formFieldConfig: FormFieldConfig<T>[];
+  protected abstract formFieldConfig: FormFieldConfig[];
 
   protected openModal(
     modalTitle: string,
@@ -39,5 +39,5 @@ export abstract class DynamicModalAbstractService<T> {
 
   abstract openForCreate(callback: (value: T) => void): void;
   abstract openForUpdate(callback: (value: T) => void, initialData: Partial<T>): void;
-  abstract openForView(value: T): void;
+  abstract openForView(value: R): void;
 }

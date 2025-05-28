@@ -28,7 +28,7 @@ export abstract class AbstractGenericModal<T, R = T> implements OnInit {
   protected fb = inject(FormBuilder);
   protected modal = inject(NgbActiveModal);
 
-  abstract formFieldSchema: FormFieldConfig<T>[];
+  abstract formFieldSchema: FormFieldConfig[];
 
   form!: FormGroup;
 
