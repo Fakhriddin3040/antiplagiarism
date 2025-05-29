@@ -24,7 +24,7 @@ class PlagiarismCheck(SQLAlchemyBaseModel, ChronoModelMixin, AuditableModelMixin
     __tablename__ = DatabaseTables.PLAGIARISM_CHECKS
 
     document_id: Mapped[ID_T] = mapped_column(
-        ForeignKey(DatabaseTables.DOCUMENTS.as_foreign_key), nullable=False
+        ForeignKey(DatabaseTables.DOCUMENTS.as_foreign_key, ondelete='cascade'), nullable=False
     )
     max_similarity_score: Mapped[float] = mapped_column(nullable=False)
     status: Mapped[PlagiarismCheckStatusTD.choices] = mapped_column(

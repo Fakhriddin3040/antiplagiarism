@@ -1,11 +1,12 @@
-import {Directive, inject, Injectable, OnInit} from '@angular/core';
-import {NgbActiveModal, NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
+import {Directive, inject} from '@angular/core';
 import {FormFieldConfig} from '../../configs/form-field.interface';
 import {DynamicModal} from '../../../shared/components/dynamic-modal/dynamic-modal.component';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 
 @Directive()
 export abstract class DynamicModalAbstractService<T, R = T> {
-  protected modal = inject(NgbModal);
+  private dialog = inject(MatDialog);
+
 
   protected abstract formFieldConfig: FormFieldConfig[];
 
@@ -14,27 +15,23 @@ export abstract class DynamicModalAbstractService<T, R = T> {
     mode: 'create' | 'update',
     submitLabelTitle?: string,
     initialData?: Partial<T>,
-  ): NgbModalRef {
-    const modalRef = this.modal.open(DynamicModal<T>, {
-      backdrop: 'static',
-      size: 'lg',
-      centered: true,
-      windowClass: 'modal-xl'
-    });
-
-    let modalInstanceTitleProp: keyof DynamicModal<T>;
+  ): MatDialogRef<DynamicModal<T>> {
+    let modalInstanceTitleProp: keyof DynamicModal<T>['data'];
 
     if (mode === 'create') modalInstanceTitleProp = 'titleCreate';
     else modalInstanceTitleProp = 'titleUpdate';
 
-    modalRef.componentInstance.formFieldSchema = this.formFieldConfig;
-    modalRef.componentInstance.mode = mode;
-    modalRef.componentInstance.initialData = initialData;
-    modalRef.componentInstance[modalInstanceTitleProp] = modalTitle;
-
-    modalRef.componentInstance.submitLabelCreate = submitLabelTitle;
-
-    return modalRef;
+    return this.dialog.open(DynamicModal<T>, {
+      width: '400px',
+      disableClose: true,
+      data: {
+        mode: mode,
+        formFieldSchema: this.formFieldConfig,
+        initialData: initialData,
+        [modalInstanceTitleProp]: modalTitle,
+        submitLabelCreate: submitLabelTitle || 'Создать',
+      }
+    });
   }
 
   abstract openForCreate(callback: (value: T) => void): void;

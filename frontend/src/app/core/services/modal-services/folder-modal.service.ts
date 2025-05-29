@@ -8,7 +8,6 @@ import {DynamicModalAbstractService} from '../../abstracts/services/dynamic-moda
   providedIn: 'root'
 })
 export class FolderModalService extends DynamicModalAbstractService<FolderRequest> {
-  // @ts-ignore
   protected override formFieldConfig: FormFieldConfig[] = FolderFormFieldsConfig;
 
   override openForCreate(callback: (value: FolderRequest) => void): void {

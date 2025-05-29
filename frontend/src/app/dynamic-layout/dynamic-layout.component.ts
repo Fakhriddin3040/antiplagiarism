@@ -72,7 +72,12 @@ export class DynamicLayoutComponent {
 
   handleMenuAction(row: any, action: { value: string }): void {
     row.showMenu = false;
-    this.rowAction.emit({ row, action: action.value });
+    if (action.value === 'delete') {
+      this.delete.emit(row);
+    }
+    else if (action.value === 'edit') {
+      this.update.emit(row);
+    }
   }
 
   getStatusClass(value: any): string {

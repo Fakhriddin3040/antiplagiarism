@@ -177,3 +177,75 @@ ul li {
     background-color: #1a6be0;
   }
 }
+
+/* корневой контейнер ─────────────────────────────────────────── */
+.dropdown-list {
+  position: absolute;            // остаётся как есть
+  inset: 0 auto auto 0;          // top:100% задаётся инлайном
+  z-index: 2000;
+
+  /* фон + рамка + тень */
+  background: #fff;
+  border: 1px solid #d0d7de;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.08);
+
+  /* плавное появление */
+  opacity: 0; transform: translateY(4px);
+  animation: dropdown-fade .18s ease-out forwards;
+
+  /* скролл если много пунктов */
+  max-height: 240px;
+  overflow-y: auto;
+
+  /* кастомный скроллбар (webkit) */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background: rgba(0,0,0,.15);
+  }
+}
+
+/* сам пункт ─────────────────────────────────────────────────── */
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  width: 100%;
+  padding: 8px 14px;
+  font-size: 14px;
+  color: #202428;
+
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background .15s;
+
+  /* когда курсор */
+  &:hover {
+    background: #f2f6ff;
+  }
+
+  /* если выбран (добавляй класc из TS) */
+  &.selected,
+  &:active {
+    background: #e5efff;
+    color: #1458ff;
+    font-weight: 500;
+  }
+
+  /* мелкая иконка слева – если понадобится */
+  .icon {
+    font-size: 16px;
+    color: inherit;
+  }
+}
+
+/* анимация drop-in */
+@keyframes dropdown-fade {
+  to { opacity: 1; transform: translateY(0); }
+}

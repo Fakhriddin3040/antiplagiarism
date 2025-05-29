@@ -5,9 +5,6 @@ import {NgForOf} from '@angular/common';
 import {FolderNodeComponent} from '../../folder-sidebar/folder-node/folder-node.component';
 import {Guid} from 'guid-typescript';
 import {findFolderInTree} from '../../helpers/functions/folder';
-import {FolderModalComponent} from '../../folder-sidebar/folder-modal/folder-modal.component';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {ModalMode} from '../../core/abstracts/abstract-generic-modal';
 import {FolderModalService} from '../../core/services/modal-services/folder-modal.service';
 
 @Component({
@@ -22,7 +19,7 @@ import {FolderModalService} from '../../core/services/modal-services/folder-moda
 })
 export class FolderSidebarComponent implements OnInit {
   hidden: boolean = false;
-  selectedFolder!: Folder;
+  selectedFolder?: Folder;
   foldersTree!: Folder[]
   hoveredId?: Guid;
 

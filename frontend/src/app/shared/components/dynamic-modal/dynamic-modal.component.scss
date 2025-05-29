@@ -1,0 +1,87 @@
+.dynamic-modal-form {
+  display: block;
+  height: 100%;
+  overflow: auto;
+}
+
+.dynamic-modal-header {
+  text-align: center;
+  padding: 3px;
+}
+
+.dynamic-modal-title {
+  font-weight: bold;
+}
+
+.dynamic-modal-body {
+  padding: 0 20px 0 20px;
+}
+
+.dynamic-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px;
+  margin-right: 10px;
+  gap: 10px;
+}
+.dynamic-modal-footer button:not(:last-child) {
+  margin-right: 100px;
+}
+
+.file-drop-cloud {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-height: 160px;
+  cursor: pointer;
+
+  /* — скрываем нативный input — */
+  .file-input {
+    display: none;
+  }
+
+  /* — облако — */
+  .cloud-shape {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    gap: 4px;
+
+    border: 3px dashed #9ec5ff;
+    border-radius: 32px;
+    background: linear-gradient(135deg,#f8fbff 0%,#eef4ff 100%);
+    transition: background .25s,border-color .25s;
+
+    /* лёгкая тень */
+    box-shadow: 0 6px 16px rgba(0,0,0,.04);
+  }
+
+  /* — иконка — */
+  .cloud-icon {
+    font-size: 48px;
+    color: #7aa7ff;
+    transition: transform .25s;
+  }
+
+  .cloud-text {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: #4f4f4f;
+
+    .muted {
+      font-size: 12px;
+      color: #9a9a9a;
+    }
+  }
+
+  /* — HOVER / DRAG OVER — */
+  &:hover .cloud-shape,
+  &.drag-over .cloud-shape {
+    background: linear-gradient(135deg,#e5f0ff 0%,#d9e6ff 100%);
+    border-color: #5592ff;
+
+    .cloud-icon { transform: translateY(-4px) scale(1.05); }
+  }
+}

@@ -1,9 +1,10 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../../environments/environment';
-import {DocumentApiResponse} from '../models/document.interface';
+import {DocumentApiRequest, DocumentApiResponse, DocumentRequest} from '../models/document.interface';
 import {Document} from '../models/document.interface';
 import {map, Observable} from 'rxjs';
+import {Guid} from 'guid-typescript';
 
 @Injectable({
   providedIn: 'root'
@@ -47,6 +48,26 @@ export class DocumentService {
       .pipe(
         map((response) => {
           return this.mapResults(response);
+        })
+      )
+  }
+
+  delete(id: Guid): Observable<Object> {
+    return this.http.delete(this.apiUrl + '/' + id);
+  }
+
+  create(data: DocumentRequest): Observable<Document> {
+    const requestData: DocumentApiRequest= {
+      title: data.title,
+      description: data.description,
+      file: data.file,
+      index_it: data.indexIt,
+      folder_id: data.folderId,
+      author_id: data.authorId,
+    };
+    return this.http.post<DocumentApiResponse>(this.apiUrl + '/', requestData)
+      .pipe(map((response) => {
+        return this.mapResult(response);
         })
       )
   }

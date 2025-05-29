@@ -40,7 +40,7 @@ export class LoginComponent implements OnInit {
 
     const request = this.form.value;
     this.auth.login(request).subscribe({
-      next: () => this.router.navigate(['/dashboard']),
+      next: () => this.router.navigate(['/dashboard/documents']),
       error: () => {
         this.form.reset();
         alert('Неверный логин или пароль');

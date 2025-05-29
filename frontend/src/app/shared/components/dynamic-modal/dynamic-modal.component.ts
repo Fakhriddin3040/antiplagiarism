@@ -1,8 +1,13 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import {Component, Output, EventEmitter, OnInit, inject, Inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, FormArray, ReactiveFormsModule } from '@angular/forms';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import {FormFieldConfig} from '../../../core/configs/form-field.interface';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {firstValueFrom, Subject} from 'rxjs';
+import {MatAutocomplete, MatAutocompleteTrigger, MatOption} from '@angular/material/autocomplete';
+import {MatFormField, MatInput} from '@angular/material/input';
+import {environment} from '../../../../environments/environment';
+import {HttpClient} from '@angular/common/http';
 
 
 @Component({
@@ -10,34 +15,107 @@ import {FormFieldConfig} from '../../../core/configs/form-field.interface';
   templateUrl: './dynamic-modal.component.html',
   styleUrls: ['./dynamic-modal.component.scss'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, MatAutocomplete, MatOption, MatAutocompleteTrigger, MatInput, MatFormField],
 })
 export class DynamicModal<T> implements OnInit {
-  @Input() mode: 'create' | 'update' = 'create';
-  @Input() initialData?: Partial<T>;
-  @Input() titleCreate!: string;
-  @Input() titleUpdate!: string;
-  @Input() submitLabelCreate: string = 'Создать';
-  @Input() submitLabelUpdate: string = 'Сохранить';
-  @Input() formFieldSchema: FormFieldConfig[] = [];
-
   @Output() submitted = new EventEmitter<T>();
 
+  private fb = inject(FormBuilder);
+  private authorSearch$ = new Subject<string>();
+  private folderSearch = new Subject<string>();
+  displayAuthor = (a: any) => a ? `${a.first_name} ${a.last_name}` : '';
+
+  displayFolder = (f: any) => f ? f.title : '';
+  authors: any[] = [];
+  filteredAuthors: any[] = [];
+
+  folders: any[] = [];
+  filteredFolders: any[] = [];
+  http = inject(HttpClient);
+
   form!: FormGroup;
+authorOpen  = false;
+folderOpen  = false;
 
-  constructor(public modal: NgbActiveModal, private fb: FormBuilder) {}
+onAuthorInput(e: Event) {
+  const q = (e.target as HTMLInputElement).value.toLowerCase();
+  this.filteredAuthors = this.authors.filter(a =>
+    `${a.first_name} ${a.last_name}`.toLowerCase().includes(q));
+}
 
-  ngOnInit() {
+onFolderInput(e: Event) {
+  const q = (e.target as HTMLInputElement).value.toLowerCase();
+  this.filteredFolders = this.folders.filter(f =>
+    f.title.toLowerCase().includes(q));
+}
+
+selectAuthor(a: any) {
+  this.form.get('author')!.setValue(a);     // кладём объект
+  this.authorOpen = false;
+}
+
+selectFolder(f: any) {
+  this.form.get('folder')!.setValue(f);
+  this.folderOpen = false;
+}
+
+/* закрываем выпадашку по blur — через setTimeout,
+   чтобы mousedown успел отработать */
+closeDropdownLater(which: 'author' | 'folder') {
+  setTimeout(() => {
+    if (which === 'author')  this.authorOpen = false;
+    else                     this.folderOpen = false;
+  }, 150);
+}
+  constructor(
+    public dialogRef: MatDialogRef<DynamicModal<T>>,
+    @Inject(MAT_DIALOG_DATA)
+    public data: {
+      mode: 'create' | 'update';
+      formFieldSchema: FormFieldConfig[];
+      initialData?: Partial<T>;
+      titleCreate: string;
+      titleUpdate: string;
+      submitLabelCreate: string;
+      submitLabelUpdate: string;
+    }
+  ) {}
+
+  async ngOnInit() {
     this.buildForm();
+
+    this.authors = await firstValueFrom(
+      this.http.get<any[]>(environment.apiUrl + '/documents/authors/')
+    );
+    this.folders = await firstValueFrom(
+      this.http.get<any[]>(environment.apiUrl + '/folders/')
+    );
+
+    this.filteredAuthors = this.authors;
+    this.filteredFolders = this.folders;
+
+    this.form.get('author')!.valueChanges.subscribe(val => {
+      const q = (val || '').toString().toLowerCase();
+      this.filteredAuthors = this.authors.filter(a =>
+        `${a.first_name} ${a.last_name}`.toLowerCase().includes(q)
+      );
+    });
+
+    this.form.get('folder')!.valueChanges.subscribe(val => {
+      const q = (val || '').toString().toLowerCase();
+      this.filteredFolders = this.folders.filter(f =>
+        f.title.toLowerCase().includes(q)
+      );
+    });
   }
 
   private buildForm() {
     const group: { [key: string]: any } = {};
 
-    for (let field of this.formFieldSchema) {
+    for (let field of this.data.formFieldSchema) {
       let value: any = null;
-      if (this.initialData && (this.initialData as any)[field.key] !== undefined) {
-        value = (this.initialData as any)[field.key];
+      if (this.data.initialData && (this.data.initialData as any)[field.key] !== undefined) {
+        value = (this.data.initialData as any)[field.key];
       } else if (field.default !== undefined) {
         value = field.default;
       } else {
@@ -77,19 +155,19 @@ export class DynamicModal<T> implements OnInit {
   }
 
   get isCreate(): boolean {
-    return this.mode === 'create';
+    return this.data.mode === 'create';
   }
 
   onSubmit() {
     if (this.form.valid) {
       const result = this.form.value as T;
-      this.modal.close(result);
+      this.dialogRef.close(result);
       this.submitted.emit(result);
     }
   }
 
   onCancel() {
-    this.modal.dismiss();
+    this.dialogRef.close();
   }
 
   onFileChange(event: any, key: string) {

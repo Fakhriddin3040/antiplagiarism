@@ -14,6 +14,21 @@ export const DocumentModalConfig: FormFieldConfig[] = [
     ]
   },
   {
+    key: 'author',
+    type: 'author-search',
+    label: 'Автор документа',
+    required: true,
+    options: [
+      {"value": 13, "label": "Иванов Иван Иванович"},
+    ]
+  },
+  {
+    key: 'folder',
+    type: 'folder-search',
+    label: 'Папка документа',
+    required: true,
+  },
+  {
     key: 'description',
     type: 'textarea',
     label: 'Описание документа',
@@ -29,19 +44,4 @@ export const DocumentModalConfig: FormFieldConfig[] = [
     label: 'Файл документа',
     required: true,
   },
-  {
-    key: 'authorId',
-    type: 'select',
-    label: 'Автор документа',
-    required: true,
-    options: [
-      {"value": 13, "label": "Иванов Иван Иванович"},
-    ]
-  },
-  {
-    key: 'folderId',
-    type: 'select',
-    label: 'Папка документа',
-    required: true,
-  }
 ]

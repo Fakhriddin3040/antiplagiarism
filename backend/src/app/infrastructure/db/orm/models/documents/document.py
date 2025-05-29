@@ -37,10 +37,10 @@ class Document(SQLAlchemyBaseModel, ChronoModelMixin, AuditableModelMixin):
     is_indexed: Mapped[bool] = mapped_column(default=False, nullable=True)
     checked_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
     file_id: Mapped[ID_T] = mapped_column(
-        ForeignKey(DatabaseTables.FILES.as_foreign_key), nullable=False
+        ForeignKey(DatabaseTables.FILES.as_foreign_key, ondelete='cascade'), nullable=False
     )
     folder_id: Mapped[ID_T] = mapped_column(
-        ForeignKey(DatabaseTables.FOLDERS.as_foreign_key), nullable=False, index=True
+        ForeignKey(DatabaseTables.FOLDERS.as_foreign_key, ondelete='cascade'), nullable=False, index=True
     )
     file: Mapped[File] = relationship("File", lazy="noload")
     folder: Mapped[Folder] = relationship("Folder", lazy="noload")

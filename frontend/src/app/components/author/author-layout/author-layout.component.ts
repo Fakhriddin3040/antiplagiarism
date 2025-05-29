@@ -1,25 +1,24 @@
-import {AngularSvgIconModule, SvgIconComponent, SvgIconRegistryService} from 'angular-svg-icon';
 import {Component, inject, OnInit} from '@angular/core';
-import {Document} from '../../core/models/document.interface';
-import {DocumentService} from '../../core/services/document.service';
-import {DynamicLayoutComponent} from '../../dynamic-layout/dynamic-layout.component';
-import {ColumnConfig} from '../../core/configs/dynamic-layout-column.config';
-import {DocumentDlcConfig} from '../../core/constants/dynamic-layout-column/document.dlc.config';
-import {DocumentModalService} from '../../core/services/modal-services/document-modal.service';
+import {DynamicLayoutComponent} from '../../../dynamic-layout/dynamic-layout.component';
+import {DocumentService} from '../../../core/services/document.service';
+import {DocumentModalService} from '../../../core/services/modal-services/document-modal.service';
+import {Document} from '../../../core/models/document.interface';
+import {ColumnConfig} from '../../../core/configs/dynamic-layout-column.config';
+import {DocumentDlcConfig} from '../../../core/constants/dynamic-layout-column/document.dlc.config';
+import {AuthorService} from '../../../author.service';
+import {AuthorModalService} from '../../../author/author-modal/author-modal.component';
 
 @Component({
-  selector: 'app-document-layout',
-  standalone: true,
+  selector: 'app-author-layout',
   imports: [
-    DynamicLayoutComponent,
-    AngularSvgIconModule,
+    DynamicLayoutComponent
   ],
-  templateUrl: './document-layout.component.html',
-  styleUrl: './document-layout.component.scss'
+  templateUrl: './author-layout.component.html',
+  styleUrl: './author-layout.component.scss'
 })
-export class DocumentLayoutComponent implements OnInit {
-  documentService = inject(DocumentService);
-  documentModalService = inject(DocumentModalService);
+export class AuthorLayoutComponent implements OnInit {
+  authorService = inject(AuthorService);
+  documentModalService = inject(AuthorModalService);
 
   data!: Document[];
   columnConfigs: ColumnConfig[] = DocumentDlcConfig;

@@ -20,7 +20,7 @@ class FolderListSchema(ChronoSchemaMixin, AuditableSchemaMixin):
 
 
 class FolderCreateSchema(AbstractPydanticSchema):
-    title: str = Field(max_length=20, min_length=1)
+    title: str = Field(max_length=60, min_length=1)
     description: Optional[str]
     parent_id: Optional[ID_T] = None
 

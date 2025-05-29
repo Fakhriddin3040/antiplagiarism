@@ -1,16 +1,15 @@
 import {Component} from '@angular/core';
-import {FormGroup} from '@angular/forms';
 import {FolderSidebarComponent} from '../folder-sidebar/folder-sidebar.component';
-import {DocumentLayoutComponent} from '../document-layout/document-layout.component';
 import {RouterOutlet} from '@angular/router';
+import {NavbarComponent} from '../navbar/navbar.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [
     FolderSidebarComponent,
-    DocumentLayoutComponent,
-    RouterOutlet
+    RouterOutlet,
+    NavbarComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'

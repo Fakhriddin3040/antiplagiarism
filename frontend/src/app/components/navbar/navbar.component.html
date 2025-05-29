@@ -1,0 +1,17 @@
+<nav class="navbar">
+  <!-- brand logo & title -->
+  <a routerLink="/" class="brand">
+    <img ngSrc="logo.png" alt="Logo" class="logo" height="225" width="224"/>
+    <span class="brand-name">Antiplagiarism</span>
+  </a>
+
+  <!-- Burger icon (mobile) -->
+  <button class="burger" (click)="open = !open" aria-label="Toggle navigation">☰</button>
+
+  <!-- Nav links -->
+  <ul [class.open]="open">
+    <li><a routerLink="/documents" routerLinkActive="active">Документы</a></li>
+    <li><a routerLink="/authors"   routerLinkActive="active">Авторы</a></li>
+    <li><a routerLink="/folders"   routerLinkActive="active">Папки</a></li>
+  </ul>
+</nav>

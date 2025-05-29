@@ -9,7 +9,7 @@ export const DocumentDlcConfig: ColumnConfig[] = [
   },
   {
     key: 'checked',
-    label: 'Проверен',
+    label: 'Индексирован',
     type: 'status',
     width: '150px',
   },

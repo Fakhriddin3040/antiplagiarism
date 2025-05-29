@@ -16,7 +16,7 @@ export class DocumentModalService extends DynamicModalAbstractService<DocumentRe
     modalRef.componentInstance.submitted.subscribe((value: DocumentRequest) => callback(value))
   }
 
-  override openForUpdate(callback: (value: DocumentRequest) => void, initialData: Partial<DocumentRequest>): void {
+  override openForUpdate(callback: (value: DocumentRequest) => void, initialData?: Partial<DocumentRequest>): void {
     const modalRef = this.openModal(
       'Редактировать документ',
       'update',

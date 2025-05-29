@@ -7,9 +7,22 @@ export interface Author extends ChronoInterface, BaseModelInterface {
   description?: string;
 }
 
+
+export interface AuthorRequest {
+  first_name?: string;
+  last_name?: string;
+  description?: string;
+}
+
 export interface AuthorCreate {
   firstName: string;
   lastName: string;
+  description?: string;
+}
+
+export interface AuthorApiRequest {
+  first_name?: string;
+  last_name?: string;
   description?: string;
 }
 
@@ -21,13 +34,6 @@ export interface AuthorUpdate {
 }
 
 export interface AuthorApiResponse extends ChronoApiInterface, BaseModelInterface {
-  first_name: string;
-  last_name: string;
-  description?: string;
-}
-
-
-export interface AuthorApiRequest {
   first_name: string;
   last_name: string;
   description?: string;
