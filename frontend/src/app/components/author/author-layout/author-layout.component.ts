@@ -1,12 +1,10 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {DynamicLayoutComponent} from '../../../dynamic-layout/dynamic-layout.component';
-import {DocumentService} from '../../../core/services/document.service';
-import {DocumentModalService} from '../../../core/services/modal-services/document-modal.service';
-import {Document} from '../../../core/models/document.interface';
 import {ColumnConfig} from '../../../core/configs/dynamic-layout-column.config';
-import {DocumentDlcConfig} from '../../../core/constants/dynamic-layout-column/document.dlc.config';
 import {AuthorService} from '../../../author.service';
 import {AuthorModalService} from '../../../author/author-modal/author-modal.component';
+import {Author} from '../../../core/models/author.interface';
+import {AuthorModalConfigs} from '../../../core/configs/dynamic-modal-configs/author-modal-configs';
 
 @Component({
   selector: 'app-author-layout',
@@ -18,17 +16,17 @@ import {AuthorModalService} from '../../../author/author-modal/author-modal.comp
 })
 export class AuthorLayoutComponent implements OnInit {
   authorService = inject(AuthorService);
-  documentModalService = inject(AuthorModalService);
+  authorModalService = inject(AuthorModalService);
 
-  data!: Document[];
-  columnConfigs: ColumnConfig[] = DocumentDlcConfig;
+  data!: Author[];
+  columnConfigs: ColumnConfig[] = AuthorModalConfigs;
 
 
   ngOnInit() {
-    this.setDocuments();
+    this.setAuthors();
   }
 
-  set _data(docs: Document[]) {
+  set _data(docs: Author[]) {
     this.data = docs;
   }
 
@@ -36,15 +34,15 @@ export class AuthorLayoutComponent implements OnInit {
     return this.data;
   }
 
-  setDocuments() {
-    return this.documentService.getAllDocuments()
+  setAuthors() {
+    return this.authorService.getAllAuthors()
       .subscribe({
         next: (docs) => this._data = docs,
         error: (error) => console.log(`Error occurred: ${error.message}`)
       })
   }
 
-  onRowSelect(event: { row: Document, selected: boolean }) {
+  onRowSelect(event: { row: Author, selected: boolean }) {
     console.log('Row selected:', event.row, 'Selected:', event.selected);
   }
 
@@ -53,8 +51,8 @@ export class AuthorLayoutComponent implements OnInit {
   }
 
   onCreate() {
-    this.documentModalService.openForCreate((docData) => {
-      this.documentService.create(docData)
+    this.authorModalService.openForCreate((docData) => {
+      this.authorService.create(docData)
         .subscribe({
           next: (doc) => this._data.push(doc),
           error: (error) => console.log(`Error occurred: ${error.message}`)
@@ -62,19 +60,19 @@ export class AuthorLayoutComponent implements OnInit {
     })
   }
 
-  onUpdate(row: Document) {
+  onUpdate(row: Author) {
     console.log(`Update document with id ${row.id}`);
-    this.documentModalService.openForUpdate(
+    this.authorModalService.openForUpdate(
       (docData) => {}
     );
   }
 
-  onDelete(row: Document) {
+  onDelete(row: Author) {
     console.log(`Delete document with id ${row.id}`);
-    this.documentService.delete(row.id)
+    this.authorService.delete(row.id)
       .subscribe({
         next: () => {
-          this.setDocuments();
+          this.setAuthors();
           console.log(`Document with id ${row.id} deleted successfully.`);
         },
         error: (error) => alert(`Error deleting document: ${error.message}`)

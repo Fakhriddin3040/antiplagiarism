@@ -55,10 +55,10 @@ FROM document_chunks AS self
          JOIN LATERAL (
     SELECT *
     FROM document_chunks AS other
-    WHERE document_id != '98c68a9d-0f90-4ac9-bee4-5a930f49ce64'
+    WHERE document_id != '273acd84-d9c7-49de-a77a-e56a2a8287ad"'
     ORDER BY self.vector <=> other.vector
     ) AS other ON TRUE
-WHERE self.document_id = '98c68a9d-0f90-4ac9-bee4-5a930f49ce64'  order by similarity DESC
+WHERE self.document_id = '273acd84-d9c7-49de-a77a-e56a2a8287ad"'  order by similarity DESC
 
 SELECT * FROM documents;
 
@@ -106,3 +106,5 @@ ON p.matched_chunk_id = td.id where similarity = 1;
 
 
 SELECT count(*) from document_chunks where document_id = '39988c40-1981-46f1-ac4d-14d86453797d';
+
+select * from public.plagiarism_checks where id = '273acd84-d9c7-49de-a77a-e56a2a8287ad'

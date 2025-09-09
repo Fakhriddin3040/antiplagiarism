@@ -5,20 +5,20 @@ class ApiExceptionStatusCodes(IntEnum):
     # AUTH
     INVALID_LOGIN_CREDENTIALS = auto()  # 1
     INVALID_ACCESS_TOKEN = auto()  # 2
-    ACCESS_TOKEN_REQUIRED = auto()
-    INVALID_PASSWORD = auto()  # 3
+    ACCESS_TOKEN_REQUIRED = auto() # 3
+    INVALID_PASSWORD = auto()  # 4
 
     # VALIDATION
-    UNIQUE_CONSTRAINT = auto()  # 4
+    UNIQUE_CONSTRAINT = auto()  # 5
 
     # SPECIAL_USE_CASES
-    DETAILED_ERROR = auto()  # 5
+    DETAILED_ERROR = auto()  # 6
 
     # FILES SPECIFIED
-    FILE_SIZE_LIMIT_EXCEEDED = auto()
-    FILE_NOT_FOUND_IN_FS = auto()
-    UNSUPPORTED_FILE_FORMAT = auto()
-    INVALID_FILE_FORMAT = auto()
+    FILE_SIZE_LIMIT_EXCEEDED = auto() # 7
+    FILE_NOT_FOUND_IN_FS = auto() # 7
+    UNSUPPORTED_FILE_FORMAT = auto() # 8
+    INVALID_FILE_FORMAT = auto() # 9
 
     # ===== COMMON =====
     OBJECT_NOT_FOUND = auto()

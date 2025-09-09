@@ -9,8 +9,8 @@ export interface Author extends ChronoInterface, BaseModelInterface {
 
 
 export interface AuthorRequest {
-  first_name?: string;
-  last_name?: string;
+  firstName?: string;
+  lastName?: string;
   description?: string;
 }
 

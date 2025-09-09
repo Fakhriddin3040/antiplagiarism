@@ -44,6 +44,10 @@ bootstrapApplication(AppComponent, {
           {
             path: 'documents',
             loadComponent: () => import('./app/components/document-layout/document-layout.component').then(m => m.DocumentLayoutComponent)
+          },
+          {
+            path: 'authors',
+            loadComponent: () => import('./app/components/author/author-layout/author-layout.component').then(m => m.AuthorLayoutComponent)
           }
         ]
       },

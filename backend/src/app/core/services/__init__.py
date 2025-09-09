@@ -1,4 +1,4 @@
-from .antiplagiarism import TextTokenizer, TextIndexer, AntiplagiarismService
+from .antiplagiarism import TextTokenizer, TextIndexer
 
 
-__all__ = ["TextTokenizer", "TextIndexer", "AntiplagiarismService"]
+__all__ = ["TextTokenizer", "TextIndexer"]

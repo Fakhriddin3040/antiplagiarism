@@ -50,7 +50,7 @@ MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
 class AllowedMimeTypeEnum(StrEnum):
     PDF = "application/pdf"
     DOC = "application/msword"
-    DOCX = "application/vnd.openxmlformats.wordprocessingml.document"
+    DOCX = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     RTF = "application/rtf"
     TXT = "text/plain"
     MD = "text/markdown"

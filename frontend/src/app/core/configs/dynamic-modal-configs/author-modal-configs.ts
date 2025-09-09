@@ -5,7 +5,7 @@ export const AuthorModalConfigs: FormFieldConfig[] = [
   {
     key: 'firstName',
     type: 'text',
-    label: 'Имя автора',
+    label: 'Имя',
     required: true,
     validators: [
       Validators.minLength(2),
@@ -15,7 +15,7 @@ export const AuthorModalConfigs: FormFieldConfig[] = [
   {
     key: 'lastName',
     type: 'text',
-    label: 'Фамилия автора',
+    label: 'Фамилия',
     required: true,
     validators: [
       Validators.minLength(2),
@@ -25,7 +25,7 @@ export const AuthorModalConfigs: FormFieldConfig[] = [
   {
     key: 'description',
     type: 'text',
-    label: 'Описание автора',
+    label: 'Описание',
     required: false,
   }
 ]
