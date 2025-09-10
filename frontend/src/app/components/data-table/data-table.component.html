@@ -1,0 +1,145 @@
+<!-- ОБЕРТКА -->
+<div class="table-wrapper">
+  <!-- Поиск + фильтры -->
+  <div class="table-toolbar">
+    <input
+      class="input"
+      [value]="search()"
+      (input)="onSearch($any($event.target).value)"
+      placeholder="Search..."
+    />
+
+    @if (filters().length) {
+      <div class="filters">
+        @for (f of filters(); track f.field) {
+          @switch (f.type) {
+            @case ('text') {
+              <input
+                class="input"
+                [placeholder]="f.placeholder || f.label"
+                (input)="onFilterChange(f, $any($event.target).value)"
+              />
+            }
+            @case ('number') {
+              <input
+                type="number"
+                class="input"
+                [placeholder]="f.placeholder || f.label"
+                (input)="onFilterChange(f, $any($event.target).value)"
+              />
+            }
+            @case ('bool') {
+              <label class="bool-filter">
+                <input type="checkbox"
+                       (change)="onFilterChange(f, $any($event.target).checked)" />
+                <span>{{ f.label }}</span>
+              </label>
+            }
+            @case ('select') {
+              <select class="input"
+                      (change)="onFilterChange(f, $any($event.target).value)">
+                <option value="">{{ f.placeholder || ('— ' + f.label + ' —') }}</option>
+
+                @if (f.options && Array.isArray(f.options)) {
+                  @for (opt of (f.options); track opt.value) {
+                    <option [value]="opt.value">{{ opt.label }}</option>
+                  }
+                } @else {
+                  @if (f.options) {
+                    @for (opt of ((f.options() | async) ?? []); track opt?.value) {
+                      <option [value]="opt.value">{{ opt.label }}</option>
+                    }
+                  }
+                }
+              </select>
+            }
+            @case ('date') {
+              <input
+                type="date"
+                class="input"
+                [placeholder]="f.placeholder || f.label"
+                (change)="onFilterChange(f, $any($event.target).value)"
+              />
+            }
+            @case ('dateRange') {
+              <input type="date" class="input range-start"
+                     [placeholder]="f.placeholder || (f.label + ' от')"
+                     (change)="onFilterRangeChange(f, 'start', $any($event.target).value)" />
+              <input type="date" class="input range-end"
+                     [placeholder]="f.placeholder || (f.label + ' до')"
+                     (change)="onFilterRangeChange(f, 'end', $any($event.target).value)" />
+            }
+          }
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Таблица -->
+  <table mat-table class="table-container" [dataSource]="items()" matSort (matSortChange)="onSort($event)">
+
+    @if (bulkActions().length) {
+      <ng-container matColumnDef="__select">
+        <th mat-header-cell *matHeaderCellDef class="header-cell checkbox-cell">
+          <input type="checkbox" [checked]="isAllSelected()" (change)="masterToggle()" />
+        </th>
+        <td mat-cell *matCellDef="let row" class="cell checkbox-cell">
+          <input type="checkbox" [checked]="selection.isSelected(row)" (change)="toggle(row)" />
+        </td>
+      </ng-container>
+    }
+
+    @for (c of columns(); track toKey(c)) {
+      <ng-container [matColumnDef]="toKey(c)">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          [disabled]="!c.sortable"
+          class="header-cell">
+          {{ c.header }}
+        </th>
+
+        <td mat-cell *matCellDef="let row" class="cell">
+          @if (!c.cellTemplate) {
+            {{ c.accessor ? c.accessor!(row) : $any(row)[toKey(c)] }}
+          } @else {
+            <ng-container
+              [ngTemplateOutlet]="c.cellTemplate"
+              [ngTemplateOutletContext]="{$implicit: row}">
+            </ng-container>
+          }
+        </td>
+      </ng-container>
+    }
+
+    @if (rowActions().length) {
+      <ng-container matColumnDef="__actions">
+        <th mat-header-cell *matHeaderCellDef class="header-cell actions-cell">Actions</th>
+        <td mat-cell *matCellDef="let row" class="cell actions-cell">
+          <div class="row-actions">
+            @for (a of rowActions(); track a.id) {
+              <button class="menu-trigger" [disabled]="!isEnabled(a, row)" (click)="run(a, row)">
+                {{ a.label }}
+              </button>
+            }
+          </div>
+        </td>
+      </ng-container>
+    }
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns()" class="header-row"></tr>
+    <tr mat-row
+        *matRowDef="let row; let i = index; columns: displayedColumns();"
+        class="dynamic-row"
+        [class.even-row]="i % 2 === 1"
+        [class.selected]="selection.isSelected(row)">
+    </tr>
+  </table>
+
+  @if (loading()) {
+    <div class="loader-backdrop">
+      <div class="loader">Loading...</div>
+    </div>
+  }
+</div>

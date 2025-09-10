@@ -9,7 +9,6 @@ import {provideRouter} from '@angular/router';
 import {importProvidersFrom, provideZoneChangeDetection} from '@angular/core';
 import {HTTP_INTERCEPTORS, HttpClientModule, provideHttpClient} from '@angular/common/http';
 import {NgbModalModule} from '@ng-bootstrap/ng-bootstrap';
-import {NavigationComponent} from './app/components/navigation/navigation.component';
 import {AuthInterceptor} from './app/interceptors/auth/auth.interceptor';
 import {DashboardComponent} from './app/components/dashboard/dashboard.component';
 import {provideAngularSvgIcon} from 'angular-svg-icon';
@@ -48,17 +47,13 @@ bootstrapApplication(AppComponent, {
           {
             path: 'authors',
             loadComponent: () => import('./app/components/author/author-layout/author-layout.component').then(m => m.AuthorLayoutComponent)
+          },
+          {
+            path: 'products',
+            loadComponent: () => import('./app/components/data-table/implementations/demo/product-data-table-demo').then(m => m.DemoProductsComponent)
           }
         ]
       },
-      {
-        path: 'navbar',
-        component: NavigationComponent
-      },
-      // {
-      //   path: 'author',
-      //   component: AuthorComponent
-      // },
     ]),
       {
         provide: HTTP_INTERCEPTORS,
