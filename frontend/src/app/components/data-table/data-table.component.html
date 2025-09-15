@@ -1,7 +1,9 @@
 <!-- ОБЕРТКА -->
-<div class="table-wrapper">
+<div class="table-wrapper" (click)="$event.stopPropagation()">
+
   <!-- Поиск + фильтры -->
   <div class="table-toolbar">
+    <!-- Поиск — остаётся снаружи -->
     <input
       class="input"
       [value]="search()"
@@ -9,133 +11,282 @@
       placeholder="Search..."
     />
 
+    <!-- Дропдаун с фильтрами -->
     @if (filters().length) {
-      <div class="filters">
-        @for (f of filters(); track f.field) {
-          @switch (f.type) {
-            @case ('text') {
-              <input
-                class="input"
-                [placeholder]="f.placeholder || f.label"
-                (input)="onFilterChange(f, $any($event.target).value)"
-              />
-            }
-            @case ('number') {
-              <input
-                type="number"
-                class="input"
-                [placeholder]="f.placeholder || f.label"
-                (input)="onFilterChange(f, $any($event.target).value)"
-              />
-            }
-            @case ('bool') {
-              <label class="bool-filter">
-                <input type="checkbox"
-                       (change)="onFilterChange(f, $any($event.target).checked)" />
-                <span>{{ f.label }}</span>
-              </label>
-            }
-            @case ('select') {
-              <select class="input"
-                      (change)="onFilterChange(f, $any($event.target).value)">
-                <option value="">{{ f.placeholder || ('— ' + f.label + ' —') }}</option>
+      <!-- toolbar кусок -->
+      <div class="filters-dropdown" (click)="$event.stopPropagation()">
+        <button
+          type="button"
+          class="dropdown-trigger"
+          (click)="toggleFilters()"
+          [attr.aria-expanded]="filtersOpen()"
+          aria-haspopup="dialog"
+          aria-controls="filters-panel"
+        >
+          <span>Фильтры</span>
+          @if (activeFiltersCount()) {
+            <span class="badge">{{ activeFiltersCount() }}</span>
+          }
+          <svg class="chevron" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
 
-                @if (f.options && Array.isArray(f.options)) {
-                  @for (opt of (f.options); track opt.value) {
-                    <option [value]="opt.value">{{ opt.label }}</option>
+        @if (filtersOpen()) {
+          <div
+            id="filters-panel"
+            class="dropdown-list"
+            style="top: calc(100% + 8px); left: 0; min-width: 360px;"
+          >
+            <div class="filters">
+              @for (f of filters(); track f.field) {
+                @switch (f.type) {
+                  @case ('text') {
+                    <div class="field">
+                      <label class="field-label">{{ f.label }}</label>
+                      <input
+                        class="input"
+                        [placeholder]="f.placeholder || ''"
+                        [value]="getDraftVal(f)"
+                        (input)="onFilterInput(f, $any($event.target).value)"
+                      />
+                    </div>
                   }
-                } @else {
-                  @if (f.options) {
-                    @for (opt of ((f.options() | async) ?? []); track opt?.value) {
-                      <option [value]="opt.value">{{ opt.label }}</option>
-                    }
+                  @case ('number') {
+                    <div class="field">
+                      <label class="field-label">{{ f.label }}</label>
+                      <input
+                        type="number"
+                        class="input"
+                        [placeholder]="f.placeholder || ''"
+                        [value]="getDraftVal(f)"
+                        (input)="onFilterInput(f, $any($event.target).value)"
+                      />
+                    </div>
+                  }
+                  @case ('bool') {
+                    <label class="field field-checkbox">
+                      <span class="field-label">{{ f.label }}</span>
+                      <label class="bool-filter">
+                        <input type="checkbox"
+                               [checked]="getDraftVal(f) === true"
+                               (change)="onFilterInput(f, $any($event.target).checked)" />
+                        <span>Only active</span>
+                      </label>
+                    </label>
+                  }
+
+
+                  @case ('select') {
+                    <div class="field">
+                      <label class="field-label">{{ f.label }}</label>
+
+                      <!-- Всегда шлём ИД -->
+                      <app-smart-select
+                        [placeholder]="f.placeholder!"
+                        [load]="f.asyncOptions!"
+                        [labelOf]="f.labelOf!"
+                        [idOf]="f.idOf!"
+                        (selected)="onFilterInput(f, $event ? f.idOf!($event) : null)">
+                      </app-smart-select>
+                    </div>
+                  }
+                  @case ('date') {
+                    <div class="field">
+                      <label class="field-label">{{ f.label }}</label>
+                      <input
+                        type="date"
+                        class="input"
+                        [value]="getDraftVal(f) ?? ''"
+                        (change)="onFilterInput(f, $any($event.target).value)"
+                      />
+                    </div>
+                  }
+                  @case ('dateRange') {
+                    <div class="field">
+                      <label class="field-label">{{ f.label }}: c</label>
+                      <input type="date" class="input"
+                             [value]="getRangeVal(f,'start') ?? ''"
+                             (change)="onFilterRangeInput(f,'start',$any($event.target).value)" />
+                    </div>
+                    <div class="field">
+                      <label class="field-label">{{ f.label }}: по</label>
+                      <input type="date" class="input"
+                             [value]="getRangeVal(f,'end') ?? ''"
+                             (change)="onFilterRangeInput(f,'end',$any($event.target).value)" />
+                    </div>
                   }
                 }
-              </select>
-            }
-            @case ('date') {
-              <input
-                type="date"
-                class="input"
-                [placeholder]="f.placeholder || f.label"
-                (change)="onFilterChange(f, $any($event.target).value)"
-              />
-            }
-            @case ('dateRange') {
-              <input type="date" class="input range-start"
-                     [placeholder]="f.placeholder || (f.label + ' от')"
-                     (change)="onFilterRangeChange(f, 'start', $any($event.target).value)" />
-              <input type="date" class="input range-end"
-                     [placeholder]="f.placeholder || (f.label + ' до')"
-                     (change)="onFilterRangeChange(f, 'end', $any($event.target).value)" />
-            }
-          }
+              }
+            </div>
+
+            <div class="filters-footer">
+              <button type="button" class="menu-trigger" (click)="resetFilters(false, true)">Сбросить</button>
+              <button type="button" class="menu-trigger apply-btn" (click)="applyFilters(true)">Применить</button>
+            </div>
+          </div>
         }
       </div>
     }
+    <!-- spacer чтобы увести actions вправо -->
+    <div class="toolbar-spacer"></div>
+
+    <!-- spacer чтобы увести actions вправо -->
+    <div class="toolbar-spacer"></div>
+
+    <!-- Actions справа -->
+    <div class="toolbar-actions">
+      <!-- Первый toolbar action — как большая кнопка -->
+      @if (firstToolbarAction()) {
+        <button
+          class="btn btn-primary main-action"
+          type="button"
+          [disabled]="isToolbarDisabled(firstToolbarAction()!)"
+          (click)="onToolbarClick(firstToolbarAction()!)">
+          {{ firstToolbarAction()!.label }}
+        </button>
+      }
+
+      <!-- Остальные actions -->
+      @if (otherToolbarActions().length) {
+        @for (ta of otherToolbarActions(); track ta.id) {
+          <button
+            class="btn btn-ghost"
+            type="button"
+            [disabled]="isToolbarDisabled(ta)"
+            (click)="onToolbarClick(ta)">
+            {{ ta.label }}
+          </button>
+        }
+      }
+    </div>
   </div>
 
-  <!-- Таблица -->
-  <table mat-table class="table-container" [dataSource]="items()" matSort (matSortChange)="onSort($event)">
+  <!-- Скролл-зона + Таблица -->
+  <div class="scroll-area">
+    <table mat-table class="table-container" [dataSource]="items()" matSort (matSortChange)="onSort($event)">
 
-    @if (bulkActions().length) {
-      <ng-container matColumnDef="__select">
-        <th mat-header-cell *matHeaderCellDef class="header-cell checkbox-cell">
-          <input type="checkbox" [checked]="isAllSelected()" (change)="masterToggle()" />
-        </th>
-        <td mat-cell *matCellDef="let row" class="cell checkbox-cell">
-          <input type="checkbox" [checked]="selection.isSelected(row)" (change)="toggle(row)" />
-        </td>
-      </ng-container>
-    }
+      @if (bulkActions().length) {
+        <ng-container matColumnDef="__select">
+          <th mat-header-cell *matHeaderCellDef class="header-cell checkbox-cell">
+            <input type="checkbox" [checked]="isAllSelected()" (change)="masterToggle()" />
+          </th>
+          <td mat-cell *matCellDef="let row" class="cell checkbox-cell">
+            <input type="checkbox" [checked]="selection.isSelected(row)" (change)="toggle(row)" />
+          </td>
+        </ng-container>
+      }
 
-    @for (c of columns(); track toKey(c)) {
-      <ng-container [matColumnDef]="toKey(c)">
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header
-          [disabled]="!c.sortable"
-          class="header-cell">
-          {{ c.header }}
-        </th>
+      @for (c of columns(); track toKey(c)) {
+        <ng-container [matColumnDef]="toKey(c)">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header
+            [disabled]="!c.sortable"
+            class="header-cell">
+            {{ c.header }}
+          </th>
 
-        <td mat-cell *matCellDef="let row" class="cell">
-          @if (!c.cellTemplate) {
-            {{ c.accessor ? c.accessor!(row) : $any(row)[toKey(c)] }}
-          } @else {
-            <ng-container
-              [ngTemplateOutlet]="c.cellTemplate"
-              [ngTemplateOutletContext]="{$implicit: row}">
-            </ng-container>
-          }
-        </td>
-      </ng-container>
-    }
-
-    @if (rowActions().length) {
-      <ng-container matColumnDef="__actions">
-        <th mat-header-cell *matHeaderCellDef class="header-cell actions-cell">Actions</th>
-        <td mat-cell *matCellDef="let row" class="cell actions-cell">
-          <div class="row-actions">
-            @for (a of rowActions(); track a.id) {
-              <button class="menu-trigger" [disabled]="!isEnabled(a, row)" (click)="run(a, row)">
-                {{ a.label }}
-              </button>
+          <td mat-cell *matCellDef="let row" class="cell">
+            @if (!c.cellTemplate) {
+              {{ c.accessor ? c.accessor!(row) : $any(row)[toKey(c)] }}
+            } @else {
+              <ng-container
+                [ngTemplateOutlet]="c.cellTemplate"
+                [ngTemplateOutletContext]="{$implicit: row}">
+              </ng-container>
             }
-          </div>
-        </td>
-      </ng-container>
-    }
+          </td>
+        </ng-container>
+      }
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns()" class="header-row"></tr>
-    <tr mat-row
-        *matRowDef="let row; let i = index; columns: displayedColumns();"
-        class="dynamic-row"
-        [class.even-row]="i % 2 === 1"
-        [class.selected]="selection.isSelected(row)">
-    </tr>
-  </table>
+      <!-- …остальные колонки -->
+
+      <!-- Колонка действий: показываем, если есть row ИЛИ bulk действия -->
+      @if (rowActions().length || bulkActions().length) {
+        <ng-container matColumnDef="__actions">
+          <!-- Шапка: троеточие для BULK-действий -->
+          <th mat-header-cell *matHeaderCellDef class="header-cell actions-cell">
+            @if (bulkActions().length) {
+              <div class="actions-header">
+                <button
+                  type="button"
+                  class="kebab-trigger"
+                  aria-haspopup="menu"
+                  [attr.aria-expanded]="bulkMenuOpen()"
+                  (click)="toggleBulkMenu($event)"
+                  [disabled]="bulkActions()?.length === 0"
+                >
+                  <!-- three dots -->
+                  <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="5" cy="12" r="2"></circle>
+                    <circle cx="12" cy="12" r="2"></circle>
+                    <circle cx="19" cy="12" r="2"></circle>
+                  </svg>
+                </button>
+
+                @if (bulkMenuOpen()) {
+                  <div class="kebab-menu" (click)="$event.stopPropagation()">
+                    @for (a of bulkActions(); track a.id) {
+                      <button
+                        class="dropdown-item"
+                        [disabled]="!isEnabled(a)"
+                        (click)="run(a); closeMenus()"
+                      >
+                        {{ a.label }}
+                      </button>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          </th>
+
+          <!-- Ячейка строки: троеточие для ROW-действий -->
+          <td mat-cell *matCellDef="let row" class="cell actions-cell">
+            <div class="actions-cell-inner">
+              <button
+                type="button"
+                class="kebab-trigger"
+                aria-haspopup="menu"
+                [attr.aria-expanded]="rowMenuOpenedFor(row)"
+                (click)="toggleRowMenu(row, $event)"
+                [disabled]="rowActions()?.length === 0"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="5" cy="12" r="2"></circle>
+                  <circle cx="12" cy="12" r="2"></circle>
+                  <circle cx="19" cy="12" r="2"></circle>
+                </svg>
+              </button>
+
+              @if (rowMenuOpenedFor(row)) {
+                <div class="kebab-menu" (click)="$event.stopPropagation()">
+                  @for (a of rowActions(); track a.id) {
+                    <button
+                      class="dropdown-item"
+                      [disabled]="!isEnabled(a, row)"
+                      (click)="run(a, row); closeMenus()"
+                    >
+                      {{ a.label }}
+                    </button>
+                  }
+                </div>
+              }
+            </div>
+          </td>
+        </ng-container>
+      }
+      <tr mat-header-row *matHeaderRowDef="displayedColumns()" class="header-row"></tr>
+      <tr mat-row
+          *matRowDef="let row; let i = index; columns: displayedColumns();"
+          class="dynamic-row"
+          [class.even-row]="i % 2 === 1"
+          [class.selected]="selection.isSelected(row)">
+      </tr>
+    </table>
+  </div>
 
   @if (loading()) {
     <div class="loader-backdrop">

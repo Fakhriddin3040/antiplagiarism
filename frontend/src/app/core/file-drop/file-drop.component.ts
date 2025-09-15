@@ -1,102 +1,42 @@
-import {
-  Component,
-  forwardRef,
-  Input,
-  ChangeDetectionStrategy,
-  HostBinding,
-} from '@angular/core';
-import {
-  ControlValueAccessor,
-  NG_VALUE_ACCESSOR,
-} from '@angular/forms';
+// file-drop.component.ts
+import { Component, EventEmitter, Input, Output, signal, HostListener } from '@angular/core';
+import {DecimalPipe} from '@angular/common';
 
 @Component({
   selector: 'app-file-drop',
   standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => FileDropComponent),
-      multi: true,
-    },
+  templateUrl: 'file-drop.component.html',
+  imports: [
+    DecimalPipe
   ],
-  template: `
-    <div
-      class="drop-zone"
-      [class.dragover]="dragOver"
-      (dragover)="onDragOver($event)"
-      (dragleave)="dragOver = false"
-      (drop)="onDrop($event)"
-      (click)="fileInput.click()">
-
-      <ng-content></ng-content>
-      <input
-        type="file"
-        [accept]="accept"
-        hidden
-        #fileInput
-        (change)="onSelect($event)" />
-    </div>
-  `,
-  styles: [`
-    .drop-zone {
-      border: 2px dashed #90caf9;
-      padding: 1rem;
-      text-align: center;
-      cursor: pointer;
-      user-select: none;
-    }
-    .drop-zone.dragover { background: #e3f2fd; }
-    :host[disabled]      { opacity: .4; pointer-events: none; }
-  `],
+  styleUrl: 'file-drop.component.scss'
 })
-export class FileDropComponent implements ControlValueAccessor {
+export class FileDropComponent {
+  @Input() multiple = true;
+  @Input() accept?: string;
+  @Input() maxSizeMb = 50;
+  @Input() placeholder = 'Перетащи файлы сюда или нажми, чтобы выбрать';
 
-  @Input() accept = '*/*';
+  @Output() changed = new EventEmitter<File[]>();
 
-  dragOver = false;
-  private _disabled = false;
+  readonly drag = signal(false);
+  readonly files = signal<File[]>([]);
 
-  private onChange: (value: File | null) => void = () => {};
-  private onTouched: () => void = () => {};
+  hasFiles = () => this.files().length > 0;
 
-  onDragOver(e: DragEvent) {
-    if (this._disabled) return;
+  onFiles(list: FileList | null) {
+    if (!list) return;
+    const arr = Array.from(list).filter(f => f.size <= this.maxSizeMb * 1024 * 1024);
+    this.files.set(arr);
+    this.changed.emit(arr);
+  }
+
+  onDragOver(e: DragEvent){ e.preventDefault(); this.drag.set(true); }
+  onDragLeave(_e: DragEvent){ this.drag.set(false); }
+  onDrop(e: DragEvent){
     e.preventDefault();
-    this.dragOver = true;
-  }
-
-  onDrop(e: DragEvent) {
-    if (this._disabled) return;
-    e.preventDefault();
-    this.dragOver = false;
-    const file = e.dataTransfer?.files?.[0] ?? null;
-    this.emitFile(file);
-  }
-
-  onSelect(e: Event) {
-    if (this._disabled) return;
-    const file = (e.target as HTMLInputElement).files?.[0] ?? null;
-    this.emitFile(file);
-  }
-
-  writeValue(_: File | null): void {}
-
-  registerOnChange(fn: any): void {
-    this.onChange = fn;
-  }
-
-  registerOnTouched(fn: any): void {
-    this.onTouched = fn;
-  }
-
-  setDisabledState(disabled: boolean): void {
-    this._disabled = disabled;
-  }
-
-  private emitFile(file: File | null) {
-    this.onChange(file);
-    this.onTouched();
+    this.drag.set(false);
+    const fl = e.dataTransfer?.files ?? null;
+    this.onFiles(fl);
   }
 }

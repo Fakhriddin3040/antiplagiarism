@@ -1,1 +1,21 @@
-<p>file-drop works!</p>
+<div class="fd" [class.fd--drag]="drag()"
+     (click)="fileInput.click()"
+     (drop)="onDrop($event)" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)">
+  <div class="fd__text">
+    <ng-content></ng-content>
+    @if (!hasFiles()) { <span class="fd__hint">{{placeholder}}</span> }
+  </div>
+  <input type="file" #fileInput
+         [attr.accept]="accept || null"
+         [attr.multiple]="multiple ? '' : null"
+         (change)="onFiles($any($event.target).files)"
+         hidden />
+</div>
+
+@if (files().length) {
+  <ul class="fd__list">
+    @for (f of files(); track f.name) {
+      <li>{{f.name}} ({{ (f.size/1024/1024) | number: '1.0-2' }} MB)</li>
+    }
+  </ul>
+}

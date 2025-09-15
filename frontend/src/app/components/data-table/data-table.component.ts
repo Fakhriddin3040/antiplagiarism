@@ -1,201 +1,235 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, model, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  ElementRef, HostListener,
+  inject, input, model, signal,
+  Output, EventEmitter,              // ← добавлено
+} from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Router, ActivatedRoute } from '@angular/router';
-import { AsyncPipe, NgTemplateOutlet, NgIf, NgFor } from '@angular/common';
-import {ColumnDef, FilterDef, ActionDef, TableDataSource, Query, Page, SortDir} from './types/table';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
+import { ActionDef, ToolbarAction, ColumnDef, FilterDef, Page, Query, SortDir, TableDataSource } from './types/table'; // ← ToolbarAction добавлен
+import { SmartSelectComponent } from '../../smart-select/smart-select.component';
 
 @Component({
   selector: 'app-data-table',
   standalone: true,
-  imports: [MatTableModule, MatPaginatorModule, MatSortModule, NgTemplateOutlet, AsyncPipe],
+  imports: [MatTableModule, MatPaginatorModule, MatSortModule, NgTemplateOutlet, AsyncPipe, SmartSelectComponent],
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppDataTableComponent<T> {
-  // Inputs (в виде сигналов Angular 16+)
-  columns = input<ColumnDef<T>[]>([]);
-  filters = input<FilterDef<T>[]>([]);
-  actions = input<ActionDef<T>[]>([]);
+  // inputs
+  columns    = input<ColumnDef<T>[]>([]);
+  filters    = input<FilterDef<T>[]>([]);
+  actions    = input<ActionDef<T>[]>([]);
   dataSource = input.required<TableDataSource<T>>();
 
-  // State
-  selection = new SelectionModel<T>(true, []);  // модель выбора (мультивыбор)
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
+  // deps
+  private readonly router = inject(Router);
+  private readonly route  = inject(ActivatedRoute);
+  private readonly host   = inject(ElementRef<HTMLElement>);
 
-  // Signals состояния
-  query = model<Query>({ page: 0, size: 25, sort: [], search: '', filters: {} });
-  page = signal<Page<T>>({ items: [], total: 0 });
-  loading = signal<boolean>(false);
+  // state
+  readonly selection = new SelectionModel<T>(true, []);
+  readonly query  = model<Query>({ page: 0, size: 25, sort: [], search: '', filters: {} });
+  readonly page   = signal<Page<T>>({ items: [], total: 0 });
+  readonly loading = signal(false);
 
-  // Derived signals (вычисляемые значения на основе состояния)
-  items = computed(() => this.page().items);
-  total = computed(() => this.page().total);
-  search = computed(() => this.query().search ?? '');
+  // menus / filters popover
+  readonly rowMenuOpen  = signal<T | null>(null);
+  readonly bulkMenuOpen = signal(false);
+  readonly filtersOpen  = signal(false);
+  readonly draft        = signal<Record<string, any>>({}); // черновик значений фильтров
 
-  // Формируем массив имен колонок для отображения (динамически, включая опциональные колонки)
-  displayedColumns = computed(() => {
-    const baseCols = this.columns().map(c => c.key as string);
-    const selectCol = this.bulkActions().length ? ['__select'] : [];
-    const actionsCol = this.rowActions().length ? ['__actions'] : [];
-    return [...selectCol, ...baseCols, ...actionsCol];
+  // derived
+  readonly items  = computed(() => this.page().items);
+  readonly total  = computed(() => this.page().total);
+  readonly search = computed(() => this.query().search ?? '');
+
+  readonly toolbarActions = computed(() => this.actions().filter(a => a.scope === 'toolbar'));
+  readonly rowActions     = computed(() => this.actions().filter(a => a.scope === 'row'));
+  readonly bulkActions    = computed(() => this.actions().filter(a => a.scope === 'bulk'));
+
+  readonly displayedColumns = computed(() => {
+    const base = this.columns().map(c => String(c.key));
+    const selectCol  = this.bulkActions().length ? ['__select'] : [];
+    const actionsCol = (this.rowActions().length || this.bulkActions().length) ? ['__actions'] : [];
+    return [...selectCol, ...base, ...actionsCol];
   });
 
-  // Разделяем действия по их "области" (scope)
-  toolbarActions = computed(() => this.actions().filter(a => a.scope === 'toolbar'));
-  rowActions = computed(() => this.actions().filter(a => a.scope === 'row'));
-  bulkActions = computed(() => this.actions().filter(a => a.scope === 'bulk'));
+  readonly activeFiltersCount = computed(() => {
+    const v = this.query().filters ?? {};
+    return Object.values(v).filter(x => !(x === '' || x == null || (Array.isArray(x) && x.length === 0))).length;
+  });
 
-  // Утилитарный метод: получить строковый ключ колонки (учитывает, что c.key может быть символом или др.)
-  toKey(c: ColumnDef<T>): string {
-    return String(c.key);
+  // ---------- toolbar: Output + селекторы + helpers ----------
+  @Output() toolbarAction = new EventEmitter<{ id: string; selection: T[]; query: Query }>();
+
+  readonly firstToolbarAction  = computed(() => this.toolbarActions()[0] ?? null);
+  readonly otherToolbarActions = computed(() => this.toolbarActions().slice(1));
+
+  isToolbarDisabled(a: ToolbarAction<T>) {
+    return a.disabled ? a.disabled({ selection: this.selection.selected, query: this.query() }) : false;
   }
 
-  // Обработчик изменения текстового фильтра и других одиночных значений
+  async onToolbarClick(a: ToolbarAction<T>) {
+    // наружу событие
+    this.toolbarAction.emit({ id: a.id, selection: this.selection.selected, query: this.query() });
+    // локальный обработчик (если задан)
+    if (a.run) {
+      await a.run({ selection: this.selection.selected, query: this.query(), reload: () => this.reload() });
+    }
+  }
+
+  // ---------- UI helpers ----------
+  toKey(c: ColumnDef<T>) { return String(c.key); }
+  rowMenuOpenedFor = (row: T) => this.rowMenuOpen() === row;
+  toggleFilters()  { this.filtersOpen.update(v => !v); }
+  toggleBulkMenu(ev: MouseEvent) { ev.stopPropagation(); this.bulkMenuOpen.update(v => !v); this.rowMenuOpen.set(null); }
+  toggleRowMenu(row: T, ev: MouseEvent) { ev.stopPropagation(); this.rowMenuOpen.set(this.rowMenuOpen() === row ? null : row); this.bulkMenuOpen.set(false); }
+  closeMenus() { this.rowMenuOpen.set(null); this.bulkMenuOpen.set(false); }
+  @HostListener('document:click', ['$event'])
+  onDocClick(ev: MouseEvent) { if (!this.host.nativeElement.contains(ev.target as Node)) { this.filtersOpen.set(false); this.closeMenus(); } }
+
+  // ---------- FILTERS: draft & apply ----------
+  private patchDraft(patch: Record<string, any>) { this.draft.update(d => ({ ...d, ...patch })); }
+  getDraftVal(f: FilterDef<T>) { return this.draft()[String(f.field)]; }
+  getRangeVal(f: FilterDef<T>, part: 'start'|'end') {
+    const key = part === 'start' ? `${String(f.field)}_from` : `${String(f.field)}_to`;
+    return this.draft()[key];
+  }
+  onFilterInput(f: FilterDef<T>, value: any) {
+    const patch = f.toQuery ? f.toQuery(value) : { [String(f.field)]: value };
+    this.patchDraft(patch);
+  }
+  onFilterRangeInput(f: FilterDef<T>, part: 'start'|'end', value: any) {
+    const key = part === 'start' ? `${String(f.field)}_from` : `${String(f.field)}_to`;
+    this.patchDraft({ [key]: value });
+  }
+  resetDraft() { this.draft.set({}); }
+
+  private clean(obj: Record<string, any>) {
+    const out: Record<string, any> = {};
+    for (const [k, v] of Object.entries(obj)) {
+      if (!(v === '' || v == null || (Array.isArray(v) && v.length === 0))) out[k] = v;
+    }
+    return out;
+  }
+
+  applyFilters(close = false) {
+    const next = this.clean(this.draft());
+    this.updateQuery({ filters: next, page: 0 });
+    if (close) this.filtersOpen.set(false);
+  }
+  resetFilters(apply = true, close = false) {
+    this.resetDraft();
+    if (apply) this.updateQuery({ filters: {}, page: 0 });
+    if (close) this.filtersOpen.set(false);
+  }
+
+  // ---------- filters / search (immediate mode) ----------
   onFilterChange(f: FilterDef<T>, value: any) {
-    // Определяем патч для объекта filters в запросе
-    const patch = f.toQuery ? f.toQuery(value) : { [f.field as string]: value };
-    // Обновляем query: новый filters и сбрасываем на первую страницу
-    this.query.update(q => ({ ...q, filters: { ...(q.filters || {}), ...patch }, page: 0 }));
-    this.reload();
+    const patch = f.toQuery ? f.toQuery(value) : { [String(f.field)]: value };
+    const next  = { ...(this.query().filters || {}), ...patch };
+    this.updateQuery({ filters: next, page: 0 });
   }
-
-  // Обработчик для диапазонных фильтров (например, dateRange или numberRange)
-  onFilterRangeChange(f: FilterDef<T>, part: 'start' | 'end', value: any) {
-    // Идентифицируем поля начала/конца диапазона (например, field_from, field_to)
-    // Здесь предполагаем, что f.field содержит базовое имя, к которому добавим суффиксы.
-    const baseField = f.field as string;
-    const fieldName = part === 'start' ? `${baseField}_from` : `${baseField}_to`;
-    const patch = { [fieldName]: value };
-    this.query.update(q => ({ ...q, filters: { ...(q.filters || {}), ...patch }, page: 0 }));
-    this.reload();
+  onFilterRangeChange(f: FilterDef<T>, part: 'start'|'end', value: any) {
+    const key = part === 'start' ? `${String(f.field)}_from` : `${String(f.field)}_to`;
+    const next = { ...(this.query().filters || {}), [key]: value };
+    this.updateQuery({ filters: next, page: 0 });
   }
+  onSearch(value: string) { this.updateQuery({ search: value, page: 0 }); }
 
-  // Обработчик ввода в поисковое поле
-  onSearch(value: string) {
-    this.query.update(q => ({ ...q, search: value, page: 0 }));
-    this.reload();
-  }
-
-  // Обновление данных (вызов dataSource)
+  // ---------- data ----------
   reload() {
     this.loading.set(true);
-    // Вызываем источник данных (например, сервис с HTTP) с текущим Query
     this.dataSource().fetch(this.query()).subscribe({
-      next: p => {
-        this.page.set(p);
-        this.loading.set(false);
-        this.selection.clear(); // сбрасываем выделение после загрузки новой страницы
-      },
-      error: _ => {
-        this.loading.set(false);
-      }
+      next: p => { this.page.set(p); this.selection.clear(); this.loading.set(false); },
+      error: () => this.loading.set(false),
     });
   }
 
-  // Обработчик события пагинатора
-  onPage(e: PageEvent) {
-    this.query.update(q => ({ ...q, page: e.pageIndex, size: e.pageSize }));
-    this.reload();
-  }
-
-  // Обработчик события сортировки (MatSort)
+  // ---------- paginator / sort ----------
+  onPage(e: PageEvent) { this.updateQuery({ page: e.pageIndex, size: e.pageSize }, false); this.reload(); }
   onSort(e: Sort) {
-    const s = e.direction ? [{ field: e.active, dir: e.direction as any }] : [];
-    this.query.update(q => ({ ...q, sort: s, page: 0 }));
-    this.reload();
+    const s = e.direction ? [{ field: e.active, dir: this.toSortDir(e.direction) }] : [];
+    this.updateQuery({ sort: s, page: 0 });
   }
 
-  // Selection helpers (помощники для работы с выделением строк)
-  toggle(row: T) {
-    this.selection.toggle(row);
-  }
-  isAllSelected() {
-    // Выбраны все элементы текущей страницы?
-    return this.items().length > 0 && this.selection.selected.length === this.items().length;
-  }
-  masterToggle() {
-    if (this.isAllSelected()) {
-      this.selection.clear();
-    } else {
-      // выделяем все элементы текущей загруженной страницы
-      this.items().forEach(r => this.selection.select(r));
-    }
-  }
+  // ---------- selection ----------
+  toggle(row: T) { this.selection.toggle(row); }
+  isAllSelected() { return this.items().length > 0 && this.selection.selected.length === this.items().length; }
+  masterToggle() { this.isAllSelected() ? this.selection.clear() : this.items().forEach(r => this.selection.select(r)); }
 
-  // Проверка, активна ли данная кнопка действия
+  // ---------- actions ----------
   isEnabled(a: ActionDef<T>, row?: T) {
-    const ctx = { row, selection: this.selection.selected };
-    // Если действие требует выбор, а ничего не выбрано - отключаем кнопку
-    if (a.requiresSelection && ctx.selection.length === 0) return false;
-    // Если определён специальный предикат canEnable, используем его
-    return a.canEnable ? !!a.canEnable(ctx) : true;
-  }
-
-  // Выполнение действия
-  async run(a: ActionDef<T>, row?: T) {
-    // Формируем контекст для действия
-    const ctx = { row, selection: this.selection.selected, reload: () => this.reload() };
-    // Если требуется подтверждение от пользователя, запрашиваем его
-    if (a.requiresConfirm) {
-      const message = `Вы уверены, что хотите выполнить действие "${a.label}"?`;
-      if (!confirm(message)) {
-        return; // пользователь отменил
-      }
+    if (a.scope === 'toolbar') {
+      return !this.isToolbarDisabled(a as ToolbarAction<T>);
     }
-    // Выполняем действие (может быть синхронным или возвращать Promise)
-    await a.run(ctx);
+    const ctx = { row, selection: this.selection.selected };
+    if ((a as any).requiresSelection && !ctx.selection.length) return false;
+    return (a as any).canEnable ? !!(a as any).canEnable(ctx) : true;
   }
 
-  private toSortDir(v: string | null | undefined): SortDir {
-    return v === 'desc' ? 'desc' : 'asc'; // всё, что не 'desc' — в 'asc'
+  async run(a: ActionDef<T>, row?: T) {
+    // toolbar-экшены запускаются через onToolbarClick
+    if (a.scope === 'toolbar') return;
+    if ((a as any).requiresConfirm && !confirm(`Вы уверены, что хотите выполнить действие "${a.label}"?`)) return;
+    await (a as any).run({ row, selection: this.selection.selected, reload: () => this.reload() });
+    this.closeMenus();
+  }
+
+  // ---------- URL <-> state ----------
+  private toSortDir(v: string | null | undefined): SortDir { return v === 'desc' ? 'desc' : 'asc'; }
+  private parseSort(str: string | null): { field: string; dir: SortDir }[] {
+    return (str ?? '')
+      .split(',').filter(Boolean)
+      .map(x => { const [field, dir] = x.split(':'); return { field, dir: this.toSortDir(dir) }; });
+  }
+  private stringifySort(s: { field: string; dir: SortDir }[]) { return (s ?? []).map(x => `${x.field}:${x.dir}`).join(','); }
+  private updateQuery(patch: Partial<Query>, reload = true) {
+    this.query.update(q => ({ ...q, ...patch }));
+    if (reload) this.reload();
   }
 
   constructor() {
+    // URL -> state (init)
     effect(() => {
       const qp = this.route.snapshot.queryParamMap;
-
-      const page = +(qp.get('page') ?? 0);
-      const size = +(qp.get('size') ?? 25);
-      const search = qp.get('q') ?? '';
-
-      const sort: { field: string; dir: SortDir }[] =
-        (qp.get('sort') ?? '')
-          .split(',')
-          .filter(Boolean)
-          .map(x => {
-            const [field, dir] = x.split(':');
-            return { field, dir: this.toSortDir(dir) };
-          });
-
-      const filters = qp.get('filters') ? JSON.parse(qp.get('filters')!) : {};
-
-      this.query.set({ page, size, search, sort, filters });
+      this.query.set({
+        page: +(qp.get('page') ?? 0),
+        size: +(qp.get('size') ?? 25),
+        search: qp.get('q') ?? '',
+        sort: this.parseSort(qp.get('sort')),
+        filters: qp.get('filters') ? JSON.parse(qp.get('filters')!) : {},
+      });
       this.reload();
     });
 
-    // Effect: при изменении состояния (query) обновляем URL (сохраняем параметры)
+    // state -> URL
     effect(() => {
       const q = this.query();
-      const sortStr = (q.sort ?? []).map(s => `${s.field}:${s.dir}`).join(',');
       this.router.navigate([], {
         relativeTo: this.route,
         queryParams: {
           page: q.page,
           size: q.size,
           q: q.search || null,
-          sort: sortStr || null,
-          // сериализуем объект фильтров в JSON строку, либо удаляем параметр, если фильтров нет
-          filters: Object.keys(q.filters ?? {}).length ? JSON.stringify(q.filters) : null
+          sort: this.stringifySort(q.sort ?? [] ) || null,
+          filters: Object.keys(q.filters ?? {}).length ? JSON.stringify(q.filters) : null,
         },
-        queryParamsHandling: 'merge'
+        queryParamsHandling: 'merge',
       });
     });
   }
 
   protected readonly Array = Array;
+  protected readonly String = String;
 }

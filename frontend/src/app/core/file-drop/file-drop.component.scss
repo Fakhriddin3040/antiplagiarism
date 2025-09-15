@@ -1,0 +1,4 @@
+.fd{ border:1px dashed var(--c-border); border-radius:12px; padding:16px; cursor:pointer; text-align:center; }
+.fd--drag{ background:#f6f8ff; border-color:#98a8ff; }
+.fd__hint{ color:#8a8f98; }
+.fd__list{ margin:.5rem 0 0; padding:0 12px; }

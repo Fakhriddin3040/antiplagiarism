@@ -1,0 +1,49 @@
+<div class="ss">
+  <div class="ss-input-wrap" [class.disabled]="disabled">
+    <input #inputEl
+           class="ss-input"
+           [placeholder]="placeholder"
+           [disabled]="disabled"
+           (focus)="focus()"
+           (keydown)="onKeydown($event)"
+           (input)="onInput($any($event.target).value)" />
+
+    @if (value()) {
+      <button class="ss-clear" type="button" (click)="clear()">✕</button>
+    } @else {
+      @if (loading()) {
+        <div class="ss-spinner" aria-hidden="true"></div>
+      }
+    }
+  </div>
+
+  @if (open() && (options().length || loading())) {
+    <div class="ss-dropdown">
+      @if (loading()) {
+        <div class="ss-empty">Loading…</div>
+      } @else if (!options().length) {
+      <div class="ss-empty">No results</div>
+    } @else {
+      <ul class="ss-list">
+        @for (opt of options(); track trackById; let i = $index) {
+          <li class="ss-item"
+              [class.active]="i === highlightIdx()"
+              [class.selected]="isSelected(opt)"
+              (mouseenter)="highlightIdx.set(i)"
+              (mousedown)="$event.preventDefault()"
+              (click)="pick(opt)">
+            @if (optionTpl) {
+              <ng-container
+                [ngTemplateOutlet]="optionTpl"
+                [ngTemplateOutletContext]="{$implicit: opt, label: labelOf(opt), selected: isSelected(opt)}">
+              </ng-container>
+            } @else {
+              {{ labelOf(opt) }}
+            }
+          </li>
+        }
+      </ul>
+    }
+    </div>
+  }
+</div>

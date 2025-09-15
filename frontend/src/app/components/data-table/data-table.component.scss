@@ -1,153 +1,254 @@
-/* ---------- ОБЁРТКА И ТУЛБАР ---------- */
+/* ───────────────── Vars (sane defaults) ───────────────── */
+:root{
+  --glass-bg:       rgba(255,255,255,.72);
+  --glass-blur:     8px;
+  --glass-stroke:   rgba(0,0,0,.06);
+  --glass-shadow:   0 10px 28px rgba(0,0,0,.12);
+  --btn-radius:     12px;
+  --chip-radius:    999px;
+  --head-radius:    12px;
+}
+
+/* ─────────────── Каркас ─────────────── */
 .table-wrapper{
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 0; /* важно */
+  position: relative;
+  display: flex; flex-direction: column;
+  min-height: 0;
+  background: color-mix(in srgb, var(--c-surface) 85%, transparent);
   border: var(--border);
-  background: #fff;
-  border-radius: var(--radius);
-  box-shadow: 0 6px 24px rgba(0,0,0,.04);
-  overflow: hidden; /* чтобы закругления резали контент */
+  border-radius: calc(var(--radius) + 4px);
+  box-shadow: var(--c-shadow-card);
+  overflow: visible;
 }
 
-/* Верхняя панель с поиском/фильтрами */
+/* ─────────────── Toolbar (поиск слева, экшены справа) ─────────────── */
 .table-toolbar{
-  position: sticky;
-  top: 0;
-  z-index: 3;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 12px;
-  align-items: center;
-  padding: 10px;
-  background: rgba(255,255,255,.72);
-  backdrop-filter: saturate(160%) blur(8px);
-  border-bottom: var(--border);
+  position: sticky; top: 0; z-index: 5;
+  display: flex; align-items: center; gap: 10px 12px; flex-wrap: wrap;
+  padding: 12px;
+  background: var(--glass-bg);
+  backdrop-filter: saturate(160%) blur(var(--glass-blur));
+  border-bottom: 1px solid var(--glass-stroke);
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
 }
 
-.filters{
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 12px;
+/* поиск растягивается: поддержка и .search-input, и первого инпута */
+.table-toolbar .search-input,
+.table-toolbar > .input{ flex: 1 1 320px; min-width: 220px; max-width: 780px; }
+
+.toolbar-spacer{ flex: 1 1 auto; }
+
+/* контейнер для правых кнопок */
+.toolbar-actions{
+  display: flex; align-items: center; gap: 8px;
+  margin-left: auto;
 }
 
-/* Общий стиль инпутов */
-.input, select.input{
-  min-height: 34px;
-  padding: 6px 10px;
-  border: var(--border);
-  border-radius: 999px;
-  background: #fff;
-  outline: none;
+/* инпуты в тулбаре */
+.table-toolbar .input{
+  min-height: 38px; padding: 8px 14px;
+  border: 1px solid var(--c-input-border);
+  border-radius: 12px;
+  background: var(--c-input-bg);
   font-size: 14px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 1px 2px rgba(0,0,0,.02);
+  transition: border-color .15s, box-shadow .15s, background .15s;
+  &:focus{
+    border-color: var(--c-primary);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--c-primary) 20%, transparent);
+    background: #fff;
+  }
 }
 
-.bool-filter{
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 4px 10px; border-radius: 999px; border: var(--border); background: #fff;
-}
-
-/* ---------- СКРОЛЛ-ЗОНА С ТАБЛИЦЕЙ ---------- */
-.scroll-area{
-  flex: 1;
-  min-height: 0;      /* обязательно */
-  overflow: auto;     /* здесь будет скролл */
-}
-
-.table-container{
-  width: 100%;
-  border-collapse: collapse;
+/* кнопки (общие) */
+.btn{
+  border: 1px solid var(--c-border);
   background: #fff;
-  font-size: 14px;
+  padding: 9px 14px;
+  border-radius: var(--btn-radius);
+  cursor: pointer; font-size: 14px; font-weight: 500;
+  transition: transform .05s ease, box-shadow .15s, background .15s, border-color .15s;
+  &:hover{ background: #f7f8fa; }
+  &:active{ transform: translateY(1px); }
+  &:disabled{ opacity:.6; cursor:not-allowed; }
 }
 
-/* Шапка таблицы (липкая) */
-.header-row,
-.mat-mdc-header-row{
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  background: var(--c-header-bg);
-  box-shadow: inset 0 -1px 0 #e5e7eb;
+/* фикс глобалки: только в тулбаре .btn-primary не absolute */
+.table-toolbar .btn-primary{ position: static; }
+
+.btn-primary{
+  background: linear-gradient(180deg, var(--c-primary), color-mix(in srgb, var(--c-primary) 88%, #0d47a1));
+  color: #fff;
+  border-color: color-mix(in srgb, var(--c-primary) 80%, #0d47a1);
+  box-shadow: 0 10px 22px color-mix(in srgb, var(--c-primary) 30%, transparent);
+  &:hover{ filter: brightness(0.98); }
 }
+.btn-ghost{ background: transparent; }
 
-.header-cell,
-.mat-mdc-header-cell{
-  padding: 12px 16px !important;
-  text-align: left;
-  font-weight: 700;
-  color: #334155;
-  white-space: nowrap;
+/* ─────────────── Фильтры ─────────────── */
+.filters-dropdown{ position: relative; }
+.dropdown-trigger{
+  display: inline-flex; align-items: center; gap: 8px;
+  min-height: 38px; padding: 8px 12px;
+  border: 1px solid var(--c-border);
+  border-radius: 12px; background:#fff; font-size:14px; cursor:pointer;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 1px 2px rgba(0,0,0,.03);
 }
-
-/* Тело таблицы */
-.dynamic-row,
-.mat-mdc-row{
-  border-bottom: 1px solid #eee;
-  transition: background-color .2s ease;
+.badge{
+  min-width:18px; height:18px; padding:0 6px;
+  border-radius: var(--chip-radius); font-size:12px; line-height:18px;
+  background:#e9f1ff; color:#0f55ff;
 }
+.chevron{ transition: transform .18s ease; }
+.dropdown-trigger[aria-expanded="true"] .chevron{ transform: rotate(180deg); }
 
-.dynamic-row:hover{ background: #f8fafc !important; }
-.dynamic-row.even-row{ background: #fafafa; }
-.dynamic-row.selected{ background: #e3f2fd !important; }
-
-.cell,
-.mat-mdc-cell{
-  padding: 12px 16px !important;
-  white-space: nowrap; text-overflow: ellipsis; overflow: hidden;
+.dropdown-list{
+  position:absolute; top: calc(100% + 10px); left: 0; z-index:2000; min-width: 380px;
+  background:#fff; border:1px solid var(--c-border);
+  border-radius: 14px; box-shadow: var(--glass-shadow);
+  padding: 12px;
+  opacity: 0; transform: translateY(4px);
+  animation: dd-in .18s ease-out forwards;
 }
+@keyframes dd-in{ to{ opacity:1; transform: translateY(0); } }
 
-.header-cell.checkbox-cell{ width: 40px; }
-.cell.checkbox-cell{ width: 40px; }
-
-/* Кнопки действий */
-.actions-cell{ position: relative; width: 92px; }
-.row-actions{ display: flex; gap: 6px; align-items: center; }
+.dropdown-list .filters{
+  display: grid; grid-template-columns: repeat(2, minmax(170px, 1fr)); gap: 12px;
+}
+.field{ display:flex; flex-direction:column; gap:6px; }
+.field-label{ font-size:12px; color:#6b7280; padding:0 6px; }
+.hint{ color:#8b93a7; font-size:12px; margin-top:4px; }
 
 .menu-trigger{
-  border: none; background: none; cursor: pointer;
-  padding: 4px 8px; border-radius: 10px; font: inherit;
-  color: #1f2937;
-  &:hover{ background: #e5e7eb; }
+  border: 1px solid var(--c-border); background:#fff;
+  padding: 8px 12px; border-radius: 10px; cursor: pointer; font-size:14px;
+  &:hover{ background:#f7f8fa; }
+}
+.filters-footer{
+  margin-top: 12px; display: flex; gap: 10px; justify-content: flex-end;
+  border-top: 1px solid #eef0f3; padding-top: 12px;
+}
+.apply-btn{
+  background: var(--c-primary); color:#fff; border-color: var(--c-primary);
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--c-primary) 30%, transparent);
+  &:hover{ filter: brightness(0.98); }
 }
 
-/* Пилюли статуса */
+/* ─────────────── Scroll area ─────────────── */
+.scroll-area{
+  flex:1 1 auto; min-height:0; overflow:auto;
+  border-radius: 0 0 calc(var(--radius) + 4px) calc(var(--radius) + 4px);
+}
+.scroll-area::-webkit-scrollbar{ height:10px; width:10px; }
+.scroll-area::-webkit-scrollbar-thumb{
+  background:#cdd5df; border-radius:999px; border:2px solid transparent; background-clip: content-box;
+}
+
+/* ─────────────── Header (капс, трекинг, радиусы) ─────────────── */
+.table-container{ width:100%; border-collapse: collapse; background:#fff; font-size:14px; }
+
+.header-row, .mat-mdc-header-row{
+  position: sticky; top: 0; z-index: 3;
+  background: var(--glass-bg), var(--c-header-bg);
+  backdrop-filter: saturate(150%) blur(10px);
+  box-shadow: inset 0 -1px 0 var(--c-border), 0 1px 0 rgba(0,0,0,.02);
+  & > .mat-mdc-header-cell:first-child,
+  & > .header-cell:first-child { border-top-left-radius: var(--head-radius); }
+  & > .mat-mdc-header-cell:last-child,
+  & > .header-cell:last-child  { border-top-right-radius: var(--head-radius); }
+}
+.header-cell, .mat-mdc-header-cell{
+  padding: 12px 16px !important;
+  text-align: left;
+  font-family: var(--font-main, Inter), system-ui, -apple-system, 'Segoe UI', Roboto;
+  font-weight: 700;
+  font-size: 12.5px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--c-text,#222) 75%, transparent);
+  white-space: nowrap;
+  &:not(:last-child){ box-shadow: inset -1px 0 0 rgba(0,0,0,.045); }
+  &.checkbox-cell{ width: 44px; padding-left: 16px !important; padding-right: 8px !important; }
+}
+.header-cell.is-sortable{
+  cursor:pointer;
+  &:hover{ background: linear-gradient(to bottom, rgba(0,0,0,.03), rgba(0,0,0,0)); }
+  &::after{
+    content:''; width:0; height:0; margin-left:8px; opacity:.6; transition: transform .15s, opacity .15s;
+    border-left:5px solid transparent; border-right:5px solid transparent; border-top:6px solid currentColor; transform: translateY(-1px);
+  }
+  &.sorted-asc::after  { opacity:.95; }
+  &.sorted-desc::after { opacity:.95; border-top:0; border-bottom:6px solid currentColor; transform: translateY(1px); }
+}
+
+/* ─────────────── Rows / Cells ─────────────── */
+.dynamic-row, .mat-mdc-row{
+  border-bottom: 1px solid rgba(0,0,0,.06);
+  transition: background-color .18s ease, box-shadow .18s ease;
+  &:hover{ background: rgba(0,0,0,.03) !important; }
+  &.even-row{ background: #fbfbfc; }
+  &.selected{ background:#eef5ff !important; box-shadow: inset 0 0 0 1px #d5e6ff; }
+}
+.cell, .mat-mdc-cell{
+  padding: 12px 16px !important;
+  color: color-mix(in srgb, var(--c-text,#222) 92%, transparent);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.header-cell.checkbox-cell{ width: 44px; }
+.cell.checkbox-cell{ width: 44px; }
+input[type="checkbox"]{ cursor:pointer; transform: scale(1.12); }
+
+/* ─────────────── Actions («…» и меню) ─────────────── */
+.actions-cell{ position:relative; width:56px; text-align:right; overflow:visible !important; }
+.actions-header, .actions-cell-inner{ position:relative; display:inline-block; }
+
+.kebab-trigger{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:34px; height:34px;
+  border:1px solid var(--c-border);
+  border-radius: 50%;
+  background:#fff; cursor:pointer;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 1px 2px rgba(0,0,0,.03);
+  transition: background .15s, border-color .15s, transform .05s ease;
+  &:hover{ background:#f7f8fa; }
+  &:active{ transform: translateY(1px); }
+  &:disabled{ opacity:.45; cursor:not-allowed; }
+}
+
+.kebab-menu{
+  position:absolute; top: calc(100% + 8px); right: 0; z-index: 2000;
+  min-width: 210px;
+  background:#fff; border:1px solid var(--c-border);
+  border-radius: 14px; box-shadow: var(--glass-shadow);
+  padding: 6px 0;
+  opacity: 0; transform: translateY(4px);
+  animation: dd-in .18s ease-out forwards;
+}
+.kebab-menu .dropdown-item{
+  display:block; width:100%; padding:10px 14px; text-align:left;
+  background:none; border:0; cursor:pointer; color:#202428; font-size:14px;
+  transition:background .12s;
+  &:hover{ background:#f2f6ff; }
+  &.selected, &:active{ background:#e5efff; color:#1458ff; font-weight:600; }
+  &:disabled{ opacity:.5; cursor:not-allowed; }
+}
+
+/* ─────────────── Status pill ─────────────── */
 .status-pill{
-  display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px;
-  &.true{  background: #e6f4ea; color:#137333; border:1px solid #c7e8d3; }
-  &.false{ background: #fde8e8; color:#b42318; border:1px solid #f8c1c1; }
+  display:inline-block; padding:4px 10px; border-radius: 999px; font-size:12px; font-weight:600;
+  &.true{  background:#e6f4ea; color:#137333; border:1px solid #c7e8d3; }
+  &.false{ background:#fde8e8; color:#b42318; border:1px solid #f8c1c1; }
 }
 
-/* Чекбоксы чуть крупнее */
-input[type="checkbox"]{
-  cursor: pointer; transform: scale(1.15);
-}
-
-/* Лоадер */
+/* ─────────────── Loader ─────────────── */
 .loader-backdrop{
-  position: absolute; inset: 0; z-index: 4;
-  background: rgba(255,255,255,.6);
-  display: grid; place-items: center;
-  backdrop-filter: blur(2px);
+  position:absolute; inset:0; z-index: 6; display:grid; place-items:center;
+  background: rgba(255,255,255,.55);
+  backdrop-filter: blur(3px) saturate(120%);
+  border-radius: inherit;
 }
 .loader{
-  background: #fff; border: 1px solid #eee;
-  padding: 8px 14px; border-radius: 10px;
-  box-shadow: 0 6px 18px rgba(0,0,0,.08);
-  font-size: 14px;
-}
-
-/* Кастомные скроллбары (необязательно) */
-.scroll-area::-webkit-scrollbar{ height: 10px; width: 10px; }
-.scroll-area::-webkit-scrollbar-thumb{
-  background: #cdd5df; border-radius: 999px; border: 2px solid transparent;
-  background-clip: content-box;
-}
-.scroll-area::-webkit-scrollbar-track{ background: transparent; }
-
-/* На узких экранах даём переносы */
-@media (max-width: 960px){
-  .cell, .header-cell{ white-space: normal; }
+  background:#fff; border:1px solid #eee; border-radius: 14px;
+  padding: 10px 14px; font-size: 14px; font-weight: 600;
+  box-shadow: var(--glass-shadow);
 }

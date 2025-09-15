@@ -54,6 +54,10 @@ bootstrapApplication(AppComponent, {
           }
         ]
       },
+      {
+        path: 'products',
+        loadComponent: () => import('./app/components/data-table/implementations/demo/product-data-table-demo').then(m => m.DemoProductsComponent)
+      }
     ]),
       {
         provide: HTTP_INTERCEPTORS,

@@ -1,0 +1,103 @@
+@if (open()) {
+  <div class="um-backdrop" (click)="close(false)">
+    <div class="um-dialog" (click)="$event.stopPropagation()">
+      <div class="um-header">
+        <h3>{{ title }}</h3>
+        <button class="um-close" (click)="close(false)">✕</button>
+      </div>
+
+      <div class="um-body">
+        <!-- Динамические поля -->
+        <div class="grid">
+          @for (f of fields(); track f.key) {
+            <div class="field" [style.--w]="toCssWidth(f.width)">
+              <label class="label">
+                {{ f.label }}
+                @if (f.required) { <span class="req">*</span> }
+              </label>
+
+              @switch (f.kind) {
+                @case ('text') {
+                  <input class="input" type="text"
+                         [placeholder]="f.placeholder || ''"
+                         [disabled]="f.disabled"
+                         [value]="get(f.key) ?? ''"
+                         (input)="set(f.key, $any($event.target).value)" />
+                }
+                @case ('textarea') {
+                  <textarea class="input" [rows]="f.rows || 3"
+                            [placeholder]="f.placeholder || ''"
+                            [disabled]="f.disabled"
+                            (input)="set(f.key, $any($event.target).value)">{{ get(f.key) ?? '' }}</textarea>
+                }
+                @case ('number') {
+                  <input class="input" type="number"
+                         [placeholder]="f.placeholder || ''"
+                         [disabled]="f.disabled"
+                         [min]="f.min" [max]="f.max" [step]="f.step || 1"
+                         [value]="get(f.key) ?? ''"
+                         (input)="set(f.key, $any($event.target).valueAsNumber)" />
+                }
+                @case ('date') {
+                  <input class="input" type="date"
+                         [disabled]="f.disabled"
+                         [value]="get(f.key) ?? ''"
+                         (change)="set(f.key, $any($event.target).value)" />
+                }
+                @case ('bool') {
+                  <label class="bool">
+                    <input type="checkbox"
+                           [checked]="!!get(f.key)"
+                           [disabled]="f.disabled"
+                           (change)="set(f.key, $any($event.target).checked)" />
+                    <span>{{ f.hint || '' }}</span>
+                  </label>
+                }
+                @case ('checkbox') {
+                  <label class="bool">
+                    <input type="checkbox"
+                           [checked]="!!get(f.key)"
+                           [disabled]="f.disabled"
+                           (change)="set(f.key, $any($event.target).checked)" />
+                    <span>{{ f.hint || '' }}</span>
+                  </label>
+                }
+                @case ('select-async') {
+                  <app-smart-select
+                    [placeholder]="f.placeholder || 'Search...'"
+                    [load]="f.load"
+                    [labelOf]="f.labelOf"
+                    [idOf]="f.idOf"
+                    [disabled]="f.disabled!"
+                    [value]="f.initialId ?? null"
+                    (selected)="set(f.key, $event ? f.idOf($event) : null)">
+                  </app-smart-select>
+                }
+                @case ('file') {
+                  <app-file-drop
+                    [multiple]="f.multiple ?? true"
+                    [accept]="f.accept"
+                    [maxSizeMb]="f.maxSizeMb ?? 50"
+                    (changed)="set(f.key, $event)">
+                    <b>Перетащи файлы</b> или нажми, чтобы выбрать.
+                  </app-file-drop>
+                }
+              }
+
+              @if (f.hint && f.kind !== 'checkbox' && f.kind !== 'bool') {
+                <div class="hint">{{ f.hint }}</div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="um-footer">
+        <button class="btn" (click)="close(false)">Отмена</button>
+        <button class="btn btn-primary" [disabled]="confirmDisabled()" (click)="close(true)">
+          {{ confirmLabel }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

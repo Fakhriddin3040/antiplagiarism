@@ -1,4 +1,12 @@
 :root {
+  /* доп. переменные под стекло/анимации */
+  --glass-bg: rgba(255,255,255,.62);
+  --glass-stroke: rgba(0,0,0,.06);
+  --glass-shadow: 0 10px 28px rgba(0,0,0,.10);
+  --glass-blur: 12px;
+  --btn-radius: 12px;
+  --chip-radius: 999px;
+  --head-radius: 14px; /* новый — скруглим шапку колонок */
   --c-primary: #2f80ed;
   --c-bg: rgba(255,255,255,0.9);
   --c-header-bg: linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 100%);
