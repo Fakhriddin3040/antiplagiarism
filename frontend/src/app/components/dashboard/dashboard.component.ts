@@ -1,5 +1,4 @@
 import {Component} from '@angular/core';
-import {FolderSidebarComponent} from '../folder-sidebar/folder-sidebar.component';
 import {RouterOutlet} from '@angular/router';
 import {NavbarComponent} from '../navbar/navbar.component';
 
@@ -7,7 +6,6 @@ import {NavbarComponent} from '../navbar/navbar.component';
   selector: 'app-dashboard',
   standalone: true,
   imports: [
-    FolderSidebarComponent,
     RouterOutlet,
     NavbarComponent
   ],

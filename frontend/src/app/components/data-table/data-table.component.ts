@@ -12,14 +12,14 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { SelectionModel } from '@angular/cdk/collections';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
-import { ActionDef, ToolbarAction, ColumnDef, FilterDef, Page, Query, SortDir, TableDataSource } from './types/table'; // ← ToolbarAction добавлен
-import { SmartSelectComponent } from '../../smart-select/smart-select.component';
+import { NgTemplateOutlet } from '@angular/common';
+import { ActionDef, ToolbarAction, ColumnDef, FilterDef, Page, Query, SortDir, TableDataSource } from './types/table';
+import {SmartSelectComponent} from '../smart-select/smart-select.component'; // ← ToolbarAction добавлен
 
 @Component({
   selector: 'app-data-table',
   standalone: true,
-  imports: [MatTableModule, MatPaginatorModule, MatSortModule, NgTemplateOutlet, AsyncPipe, SmartSelectComponent],
+  imports: [MatTableModule, MatPaginatorModule, MatSortModule, NgTemplateOutlet, SmartSelectComponent],
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -38,8 +38,8 @@ export class AppDataTableComponent<T> {
 
   // state
   readonly selection = new SelectionModel<T>(true, []);
-  readonly query  = model<Query>({ page: 0, size: 25, sort: [], search: '', filters: {} });
-  readonly page   = signal<Page<T>>({ items: [], total: 0 });
+  readonly query  = model<Query>({ limit: 10, offset: 0, sort: [], search: '', filters: {} });
+  readonly page   = signal<Page<T>>({ items: [], count: 0 });
   readonly loading = signal(false);
 
   // menus / filters popover
@@ -50,7 +50,7 @@ export class AppDataTableComponent<T> {
 
   // derived
   readonly items  = computed(() => this.page().items);
-  readonly total  = computed(() => this.page().total);
+  readonly total  = computed(() => this.page().count);
   readonly search = computed(() => this.query().search ?? '');
 
   readonly toolbarActions = computed(() => this.actions().filter(a => a.scope === 'toolbar'));
@@ -125,12 +125,12 @@ export class AppDataTableComponent<T> {
 
   applyFilters(close = false) {
     const next = this.clean(this.draft());
-    this.updateQuery({ filters: next, page: 0 });
+    this.updateQuery({ filters: next, offset: 0 });
     if (close) this.filtersOpen.set(false);
   }
   resetFilters(apply = true, close = false) {
     this.resetDraft();
-    if (apply) this.updateQuery({ filters: {}, page: 0 });
+    if (apply) this.updateQuery({ filters: {}, offset: 0 });
     if (close) this.filtersOpen.set(false);
   }
 
@@ -138,14 +138,14 @@ export class AppDataTableComponent<T> {
   onFilterChange(f: FilterDef<T>, value: any) {
     const patch = f.toQuery ? f.toQuery(value) : { [String(f.field)]: value };
     const next  = { ...(this.query().filters || {}), ...patch };
-    this.updateQuery({ filters: next, page: 0 });
+    this.updateQuery({ filters: next, offset: 0 });
   }
   onFilterRangeChange(f: FilterDef<T>, part: 'start'|'end', value: any) {
     const key = part === 'start' ? `${String(f.field)}_from` : `${String(f.field)}_to`;
     const next = { ...(this.query().filters || {}), [key]: value };
-    this.updateQuery({ filters: next, page: 0 });
+    this.updateQuery({ filters: next, offset: 0 });
   }
-  onSearch(value: string) { this.updateQuery({ search: value, page: 0 }); }
+  onSearch(value: string) { this.updateQuery({ search: value, offset: 0 }); }
 
   // ---------- data ----------
   reload() {
@@ -157,10 +157,10 @@ export class AppDataTableComponent<T> {
   }
 
   // ---------- paginator / sort ----------
-  onPage(e: PageEvent) { this.updateQuery({ page: e.pageIndex, size: e.pageSize }, false); this.reload(); }
+  onPage(e: PageEvent) { this.updateQuery({ offset: e.pageIndex * e.pageSize, limit: e.pageSize }, false); this.reload(); }
   onSort(e: Sort) {
     const s = e.direction ? [{ field: e.active, dir: this.toSortDir(e.direction) }] : [];
-    this.updateQuery({ sort: s, page: 0 });
+    this.updateQuery({ sort: s, limit: 0 });
   }
 
   // ---------- selection ----------
@@ -175,7 +175,7 @@ export class AppDataTableComponent<T> {
     }
     const ctx = { row, selection: this.selection.selected };
     if ((a as any).requiresSelection && !ctx.selection.length) return false;
-    return (a as any).canEnable ? !!(a as any).canEnable(ctx) : true;
+    return (a as any).canEnable ? (a as any).canEnable(ctx) : true;
   }
 
   async run(a: ActionDef<T>, row?: T) {
@@ -204,8 +204,8 @@ export class AppDataTableComponent<T> {
     effect(() => {
       const qp = this.route.snapshot.queryParamMap;
       this.query.set({
-        page: +(qp.get('page') ?? 0),
-        size: +(qp.get('size') ?? 25),
+        offset: +(qp.get('offset') ?? 0),
+        limit: +(qp.get('limit') ?? 25),
         search: qp.get('q') ?? '',
         sort: this.parseSort(qp.get('sort')),
         filters: qp.get('filters') ? JSON.parse(qp.get('filters')!) : {},
@@ -219,8 +219,8 @@ export class AppDataTableComponent<T> {
       this.router.navigate([], {
         relativeTo: this.route,
         queryParams: {
-          page: q.page,
-          size: q.size,
+          offset: q.offset,
+          limit: q.limit,
           q: q.search || null,
           sort: this.stringifySort(q.sort ?? [] ) || null,
           filters: Object.keys(q.filters ?? {}).length ? JSON.stringify(q.filters) : null,

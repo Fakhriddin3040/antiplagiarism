@@ -5,13 +5,14 @@ import {TemplateRef} from '@angular/core';
 export type SortDir = 'asc' | 'desc';
 
 export type Query = {
-  page: number; size: number;
+  offset: number;            // с какого элемента
+  limit: number;             // сколько элементов
   sort?: { field: string; dir: SortDir }[];
   search?: string;
   filters?: Record<string, any>; // уже нормализованные значения
 };
 
-export type Page<T> = { items: T[]; total: number };
+export type Page<T> = { items: T[]; count: number };
 
 export type Accessor<T> = (row: T) => any;
 
@@ -21,8 +22,8 @@ export type ColumnDef<T> = {
   width?: string | number;
   sticky?: 'start'|'end';
   sortable?: boolean;
-  accessor?: Accessor<T>;           // если key недостаточно
-  cellTemplate?: TemplateRef<any> | null;  // кастомная ячейка
+  accessor?: Accessor<T>;
+  cellTemplate?: TemplateRef<any> | null;
 };
 
 export type FilterOp = 'eq'|'ne'|'in'|'nin'|'gt'|'lt'|'gte'|'lte'|'like'|'between';
@@ -38,7 +39,7 @@ export type FilterDef<T> = {
   type: 'text'|'select'|'multi'|'number'|'numberRange'|'date'|'dateRange'|'chips'|'bool';
   options?: Array<{label:string; value:any}> | (()=>Observable<any[]>);
 
-  // ↓ новые (для async-select сценария)
+  // ↓ для async-select
   asyncOptions?: (term: string) => Observable<any[]>;
   labelOf?: (item: any) => string;
   idOf?: (item: any) => string | number;
@@ -49,15 +50,13 @@ export type FilterDef<T> = {
   width?: number;
 };
 
-export type ActionScope = 'row'|'bulk'|'toolbar';
-
 export type RowOrBulkAction<T> = {
   id: string;
   label: string;
   icon?: string;
   scope: 'row' | 'bulk';
   requiresConfirm?: boolean;
-  requiresSelection?: boolean; // актуально для bulk
+  requiresSelection?: boolean;
   canEnable?: (ctx: { row?: T; selection: T[] }) => boolean;
   run: (ctx: { row?: T; selection: T[]; reload: () => void }) => void | Promise<void>;
 };
@@ -69,9 +68,9 @@ export type ToolbarAction<T = any> = {
   label: string;
   icon?: string;
   scope: 'toolbar';
-  variant?: ToolbarVariant;                // как рисовать кнопку
+  variant?: ToolbarVariant;
   disabled?: (ctx: { selection: T[]; query: Query }) => boolean;
-  run?: (ctx: { selection: T[]; query: Query; reload: () => void }) => void | Promise<void>; // опционально
+  run?: (ctx: { selection: T[]; query: Query; reload: () => void }) => void | Promise<void>;
 };
 
 export type ActionDef<T> = RowOrBulkAction<T> | ToolbarAction<T>;

@@ -3,7 +3,7 @@ import {Router, RouterLink} from '@angular/router';
 import {Component, OnInit} from '@angular/core';
 import {MatFormField, MatInput, MatLabel} from '@angular/material/input';
 import {MatButton} from '@angular/material/button';
-import {AuthService} from '../../../../core/services/auth.service';
+import {AuthService} from '../../../../features/auth/auth.service';
 
 @Component({
   selector: 'app-login',

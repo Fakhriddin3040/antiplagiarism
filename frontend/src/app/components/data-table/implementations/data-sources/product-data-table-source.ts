@@ -90,7 +90,7 @@ export class ProductDataSource implements TableDataSource<Product> {
     }
     // только активные
     if (f['active'] === true) {
-      rows = rows.filter(r => r.active === true);
+      rows = rows.filter(r => r.active);
     }
     // sku text (пример like)
     if (typeof f['sku'] === 'string' && f['sku'].trim()) {
@@ -125,12 +125,12 @@ export class ProductDataSource implements TableDataSource<Product> {
     }
 
     // 3) пагинация
-    const size = q.size ?? 25;
-    const page = q.page ?? 0;
-    const start = page * size;
-    const items = rows.slice(start, start + size);
-    const total = rows.length;
+    const limit = q.limit ?? 25;
+    const offset = q.offset ?? 0;
+    const start = offset * limit;
+    const items = rows.slice(start, start + limit);
+    const count = rows.length;
 
-    return of({ items, total }).pipe(delay(250));
+    return of({ items, count }).pipe(delay(250));
   }
 }

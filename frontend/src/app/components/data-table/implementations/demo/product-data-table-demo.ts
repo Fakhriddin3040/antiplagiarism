@@ -11,7 +11,7 @@ import {
   FieldDef as FormFieldDef,
   ModalResult
 } from '../../../../core/types/form-types';
-import {DynamicFormModalComponent} from '../../../../core/types/dynamic-form-modal/dynamic-form-modal.component';
+import {DynamicFormModalComponent} from '../../../dynamic-form-modal/dynamic-form-modal.component';
 
 @Component({
   selector: 'app-demo-products',

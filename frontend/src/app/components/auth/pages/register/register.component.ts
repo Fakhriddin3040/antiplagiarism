@@ -5,7 +5,8 @@ import {NgIf} from '@angular/common';
 import {Router, RouterLink} from '@angular/router';
 import {MatFormField, MatInput, MatLabel} from '@angular/material/input';
 import {MatButton} from '@angular/material/button';
-import {AuthService} from '../../../../core/services/auth.service';
+import {AUTH_SERVICE} from '../../../../core/features/auth/auth.service.interface';
+import {AuthHelper} from '../../../../helpers/auth/auth.helper';
 
 @Component({
   selector: 'app-register',
@@ -32,7 +33,7 @@ import {AuthService} from '../../../../core/services/auth.service';
 })
 export class RegisterComponent implements OnInit {
   private fb = inject(FormBuilder);
-  private auth = inject(AuthService);
+  private auth = inject(AUTH_SERVICE);
   private router = inject(Router);
 
   form!: FormGroup;
@@ -70,9 +71,9 @@ export class RegisterComponent implements OnInit {
     this.auth.register(this.form.value)
       .subscribe({
         next: (response) => {
-          this.auth.processTokenResponse(response);
+          AuthHelper.setToken(response.accessToken);
           this.loading = false;
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/dashboard']); // @ts-ignore
         },
         error: (error) => {
           this.loading = false;

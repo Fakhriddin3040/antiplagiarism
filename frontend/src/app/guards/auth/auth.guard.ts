@@ -7,14 +7,14 @@ import {
   Router,
   RouterStateSnapshot
 } from '@angular/router';
-import {AuthService} from '../../core/services/auth.service';
+import {AUTH_SERVICE} from '../../core/features/auth/auth.service.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
   router = inject(Router);
-  authService = inject(AuthService);
+  authService = inject(AUTH_SERVICE);
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): MaybeAsync<GuardResult> {
       if (!this.authService.isAuthenticated()) {
