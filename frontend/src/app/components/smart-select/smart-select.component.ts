@@ -3,13 +3,12 @@ import {
   Input, Output, TemplateRef, ViewChild, computed, effect, model, signal
 } from '@angular/core';
 import { CommonModule, NgTemplateOutlet } from '@angular/common';
-import { AsyncPipe } from '@angular/common';
 import { Observable, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-smart-select',
   standalone: true,
-  imports: [CommonModule, NgTemplateOutlet, AsyncPipe],
+  imports: [CommonModule, NgTemplateOutlet],
   templateUrl: './smart-select.component.html',
   styleUrls: ['./smart-select.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

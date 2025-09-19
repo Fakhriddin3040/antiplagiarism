@@ -52,7 +52,6 @@ describe('AuthService (register → login, unique data)', () => {
   afterEach(() => {
     httpMock.verify();
   });
-
   it('should register a new user and then login successfully', (done) => {
     const u = makeUniqueUser();
 
