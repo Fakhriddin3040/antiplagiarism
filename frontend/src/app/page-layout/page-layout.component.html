@@ -1,0 +1,11 @@
+<!-- page-layout.component.html -->
+<div class="page-layout">
+  <app-sidebar-tree
+    class="sidebar"
+    [collapsed]="collapsed"
+    (selectFolder)="onSelect($event)"
+    (toggleCollapse)="collapsed = !collapsed">
+  </app-sidebar-tree>
+
+  <router-outlet></router-outlet>
+</div>

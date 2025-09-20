@@ -13,6 +13,7 @@ export class Folder implements BaseModel, ChronoModel, AuthorInfoModel {
     public updatedById: Guid,
     public description?: string,
     public parentId?: Guid,
+    public children: Folder[] = [],
   ) {
   }
 }
@@ -33,4 +34,12 @@ export class UpdateFolderDto {
     public parentId?: Guid,
   ) {
   }
+}
+
+
+export interface FolderNode {
+  id: Guid;
+  name: string;
+  children?: FolderNode[];
+  isOpen?: boolean;
 }

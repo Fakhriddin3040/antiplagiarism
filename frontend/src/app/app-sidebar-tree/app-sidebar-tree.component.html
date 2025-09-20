@@ -1,0 +1,75 @@
+<aside class="sidebar-shell" [class.is-collapsed]="collapsed">
+  <header class="sidebar-head">
+    <button type="button" class="collapse-btn" (click)="toggleCollapse.emit()" [attr.aria-label]="collapsed ? 'Expand' : 'Collapse'">
+      <span class="chev" [class.rot]="collapsed">❮</span>
+    </button>
+    <span class="title" *ngIf="!collapsed">Файлы</span>
+    <button type="button" class="new-btn" *ngIf="!collapsed" (click)="addChild(null)">＋</button>
+  </header>
+
+  <div class="tree-scroll">
+    <ul class="tree" role="tree">
+      @if (loading()) {
+        <li class="loading">Загрузка…</li>
+      } @else {
+        @for (n of tree(); track trackById($index, n)) {
+          <li role="treeitem" [attr.aria-expanded]="isOpen(n)" class="node">
+            <div class="row">
+              <button class="twisty" (click)="toggle(n)">
+                <span class="icon" [class.open]="isOpen(n)">▸</span>
+              </button>
+
+              <button class="label" (click)="select(n)">{{ n.title }}</button>
+
+              <div class="row-actions">
+                <button class="icon-btn" title="Добавить" (click)="addChild(n)">＋</button>
+                <button class="icon-btn" title="Переименовать" (click)="rename(n)">✎</button>
+                <button class="icon-btn danger" title="Удалить" (click)="remove(n, null)">🗑</button>
+              </div>
+            </div>
+
+            @if (isOpen(n)) {
+              <ul role="group">
+                @if (!n.children.length) {
+                  <li class="empty">Пусто</li>
+                } @else {
+                  <ng-container *ngTemplateOutlet="renderChildren; context: { $implicit: n }"></ng-container>
+                }
+              </ul>
+            }
+          </li>
+        }
+      }
+    </ul>
+  </div>
+
+  <ng-template #renderChildren let-parent>
+    @for (c of parent.children; track trackById($index, c)) {
+      <li role="treeitem" [attr.aria-expanded]="isOpen(c)" class="node">
+        <div class="row">
+          <button class="twisty" (click)="toggle(c)">
+            <span class="icon" [class.open]="isOpen(c)">▸</span>
+          </button>
+
+          <button class="label" (click)="select(c)">{{ c.title }}</button>
+
+          <div class="row-actions">
+            <button class="icon-btn" title="Добавить" (click)="addChild(c)">＋</button>
+            <button class="icon-btn" title="Переименовать" (click)="rename(c)">✎</button>
+            <button class="icon-btn danger" title="Удалить" (click)="remove(c, parent)">🗑</button>
+          </div>
+        </div>
+
+        @if (isOpen(c)) {
+          <ul role="group">
+            @if (!c.children?.length) {
+              <li class="empty">Пусто</li>
+            } @else {
+              <ng-container *ngTemplateOutlet="renderChildren; context: { $implicit: c }"></ng-container>
+            }
+          </ul>
+        }
+      </li>
+    }
+  </ng-template>
+</aside>

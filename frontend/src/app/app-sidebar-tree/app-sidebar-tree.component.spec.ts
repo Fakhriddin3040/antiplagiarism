@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FolderSidebarComponent } from './folder-sidebar.component';
+import { AppSidebarTreeComponent } from './app-sidebar-tree.component';
 
-describe('FolderSidebarComponent', () => {
-  let component: FolderSidebarComponent;
-  let fixture: ComponentFixture<FolderSidebarComponent>;
+describe('AppSidebarTreeComponent', () => {
+  let component: AppSidebarTreeComponent;
+  let fixture: ComponentFixture<AppSidebarTreeComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FolderSidebarComponent]
+      imports: [AppSidebarTreeComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(FolderSidebarComponent);
+    fixture = TestBed.createComponent(AppSidebarTreeComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

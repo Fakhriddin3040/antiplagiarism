@@ -1,0 +1,26 @@
+/* page-layout.component.scss */
+.page-layout {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  gap: var(--sidebar-gap);
+  height: var(--height-calc-vh);
+  padding: var(--space-3);
+}
+
+.sidebar {
+  position: sticky;
+  top: var(--space-3);
+  align-self: start;
+  height: calc(var(--height-calc-vh) - var(--space-3));
+}
+
+.content {
+  min-width: 0;            /* чтоб таблица не ломала грид */
+  height: var(--height-calc-vh);
+  overflow: auto;
+  background: var(--c-surface);
+  border: var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--c-shadow-card);
+  padding: var(--space-3);
+}

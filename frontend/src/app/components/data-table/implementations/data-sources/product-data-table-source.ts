@@ -9,10 +9,10 @@ export interface Product {
   name: string;
   sku: string;
   categoryId: number;
-  category: string;         // денормализация для удобства отображения
-  price: number;            // в у.е.
+  category: string;
+  price: number;
   active: boolean;
-  createdAt: string;        // ISO
+  createdAt: string;
   asset?: File
 }
 

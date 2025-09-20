@@ -20,6 +20,8 @@ import { AUTH_SERVICE } from './app/core/features/auth/auth.service.interface';
 import { AuthService } from './app/features/auth/auth.service';
 import { AuthInterceptor } from './app/interceptors/auth/auth.interceptor';
 import {CaseTransformInterceptor} from './app/interceptors/case-transform/case-transform.interceptor';
+import {FOLDER_SERVICE} from './app/core/features/folder/folder.service.token';
+import {FolderService} from './app/features/folder/folder.service';
 
 const routes: Routes = [
   { path: '', redirectTo: 'dashboard/documents', pathMatch: 'full' },
@@ -49,6 +51,12 @@ const routes: Routes = [
       import('./app/components/data-table/implementations/demo/product-data-table-demo')
         .then(m => m.DemoProductsComponent),
   },
+  {
+    path: 'page-layout',
+    loadComponent: () =>
+      import('./app/page-layout/page-layout.component')
+        .then(m => m.PageLayoutComponent),
+  }
 ];
 
 bootstrapApplication(AppComponent, {
@@ -61,6 +69,7 @@ bootstrapApplication(AppComponent, {
     ),
 
     { provide: AUTH_SERVICE, useClass: AuthService },
+    { provide: FOLDER_SERVICE, useClass: FolderService },
 
     provideAngularSvgIcon(),
 

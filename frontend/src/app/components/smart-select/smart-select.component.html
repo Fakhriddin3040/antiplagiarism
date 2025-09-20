@@ -25,7 +25,7 @@
       <div class="ss-empty">No results</div>
     } @else {
       <ul class="ss-list">
-        @for (opt of options(); track trackById; let i = $index) {
+        @for (opt of options(); track trackById(i, opt); let i = $index) {
           <li class="ss-item"
               [class.active]="i === highlightIdx()"
               [class.selected]="isSelected(opt)"

@@ -17,7 +17,7 @@ class Folder(SQLAlchemyBaseModel, ChronoModelMixin, AuditableModelMixin):
     __tablename__ = DatabaseTables.FOLDERS
 
     title: Mapped[str] = mapped_column(String(60), nullable=False, index=True)
-    description: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
+    description: Mapped[str] = mapped_column(String(255), nullable=True, index=True)
     parent_id: Mapped[ID_T] = mapped_column(
         ForeignKey(DatabaseTables.FOLDERS.as_foreign_key, ondelete="CASCADE"),
         nullable=True,

@@ -4,9 +4,16 @@ import {Guid} from 'guid-typescript';
 
 export interface FolderServiceInterface {
   getRoots(): Observable<Folder[]>;
+  getAll(): Observable<Folder[]>;
   getChildren(id: Guid): Observable<Folder[]>;
-  rename(id: Guid, newTitle: string): Observable<void>;
   create(item: CreateFolderDto): Observable<Folder>;
   update(id: Guid, item: UpdateFolderDto): Observable<void>;
   delete(id: Guid): Observable<void>;
+  getTree(
+    opts?: { sort?: (a: Folder, b: Folder) => number }
+  ): Observable<Folder[]>;
+  buildTree(
+    folders: Folder[],
+    opts?: { sort?: (a: Folder, b: Folder) => number }
+  ): Folder[];
 }
