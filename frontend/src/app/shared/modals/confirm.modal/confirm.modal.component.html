@@ -1,0 +1,17 @@
+<div class="backdrop" (click)="onBackdrop()"></div>
+
+<div class="window" role="dialog" aria-modal="true">
+  <div class="modal-header">
+    <h6 class="modal-title">{{ title() }}</h6>
+    <button type="button" class="btn-close" (click)="emit(false)">&times;</button>
+  </div>
+
+  <div class="modal-body">
+    <p class="mb-0" [innerHTML]="message()"></p>
+  </div>
+
+  <div class="modal-footer">
+    <app-secondary-button [label]="discardLabel()" (clicked)="emit(false)"></app-secondary-button>
+    <app-primary-button [label]="confirmLabel()" [variant]="primaryButtonVariant()" (clicked)="emit(true)" #okBtn ></app-primary-button>
+  </div>
+</div>

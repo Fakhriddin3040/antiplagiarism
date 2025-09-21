@@ -47,7 +47,7 @@ async def create(
 
 
 @router.get(
-    "/", response_model=Sequence[FolderListSchema], status_code=status.HTTP_200_OK
+    "", response_model=Sequence[FolderListSchema], status_code=status.HTTP_200_OK
 )
 async def list_(
     params: FolderFilterSearchSchema = Depends(FolderFilterSearchSchema),

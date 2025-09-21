@@ -77,7 +77,7 @@ export class RegisterComponent implements OnInit {
         },
         error: (error) => {
           this.loading = false;
-          console.log(error);
+          console.error(error);
           alert("Упс... Что-то пошло не так. Обратитесь к службе поддержки.");
         },
       });

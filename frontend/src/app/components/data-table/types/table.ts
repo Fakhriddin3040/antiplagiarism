@@ -12,7 +12,7 @@ export type Query = {
   filters?: Record<string, any>; // уже нормализованные значения
 };
 
-export type Page<T> = { items: T[]; count: number };
+export type Page<T> = { rows: T[]; count: number };
 
 export type Accessor<T> = (row: T) => any;
 

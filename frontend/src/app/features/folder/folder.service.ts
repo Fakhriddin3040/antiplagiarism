@@ -10,14 +10,15 @@ import {CreateFolderDto, Folder, UpdateFolderDto} from '../../core/features/fold
 
 export class FolderService implements FolderServiceInterface {
   private httpClient = inject(HttpClient);
-  private baseUrl = EnvironmentHelper.makeApiUrl(ApiEndpointEnum.FOLDERS);
+  private listUrl = EnvironmentHelper.makeApiUrl(ApiEndpointEnum.FOLDERS, false);
+  private baseUrl = EnvironmentHelper.makeApiUrl(ApiEndpointEnum.FOLDERS, true);
 
   private makeDetailUrl(id: Guid): string {
-    return `${this.baseUrl}/${id.toString()}`;
+    return `${this.baseUrl}${id.toString()}/`;
   }
 
   getAll(): Observable<Folder[]> {
-    return this.httpClient.get<Folder[]>(this.baseUrl);
+    return this.httpClient.get<Folder[]>(this.listUrl);
   }
 
   create(item: CreateFolderDto): Observable<Folder> {
@@ -35,8 +36,7 @@ export class FolderService implements FolderServiceInterface {
   }
 
   getRoots(): Observable<Folder[]> {
-    console.log("Service called here.")
-    return this.httpClient.get<Folder[]>(EnvironmentHelper.makeApiUrl(ApiEndpointEnum.FOLDERS_ROOTS)).pipe();
+    return this.httpClient.get<Folder[]>(EnvironmentHelper.makeApiUrl(ApiEndpointEnum.FOLDERS_ROOTS, false)).pipe();
   }
 
   update(id: Guid, item: UpdateFolderDto): Observable<void> {

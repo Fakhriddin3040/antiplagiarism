@@ -1,11 +1,13 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable} from 'rxjs';
 import { Guid } from 'guid-typescript';
-import {Author, CreateAuthorDto, UpdateAuthorDto} from '../../core/features/author/types/author.types';
+import {Author, AuthorsPage, CreateAuthorDto, UpdateAuthorDto} from '../../core/features/author/types/author.types';
 import {AuthorServiceInterface} from '../../core/features/author/author.service.interface';
 import {EnvironmentHelper} from '../../helpers/environment/environment.helper';
 import { ApiEndpointEnum } from '../../shared/enums/routing/api-endpoint.enum';
+import {Query} from '../../components/data-table/types/table';
+import {HttpQueryParser} from '../../core/http/helpers/http-query.parser';
 
 function normalizeAuthor(a: Author): Author {
   // Приводим поля времени к Date (если пришли строками)
@@ -14,31 +16,28 @@ function normalizeAuthor(a: Author): Author {
   return { ...a, createdAt, updatedAt };
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class AuthorService implements AuthorServiceInterface {
+
   private http = inject(HttpClient);
-  private baseUrl = EnvironmentHelper.makeApiUrl(ApiEndpointEnum.AUTHORS);
+  private listUrl = EnvironmentHelper.makeApiUrl(ApiEndpointEnum.AUTHORS, false);
+  private baseUrl = EnvironmentHelper.makeApiUrl(ApiEndpointEnum.AUTHORS, true);
 
   private detailUrl(id: Guid): string {
-    return `${this.baseUrl}/${id.toString()}`;
+    return `${this.baseUrl}${id.toString()}`;
   }
 
-  getAll(): Observable<Author[]> {
+  getAll(query?: Query): Observable<AuthorsPage> {
+    const params = query ? HttpQueryParser.makeParams(query) : undefined;
     return this.http
-      .get<Author[]>(this.baseUrl)
-      .pipe(map(list => (list ?? []).map(normalizeAuthor)));
-  }
-
-  getById(id: Guid): Observable<Author> {
-    return this.http
-      .get<Author>(this.detailUrl(id))
-      .pipe(map(normalizeAuthor));
+      .get<AuthorsPage>(this.listUrl, { params: params })
   }
 
   create(item: CreateAuthorDto): Observable<Author> {
     return this.http
-      .post<Author>(this.baseUrl, item)
-      .pipe(map(normalizeAuthor));
+      .post<Author>(this.baseUrl, item);
   }
 
   update(id: Guid, item: UpdateAuthorDto): Observable<void> {
@@ -47,5 +46,14 @@ export class AuthorService implements AuthorServiceInterface {
 
   delete(id: Guid): Observable<void> {
     return this.http.delete<void>(this.detailUrl(id));
+  }
+
+  bulkDelete(ids: Guid[]): undefined {
+    ids.forEach((id) => this.delete(id).subscribe({
+      next: () => {},
+      error: (err) => {
+        console.error(err);
+      }
+    }));
   }
 }

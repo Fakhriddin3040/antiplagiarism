@@ -1,9 +1,10 @@
 from abc import ABC
-from typing import Type, Optional, Any, Sequence, TypeVar, Dict, Mapping, Tuple
+from typing import Type, Optional, Any, Sequence, TypeVar, Dict, Mapping, Tuple, List
 
 from sqlalchemy import select, exists, Select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.interfaces import ORMOption
+from sqlalchemy.sql.functions import count
 
 from src.base.types.orm.models import TModel
 from src.base.types.pytypes import ID_T
@@ -81,15 +82,7 @@ class AbstractAsyncSQLAlchemyRepository(ABC):
             getattr(self.model, key) == value for key, value in filters.items() if value
         ]
 
-        search_filters = (
-            [
-                getattr(self.model, key).ilike(f"%{value}%")
-                for key, value in search.items()
-                if value
-            ]
-            if search
-            else []
-        )
+        search_filters = self._parse_search(search) if search else list()
 
         conditions = [*filter_args, *search_filters]
 
@@ -99,23 +92,47 @@ class AbstractAsyncSQLAlchemyRepository(ABC):
         _select = select(self.model).where(*conditions)
         return _select
 
+    def _parse_search(self, search: Dict[str, Any]) -> List[Select]:
+        return [
+            getattr(self.model, key).ilike(f"%{value}%")
+            for key, value in search.items()
+            if value
+        ]
+
+
     async def filter(
         self,
         limit: Optional[int] = 10,
         offset: int = 0,
         search: Optional[Dict[str, Any]] = None,
+        need_count: Optional[bool] = False,
         **filters,
-    ) -> Sequence[TModel]:
+    ) -> Sequence[TModel] | Tuple[Sequence[TModel], int]:
         if not filters and not search:
-            return await self.all(offset=offset, limit=limit)
+            _select = select(self.model).offset(offset).limit(limit)
+        else:
+            _select = self.parse_to_statement(search=search, **filters)
+            _select = _select.limit(limit).offset(offset)
 
-        _select = self.parse_to_statement(search=search, **filters)
+        result = (await self.db.execute(_select)).scalars().all()
 
-        _select = _select.limit(limit).offset(offset)
+        if not need_count:
+            return result
 
-        result = await self.db.execute(_select)
+        res_len = len(result)
 
-        return result.scalars().all()
+        if res_len == limit:
+            return result, await self._get_count(smt=_select)
+        elif res_len > 0:
+            return result, offset + res_len
+
+        return result, 0
+
+    async def _get_count(self, smt: Select) -> Optional[int]:
+        return (await self.db.execute(
+            select(count()).select_from(smt.subquery())
+        )).scalar_one_or_none()
+
 
     async def filter_exists(
         self, search: Optional[Dict[str, Any]] = None, **filters

@@ -2,7 +2,7 @@
   <div class="um-backdrop" (click)="close(false)">
     <div class="um-dialog" (click)="$event.stopPropagation()">
       <div class="um-header">
-        <h3>{{ title }}</h3>
+        <h3>{{ title() }}</h3>
         <button class="um-close" (click)="close(false)">✕</button>
       </div>
 
@@ -95,9 +95,10 @@
       <div class="um-footer">
         <button class="btn" (click)="close(false)">Отмена</button>
         <button class="btn btn-primary" [disabled]="confirmDisabled()" (click)="close(true)">
-          {{ confirmLabel }}
+          {{ confirmLabel() }}
         </button>
       </div>
+
     </div>
   </div>
 }

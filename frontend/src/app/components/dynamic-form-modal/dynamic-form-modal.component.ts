@@ -1,9 +1,11 @@
 import {
-  ChangeDetectionStrategy, Component, Input, Output, EventEmitter, signal, computed
+  ChangeDetectionStrategy, Component, Input, Output, EventEmitter, signal, computed, input, inject
 } from '@angular/core';
 import {SmartSelectComponent} from '../smart-select/smart-select.component';
 import {FileDropComponent} from '../file-drop/file-drop.component';
-import {FieldDef, ModalResult} from '../../core/types/form-types';
+import {ModalFieldDef, ModalResult} from '../../core/types/form-types';
+import {ConfirmModalOptions, defaultConfirmModalOptions} from '../../shared/modals/types/confirm.modal.types';
+import {ConfirmModalService} from '../../shared/modals/service/confirm-modal.service';
 
 @Component({
   selector: 'app-dynamic-form-modal',
@@ -17,17 +19,21 @@ export class DynamicFormModalComponent {
   // -------- управление --------
   readonly open = signal(false);
 
+  // -------- Injectables --------
+  confirmModalService = inject(ConfirmModalService);
+
   // -------- входные (простые) --------
-  @Input() title = 'Форма';
-  @Input() confirmLabel = 'Сохранить';
-  @Input() requireConfirm = true;
+  title = input('Форма');
+  requireConfirm = input(true);
+  confirmLabel = input('Подтвердить');
+  confirmOpts = input<ConfirmModalOptions>(defaultConfirmModalOptions);
 
   // -------- входные (через сеттеры, чтобы синкать стейт) --------
-  private readonly _fields = signal<FieldDef[]>([]);
+  private readonly _fields = signal<ModalFieldDef[]>([]);
   private readonly _initialValue = signal<Record<string, any>>({});
 
   // алиасируем input "fields" в сеттер formFields
-  @Input('fields') set formFields(v: FieldDef[] | null | undefined) {
+  @Input('fields') set formFields(v: ModalFieldDef[] | null | undefined) {
     this._fields.set(v ?? []);
     this.syncInitial(); // поля поменялись — пересоберём начальное value
   }
@@ -59,18 +65,41 @@ export class DynamicFormModalComponent {
 
   // -------- API --------
   show(data?: Record<string, any>) {
-    if (data) this.value.update(prev => ({ ...prev, ...data }));
+    if (data) this.value.update(prev => ({...prev, ...data}));
     this.open.set(true);
   }
 
   close(confirmed: boolean) {
-    this.open.set(false);
-    this.closed.emit({ confirmed, value: this.value() });
+    const close = (c: boolean) => {
+      // Confirmation modal closed by applying or cancelling
+      if (!c) {
+        return
+      }
+      this.open.set(false);
+      this.closed.emit({confirmed, value: this.value()});
+    }
+
+    if (confirmed && this.requireConfirm()) {
+      this.confirmModalService.confirm().subscribe({
+        next: (res) => {
+          close(res);
+        },
+        error: (err) => {
+          console.error(err);
+        }
+      })
+    }
+    else {
+      close(true);
+    }
   }
 
   // helpers для шаблона
   get = (k: string) => this.value()[k];
-  set(k: string, v: any) { this.value.update(obj => ({ ...obj, [k]: v })); }
+
+  set(k: string, v: any) {
+    this.value.update(obj => ({...obj, [k]: v}));
+  }
 
   toCssWidth(w?: number | string) {
     if (typeof w === 'number') return String(w);
@@ -81,7 +110,7 @@ export class DynamicFormModalComponent {
   // -------- внутренняя синхронизация стартовых значений --------
   private syncInitial() {
     // базовые значения
-    const init: Record<string, any> = { ...this._initialValue() };
+    const init: Record<string, any> = {...this._initialValue()};
 
     // проставим initialId для select-async, если ключ ещё не задан
     for (const f of this._fields()) {

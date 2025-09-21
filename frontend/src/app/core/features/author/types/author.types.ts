@@ -1,6 +1,7 @@
 import {Guid} from 'guid-typescript';
 import {BaseModel} from '../../../types/base.model.type';
 import {ChronoModel} from '../../../types/chrono.model.type';
+import {Page} from '../../../../components/data-table/types/table';
 
 export class Author implements BaseModel, ChronoModel {
   constructor(
@@ -27,3 +28,4 @@ export class CreateAuthorDto {
 export class ListAuthorDto extends Author {}
 
 export type UpdateAuthorDto = Partial<CreateAuthorDto>;
+export type AuthorsPage = Page<Author>;

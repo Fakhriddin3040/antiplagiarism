@@ -25,23 +25,15 @@ class AbstractPydanticSearchSchema(BaseModel):
     search: Optional[str] = Field(None, description="Поисковый запрос")
 
     def parse_search(self, permitted_fields: set[str]) -> Dict[str, Any]:
+        self.search = self.search.strip() if self.search else ""
+
         if not self.search:
             return {}
 
-        arr = self.search.split(",")
-
-        data = {}
-
-        for item in arr:
-            if "=" not in item:
-                continue
-
-            key, value = item.split("=")
-
-            if key in permitted_fields:
-                data[key] = value
-
-        return data
+        return {
+            field: self.search
+            for field in permitted_fields
+        }
 
 
 class AbstractPydanticFilterSchema(BaseModel):

@@ -2,7 +2,7 @@
 import { Observable } from 'rxjs';
 import { TemplateRef } from '@angular/core';
 
-export type FieldKind =
+export type ModalFieldKind =
   | 'text'
   | 'textarea'
   | 'number'
@@ -13,10 +13,10 @@ export type FieldKind =
   | 'file';          // drag & drop
 
 // базовое поле
-export type BaseField<T = any> = {
+export type ModalBaseField<T = any> = {
   key: string;
   label: string;
-  kind: FieldKind;
+  kind: ModalFieldKind;
   placeholder?: string;
   hint?: string;
   required?: boolean;
@@ -26,28 +26,28 @@ export type BaseField<T = any> = {
 };
 
 // текстовые
-export type TextField = BaseField & {
+export type ModalTextField = ModalBaseField & {
   kind: 'text' | 'textarea';
   rows?: number; // для textarea
 };
 
-export type NumberField = BaseField & {
+export type ModalNumberField = ModalBaseField & {
   kind: 'number';
   min?: number;
   max?: number;
   step?: number;
 };
 
-export type DateField = BaseField & {
+export type ModalDateField = ModalBaseField & {
   kind: 'date';
 };
 
-export type BoolField = BaseField & {
+export type ModalBoolField = ModalBaseField & {
   kind: 'bool' | 'checkbox';
 };
 
 // асинхронный select (smart select, шлём только id)
-export type SelectAsyncField<T = any> = BaseField<T> & {
+export type ModalSelectAsyncField<T = any> = ModalBaseField<T> & {
   kind: 'select-async';
   load: (term: string) => Observable<readonly T[] | T[]>;
   labelOf: (item: T) => string;
@@ -56,7 +56,7 @@ export type SelectAsyncField<T = any> = BaseField<T> & {
 };
 
 // файлы
-export type FileField = BaseField & {
+export type ModalFileField = ModalBaseField & {
   kind: 'file';
   multiple?: boolean;
   accept?: string;
@@ -64,13 +64,13 @@ export type FileField = BaseField & {
 };
 
 // итоговый union
-export type FieldDef =
-  | TextField
-  | NumberField
-  | DateField
-  | BoolField
-  | SelectAsyncField
-  | FileField;
+export type ModalFieldDef =
+  | ModalTextField
+  | ModalNumberField
+  | ModalDateField
+  | ModalBoolField
+  | ModalSelectAsyncField
+  | ModalFileField;
 
 // результат модалки
 export type ModalResult<T = any> = {

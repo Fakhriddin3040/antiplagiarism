@@ -33,7 +33,7 @@ class DocumentIndexService:
             extension=document.file.extension, path=path
         )
         if not file_content or len(file_content.strip()) < 100:
-            msg = "File should have at least 100 words" % path
+            msg = "File should have at least 100 words. Path: %s" % path
             logger.critical(msg)
             raise ApiException(
                 status_code=status.HTTP_400_BAD_REQUEST,

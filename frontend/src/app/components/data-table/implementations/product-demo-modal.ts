@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {Category, ProductDataSource} from './data-sources/product-data-table-source';
-import {FormModalService} from '../../../core/types/form-modal.service';
-import {FieldDef} from '../../../core/types/form-types';
+import {ModalFieldDef} from '../../../core/types/form-types';
+import {FormModalService} from '../../../core/services/form-modal.service';
 
 @Component({
   standalone: true,
@@ -16,7 +16,7 @@ export class DemoUsageComponent {
   constructor(private modals: FormModalService) {}
 
   async openCreate() {
-    const fields: FieldDef[] = [
+    const fields: ModalFieldDef[] = [
       { key: 'name', label: 'Name', kind: 'text', required: true, placeholder: 'Product name', width: 12 },
       { key: 'sku',  label: 'SKU',  kind: 'text', required: true, placeholder: 'e.g. SKU-0001', width: 6 },
       {

@@ -1,11 +1,12 @@
 import { Guid } from "guid-typescript";
 import {Observable} from 'rxjs';
-import {Author, CreateAuthorDto, UpdateAuthorDto} from './types/author.types';
+import {Author, AuthorsPage, CreateAuthorDto, UpdateAuthorDto} from './types/author.types';
+import {Query} from '../../../components/data-table/types/table';
 
 export interface AuthorServiceInterface {
-  getAll(): Observable<Author[]>;
-  getById(id: Guid): Observable<Author>;
+  getAll(query?: Query): Observable<AuthorsPage>;
   create(item: CreateAuthorDto): Observable<Author>;
   update(id: Guid, item: UpdateAuthorDto): Observable<void>;
   delete(id: Guid): Observable<void>;
+  bulkDelete(ids: Guid[]): undefined;
 }
