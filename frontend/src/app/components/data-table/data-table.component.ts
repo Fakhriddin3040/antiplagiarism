@@ -39,7 +39,7 @@ export class AppDataTableComponent<T> {
   // state
   readonly selection = new SelectionModel<T>(true, []);
   readonly query  = model<Query>({ limit: 10, offset: 0, sort: [], search: '', filters: {} });
-  readonly page   = signal<Page<T>>({ items: [], count: 0 });
+  readonly page   = signal<Page<T>>({ rows: [], count: 0 });
   readonly loading = signal(false);
 
   // menus / filters popover
@@ -49,7 +49,7 @@ export class AppDataTableComponent<T> {
   readonly draft        = signal<Record<string, any>>({}); // черновик значений фильтров
 
   // derived
-  readonly items  = computed(() => this.page().items);
+  readonly items  = computed(() => this.page().rows);
   readonly total  = computed(() => this.page().count);
   readonly search = computed(() => this.query().search ?? '');
 
@@ -96,7 +96,7 @@ export class AppDataTableComponent<T> {
   toggleRowMenu(row: T, ev: MouseEvent) { ev.stopPropagation(); this.rowMenuOpen.set(this.rowMenuOpen() === row ? null : row); this.bulkMenuOpen.set(false); }
   closeMenus() { this.rowMenuOpen.set(null); this.bulkMenuOpen.set(false); }
   @HostListener('document:click', ['$event'])
-  onDocClick(ev: MouseEvent) { if (!this.host.nativeElement.contains(ev.target as Node)) { this.filtersOpen.set(false); this.closeMenus(); } }
+  onDocClick(ev: MouseEvent) { if (!this.host.nativeElement.contains(ev.target)) { this.filtersOpen.set(false); this.closeMenus(); } }
 
   // ---------- FILTERS: draft & apply ----------
   private patchDraft(patch: Record<string, any>) { this.draft.update(d => ({ ...d, ...patch })); }
@@ -171,18 +171,18 @@ export class AppDataTableComponent<T> {
   // ---------- actions ----------
   isEnabled(a: ActionDef<T>, row?: T) {
     if (a.scope === 'toolbar') {
-      return !this.isToolbarDisabled(a as ToolbarAction<T>);
+      return !this.isToolbarDisabled(a);
     }
     const ctx = { row, selection: this.selection.selected };
-    if ((a as any).requiresSelection && !ctx.selection.length) return false;
-    return (a as any).canEnable ? (a as any).canEnable(ctx) : true;
+    if (a.requiresSelection && !ctx.selection.length) return false;
+    return a.canEnable ? a.canEnable(ctx) : true;
   }
 
   async run(a: ActionDef<T>, row?: T) {
     // toolbar-экшены запускаются через onToolbarClick
     if (a.scope === 'toolbar') return;
-    if ((a as any).requiresConfirm && !confirm(`Вы уверены, что хотите выполнить действие "${a.label}"?`)) return;
-    await (a as any).run({ row, selection: this.selection.selected, reload: () => this.reload() });
+    if (a.requiresConfirm && !confirm(`Вы уверены, что хотите выполнить действие "${a.label}"?`)) return;
+    await a.run({ row, selection: this.selection.selected, reload: () => this.reload() });
     this.closeMenus();
   }
 

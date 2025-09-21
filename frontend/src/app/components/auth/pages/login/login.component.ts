@@ -4,6 +4,7 @@ import {Component, OnInit} from '@angular/core';
 import {MatFormField, MatInput, MatLabel} from '@angular/material/input';
 import {MatButton} from '@angular/material/button';
 import {AuthService} from '../../../../features/auth/auth.service';
+import {AuthHelper} from '../../../../helpers/auth/auth.helper';
 
 @Component({
   selector: 'app-login',
@@ -40,7 +41,10 @@ export class LoginComponent implements OnInit {
 
     const request = this.form.value;
     this.auth.login(request).subscribe({
-      next: () => this.router.navigate(['/dashboard/documents']),
+      next: (value) => {
+        AuthHelper.setToken(value.accessToken);
+        this.router.navigate(['page-layout/authors']);
+      },
       error: () => {
         this.form.reset();
         alert('Неверный логин или пароль');

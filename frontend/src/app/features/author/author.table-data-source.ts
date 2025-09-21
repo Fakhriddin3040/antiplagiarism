@@ -1,19 +1,15 @@
 import {AuthorTableDataSourceInterface} from '../../core/features/author/author.table-data-source.interface';
 import {Observable} from 'rxjs';
-import {Page, Query} from '../../components/data-table/types/table';
-import {ListAuthorDto} from '../../core/features/author/types/author.types';
+import {Query} from '../../components/data-table/types/table';
+import {AuthorsPage, ListAuthorDto} from '../../core/features/author/types/author.types';
 import {inject} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {EnvironmentHelper} from '../../helpers/environment/environment.helper';
-import {ApiEndpointEnum} from '../../shared/enums/routing/api-endpoint.enum';
+import {AUTHOR_SERVICE} from '../../core/features/author/author.service.token';
 
 export class AuthorTableDataSource implements AuthorTableDataSourceInterface {
-  private readonly API_URL = EnvironmentHelper.makeApiUrl(ApiEndpointEnum.AUTHORS);
+  authorService = inject(AUTHOR_SERVICE);
 
-  private readonly _httpClient = inject(HttpClient);
-
-  fetch(q: Query): Observable<Page<ListAuthorDto>> {
-    return null!
+  fetch(q: Query): Observable<AuthorsPage> {
+    return this.authorService.getAll(q);
   }
 
 }

@@ -1,9 +1,10 @@
 import logging
-from typing import Annotated, Sequence
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 from starlette import status
 
+from src.app.infrastructure.api.dto.api_list_response import ApiListResponse
 from src.app.infrastructure.auth.deps.auth import get_current_user
 from src.app.infrastructure.constants import DOCUMENT_SEARCH_PERMITTED_FIELDS
 from src.app.infrastructure.db.orm import User, Document
@@ -45,13 +46,13 @@ async def create(
 
 
 @router.get(
-    "/", response_model=Sequence[DocumentListSchema], status_code=status.HTTP_200_OK
+    "/", response_model=ApiListResponse[DocumentListSchema], status_code=status.HTTP_200_OK
 )
 async def list_(
     params: Annotated[DocumentFilterSearchParamsSchema, Query()],
     document_repo: DocumentRepository = Depends(get_document_repository),
     user: User = Depends(get_current_user),
-) -> Sequence[DocumentListSchema]:
+) -> ApiListResponse[DocumentListSchema]:
     search = params.parse_search(permitted_fields=DOCUMENT_SEARCH_PERMITTED_FIELDS)
     filters = params.parse_filters()
 
@@ -59,8 +60,11 @@ async def list_(
 
     filters[DocumentField.CREATED_BY.as_foreign_key] = user.id
 
-    docs = await document_repo.filter(search=search, **filters)
-    return docs
+    docs, count = await document_repo.filter(search=search, need_count=True, **filters)
+    return ApiListResponse[DocumentListSchema](
+        count=count,
+        rows=docs,
+    )
 
 
 @router.delete("/{doc_id}", response_model=None, status_code=status.HTTP_204_NO_CONTENT)

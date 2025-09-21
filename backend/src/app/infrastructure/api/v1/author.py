@@ -1,10 +1,11 @@
 import logging
-from typing import Annotated, Sequence
+from typing import Annotated
 
 from fastapi import APIRouter, Query, Body
 from fastapi.params import Depends
 from starlette import status
 
+from src.app.infrastructure.api.dto.api_list_response import ApiListResponse
 from src.app.infrastructure.auth.deps.auth import get_current_user
 from src.app.infrastructure.constants import DOCUMENT_AUTHOR_SEARCH_PERMITTED_FIELDS
 from src.app.infrastructure.db.orm import User
@@ -48,26 +49,34 @@ async def create(
 
 
 @router.get(
-    "/",
-    response_model=Sequence[DocumentAuthorListSchema],
+    "",
+    response_model=ApiListResponse[DocumentAuthorListSchema],
     status_code=status.HTTP_200_OK,
 )
 async def list_(
     params: Annotated[DocumentAuthorSearchSchema, Query()],
     author_repo: DocumentAuthorRepository = Depends(get_author_repository),
     user: User = Depends(get_current_user),
-) -> Sequence:
+) -> ApiListResponse[DocumentAuthorListSchema]:
     search = params.parse_search(
         permitted_fields=DOCUMENT_AUTHOR_SEARCH_PERMITTED_FIELDS
     )
     filters = params.parse_filters()
     logger.debug("Search params: %s, filters: %s for user %s", search, filters, user.id)
-    authors = await author_repo.filter(**filters, search=search, created_by_id=user.id)
-    return authors
+    authors, count = await author_repo.filter(
+        **filters,
+        search=search,
+        created_by_id=user.id,
+        need_count=True
+    )
+    return ApiListResponse[DocumentAuthorListSchema](
+        count=count,
+        rows=authors
+    )
 
 
 @router.patch(
-    "/{author_id}",
+    "/{author_id}/",
     response_model=DocumentAuthorListSchema,
     status_code=status.HTTP_200_OK,
 )
@@ -108,7 +117,7 @@ async def update(
 
 
 @router.delete(
-    "/{author_id}",
+    "/{author_id}/",
     status_code=status.HTTP_204_NO_CONTENT,
     response_model=None,
 )

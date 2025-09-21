@@ -11,9 +11,7 @@ export class AuthInterceptor implements HttpInterceptor {
       req = req.clone({
         setHeaders: this.getAuthHeaders()
       })
-      console.log('Authorization', `Bearer ${token}`);
     }
-      console.log("Niga one");
       return next.handle(req);
   }
 

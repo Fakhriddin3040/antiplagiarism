@@ -1,0 +1,8 @@
+<button type="button"
+        class="btn btn-sm"
+        [disabled]="disabled()"
+        (click)="clicked.emit()"
+        [class.btn-danger]="variant() === 'danger'"
+        [class.btn-primary]="variant() === 'primary'">
+  {{ label() }}
+</button>

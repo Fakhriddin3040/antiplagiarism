@@ -47,7 +47,7 @@ async def login(
 
 @router.get("check_auth", status_code=status.HTTP_200_OK, response_model=None)
 async def fuck_you_niga(user=Depends(get_current_user)):
-    return {"Fuck You Niga": user.username}
+    return {"Fuck You Niga": user.email}
 
 
 @router.get(
