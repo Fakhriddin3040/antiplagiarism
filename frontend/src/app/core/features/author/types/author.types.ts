@@ -27,5 +27,9 @@ export class CreateAuthorDto {
 
 export class ListAuthorDto extends Author {}
 
+export type ShortAuthorDto = BaseModel & {
+  fullName: string
+}
+
 export type UpdateAuthorDto = Partial<CreateAuthorDto>;
 export type AuthorsPage = Page<Author>;

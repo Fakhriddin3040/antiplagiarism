@@ -27,6 +27,9 @@ import {AuthorService} from './app/features/author/author.service';
 import {AUTHOR_TABLE_DATA_SOURCE} from './app/core/features/author/author.table-data-source.token';
 import {AuthorTableDataSource} from './app/features/author/author.table-data-source';
 import {FormModalService} from './app/core/services/form-modal.service';
+import {DOCUMENT_DATA_SOURCE, DOCUMENT_SERVICE} from './app/core/features/document/document.tokens';
+import {DocumentDataSource} from './app/features/document/document.data-source';
+import {DocumentService} from './app/features/document/document.service';
 
 const routes: Routes = [
 
@@ -50,6 +53,10 @@ const routes: Routes = [
       {
         path: 'authors',
         loadComponent: () => import('./app/components/author/author.data-table.component').then(m => m.AuthorDataTableComponent),
+      },
+      {
+        path: "documents",
+        loadComponent: () => import('./app/components/document.data-table/document.data-table.component').then(m => m.DocumentDataTableComponent),
       }
     ]
   }
@@ -85,6 +92,8 @@ bootstrapApplication(AppComponent, {
     { provide: AUTHOR_TABLE_DATA_SOURCE, useClass: AuthorTableDataSource },
     { provide: AUTH_SERVICE, useExisting: AuthService },
     { provide: AUTHOR_SERVICE, useClass: AuthorService },
+    { provide: DOCUMENT_DATA_SOURCE, useClass: DocumentDataSource },
+    { provide: DOCUMENT_SERVICE, useClass: DocumentService },
     { provide: NgbActiveModal, useClass: NgbActiveModal },
   ],
 });
