@@ -1,8 +1,7 @@
-import {Guid} from 'guid-typescript';
 import {ChronoModel} from '../../../types/chrono.model.type';
 import {BaseModel} from '../../../types/base.model.type';
 import {Page} from '../../../../components/data-table/types/table';
-import {ListAuthorDto, ShortAuthorDto} from '../../author/types/author.types';
+import {ShortAuthorDto} from '../../author/types/author.types';
 
 
 export enum PlagiarismVerdict {
@@ -30,23 +29,21 @@ export type ListDocumentDto = BaseModel & ChronoModel & {
   author: ShortAuthorDto,
   isIndexed: boolean,
   checkedAt: boolean,
-  indexedAt: boolean
 }
 
 export type Document = BaseModel & ChronoModel & {
   title: string,
-  authorId: Guid,
+  authorId: string,
   isIndexed: boolean,
-  indexedAt: Date | null,
   checkedAt: Date | null,
-  folderId: Guid,
+  folderId: string,
   file: LocalFile
 }
 
 export type CreateDocumentDto = {
   title: string,
-  author_id: Guid,
-  folder_id: Guid,
+  authorId: string,
+  folderId: string,
   file: File
 }
 

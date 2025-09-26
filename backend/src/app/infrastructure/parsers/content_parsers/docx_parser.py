@@ -52,7 +52,9 @@ class DocxParser(AbstractParser):
             if txt:
                 yield txt
             for v in node.values():
-                if isinstance(v, (Mapping, Sequence)) and not isinstance(v, (str, bytes)):
+                if isinstance(v, (Mapping, Sequence)) and not isinstance(
+                    v, (str, bytes)
+                ):
                     yield from self._parse(v)
             return
 

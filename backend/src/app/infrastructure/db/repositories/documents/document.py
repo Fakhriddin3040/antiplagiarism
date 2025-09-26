@@ -9,18 +9,27 @@ from src.base.abs.repository import AbstractAsyncSQLAlchemyRepository
 
 class DocumentRepository(AbstractAsyncSQLAlchemyRepository):
     async def filter(
-            self,
-            limit: Optional[int] = 10,
-            offset: int = 0,
-            search: Optional[Dict[str, Any]] = None,
-            need_count: Optional[bool] = False,
-            **filters,
+        self,
+        limit: Optional[int] = 10,
+        offset: int = 0,
+        search: Optional[Dict[str, Any]] = None,
+        need_count: Optional[bool] = False,
+        **filters,
     ) -> Sequence[Document] | Tuple[Sequence[Document], int]:
         if not filters and not search:
-            _select = select(self.model).options(selectinload(self.model.file)).offset(offset).limit(limit)
+            _select = (
+                select(self.model)
+                .options(selectinload(self.model.file))
+                .offset(offset)
+                .limit(limit)
+            )
         else:
             _select = self.parse_to_statement(search=search, **filters)
-            _select = _select.options(selectinload(self.model.file)).limit(limit).offset(offset)
+            _select = (
+                _select.options(selectinload(self.model.file))
+                .limit(limit)
+                .offset(offset)
+            )
 
         result = (await self.db.execute(_select)).scalars().all()
 

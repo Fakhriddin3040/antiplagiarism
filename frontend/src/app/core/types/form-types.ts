@@ -26,37 +26,37 @@ export type ModalBaseField<T = any> = {
 };
 
 // текстовые
-export type ModalTextField = ModalBaseField & {
+export type ModalTextField<T = any> = ModalBaseField<T> & {
   kind: 'text' | 'textarea';
   rows?: number; // для textarea
 };
 
-export type ModalNumberField = ModalBaseField & {
+export type ModalNumberField<T = any> = ModalBaseField<T> & {
   kind: 'number';
   min?: number;
   max?: number;
   step?: number;
 };
 
-export type ModalDateField = ModalBaseField & {
+export type ModalDateField<T = any> = ModalBaseField<T> & {
   kind: 'date';
 };
 
-export type ModalBoolField = ModalBaseField & {
+export type ModalBoolField<T = any> = ModalBaseField<T> & {
   kind: 'bool' | 'checkbox';
 };
 
 // асинхронный select (smart select, шлём только id)
-export type ModalSelectAsyncField<T = any> = ModalBaseField<T> & {
+export type ModalSelectAsyncField<T = any, K = any> = ModalBaseField<T> & {
   kind: 'select-async';
-  load: (term: string) => Observable<readonly T[] | T[]>;
-  labelOf: (item: T) => string;
-  idOf: (item: T) => string | number;
+  load: (term: string) => Observable<readonly K[] | K[]>;
+  labelOf: (item: K) => string;
+  idOf: (item: K) => string | number | string;
   initialId?: string | number | null;
 };
 
 // файлы
-export type ModalFileField = ModalBaseField & {
+export type ModalFileField<T> = ModalBaseField<T> & {
   kind: 'file';
   multiple?: boolean;
   accept?: string;
@@ -64,13 +64,13 @@ export type ModalFileField = ModalBaseField & {
 };
 
 // итоговый union
-export type ModalFieldDef =
-  | ModalTextField
-  | ModalNumberField
-  | ModalDateField
-  | ModalBoolField
-  | ModalSelectAsyncField
-  | ModalFileField;
+export type ModalFieldDef<T = any, K = any> =
+  | ModalTextField<T>
+  | ModalNumberField<T>
+  | ModalDateField<T>
+  | ModalBoolField<T>
+  | ModalSelectAsyncField<T, K>
+  | ModalFileField<T>;
 
 // результат модалки
 export type ModalResult<T = any> = {

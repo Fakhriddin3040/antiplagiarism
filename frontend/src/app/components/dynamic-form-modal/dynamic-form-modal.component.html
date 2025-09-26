@@ -75,7 +75,7 @@
                 }
                 @case ('file') {
                   <app-file-drop
-                    [multiple]="f.multiple ?? true"
+                    [multiple]="f.multiple ?? false"
                     [accept]="f.accept"
                     [maxSizeMb]="f.maxSizeMb ?? 50"
                     (changed)="set(f.key, $event)">

@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, Output, signal, inject, OnInit, computed } from '@angular/core';
-import { NgIf, NgTemplateOutlet } from '@angular/common'; // es-lint-disable-line
-import { Guid } from 'guid-typescript';
+import { NgIf, NgTemplateOutlet } from '@angular/common';
 import { firstValueFrom, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -8,8 +7,6 @@ import { CreateFolderDto, Folder, UpdateFolderDto } from '../core/features/folde
 import { FOLDER_SERVICE } from '../core/features/folder/folder.service.token';
 
 // --- Вспомогалки
-const guidStr = (g: Guid | undefined | null) => g ? g.toString() : null;
-
 @Component({
   selector: 'app-sidebar-tree',
   standalone: true,
@@ -42,11 +39,11 @@ export class AppSidebarTreeComponent implements OnInit {
   }
 
   // ---- UI helpers
-  trackById = (_: number, n: Folder) => guidStr(n.id)!;
-  isOpen = (n: Folder) => this.openIds().has(guidStr(n.id)!);
+  trackById = (_: number, n: Folder) => n.id!;
+  isOpen = (n: Folder) => this.openIds().has(n.id!);
   setOpen(n: Folder, on: boolean) {
     const s = new Set(this.openIds());
-    const k = guidStr(n.id)!;
+    const k = n.id;
     on ? s.add(k) : s.delete(k);
     this.openIds.set(s);
   }
@@ -91,7 +88,7 @@ export class AppSidebarTreeComponent implements OnInit {
     );
 
     this.flat.update(arr =>
-      arr.map(f => guidStr(f.id) === guidStr(node.id) ? { ...f, title: next } : f)
+      arr.map(f => f.id === node.id ? { ...f, title: next } : f)
     );
   }
 
@@ -104,8 +101,8 @@ export class AppSidebarTreeComponent implements OnInit {
       )
     );
 
-    const id = guidStr(node.id)!;
-    this.flat.update(arr => arr.filter(f => guidStr(f.id) !== id));
+    const id = node.id!;
+    this.flat.update(arr => arr.filter(f => f.id !== id));
 
     // закрыть id, если он был открыт
     const s = new Set(this.openIds());

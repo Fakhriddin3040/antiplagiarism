@@ -11,7 +11,8 @@ class DocumentChunk(SQLAlchemyBaseModel, ChronoModelMixin):
     __tablename__ = DatabaseTables.DOCUMENT_CHUNKS
 
     document_id: Mapped[ID_T] = mapped_column(
-        ForeignKey(DatabaseTables.DOCUMENTS.as_foreign_key, ondelete='cascade'), nullable=False
+        ForeignKey(DatabaseTables.DOCUMENTS.as_foreign_key, ondelete="cascade"),
+        nullable=False,
     )
     content: Mapped[str] = mapped_column(Text)
     idx: Mapped[int] = mapped_column(nullable=False)

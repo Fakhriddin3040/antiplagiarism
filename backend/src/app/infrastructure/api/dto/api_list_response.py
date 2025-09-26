@@ -5,7 +5,10 @@ from typing_extensions import TypeVar
 
 from src.base.schema import AbstractPydanticSchema
 
-ROW_TYPE = TypeVar('ROW_TYPE', default=AbstractPydanticSchema, bound=AbstractPydanticSchema)
+ROW_TYPE = TypeVar(
+    "ROW_TYPE", default=AbstractPydanticSchema, bound=AbstractPydanticSchema
+)
+
 
 class ApiListResponse(AbstractPydanticSchema, Generic[ROW_TYPE]):
     count: Optional[int] = Field(default=0)

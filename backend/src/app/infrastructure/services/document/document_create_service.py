@@ -25,7 +25,6 @@ from src.utils.constants.exceptions.error_codes import (
 )
 from src.utils.constants.models_fields import DocumentField
 from src.utils.exceptions.api_exception import ApiExceptionDetail, ApiException
-from src.utils.functions.datetime import get_datetime_utc
 
 logger = logging.getLogger(__name__)
 
@@ -61,14 +60,10 @@ class DocumentCreateService:
         document_data[DocumentField.FILE.as_foreign_key] = file.id
         del document_data[DocumentField.FILE]
 
-        index_it = document_data.pop("index_it")
-
         document = await self.document_repo.create(document_data)
         document.file = file
 
-        if index_it:
-            await self._index_document(document=document)
-            await self._set_indexed(document=document)
+        await self._index_document(document=document)
 
         document.file = file
 
@@ -88,15 +83,6 @@ class DocumentCreateService:
             user=user, schema=file_create_schema
         )
         return file
-
-    async def _set_indexed(self, document: Document):
-        logger.info("Setting indexed to document %s", document.id)
-        obj_in = {
-            DocumentField.INDEXED_AT: get_datetime_utc(),
-            DocumentField.IS_INDEXED: True,
-        }
-        await self.document_repo.update(obj_in=obj_in, db_obj=document)
-        logger.info("Indexed document %s", document.id)
 
     async def validate(self, user: User, schema: DocumentCreateSchema) -> None:
         logger.info(f"Validating new document {schema.title}")

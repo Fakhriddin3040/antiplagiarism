@@ -1,11 +1,12 @@
 import {map, Observable} from 'rxjs';
-import {Guid} from 'guid-typescript';
 import {inject} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {FolderServiceInterface} from '../../core/features/folder/folder.service.interface';
 import { EnvironmentHelper } from '../../helpers/environment/environment.helper';
 import {ApiEndpointEnum} from '../../shared/enums/routing/api-endpoint.enum';
-import {CreateFolderDto, Folder, UpdateFolderDto} from '../../core/features/folder/types/folder.types';
+import {CreateFolderDto, Folder, ShortFolderDto, UpdateFolderDto} from '../../core/features/folder/types/folder.types';
+import {Query} from '../../components/data-table/types/table';
+import {HttpQueryParser} from '../../core/http/helpers/http-query.parser';
 
 
 export class FolderService implements FolderServiceInterface {
@@ -13,7 +14,7 @@ export class FolderService implements FolderServiceInterface {
   private listUrl = EnvironmentHelper.makeApiUrl(ApiEndpointEnum.FOLDERS, false);
   private baseUrl = EnvironmentHelper.makeApiUrl(ApiEndpointEnum.FOLDERS, true);
 
-  private makeDetailUrl(id: Guid): string {
+  private makeDetailUrl(id: string): string {
     return `${this.baseUrl}${id.toString()}/`;
   }
 
@@ -21,25 +22,32 @@ export class FolderService implements FolderServiceInterface {
     return this.httpClient.get<Folder[]>(this.listUrl);
   }
 
+  shortList(query: Query): Observable<ShortFolderDto[]> {
+    const params = query ? HttpQueryParser.makeParams(query) : undefined;
+    return this.httpClient.get<ShortFolderDto[]>(
+      this.listUrl, { params }
+    )
+  }
+
   create(item: CreateFolderDto): Observable<Folder> {
     return this.httpClient.post<Folder>(this.baseUrl, item);
   }
 
-  delete(id: Guid): Observable<void> {
+  delete(id: string): Observable<void> {
     return this.httpClient.delete<void>(this.makeDetailUrl(id));
   }
 
-  getChildren(id: Guid): Observable<Folder[]> {
+  getChildren(id: string): Observable<Folder[]> {
     return this.httpClient.get<Folder>(this.makeDetailUrl(id)).pipe(
         map((result: Folder) => result.children)
     )
   }
 
   getRoots(): Observable<Folder[]> {
-    return this.httpClient.get<Folder[]>(EnvironmentHelper.makeApiUrl(ApiEndpointEnum.FOLDERS_ROOTS, false)).pipe();
+    return this.httpClient.get<Folder[]>(EnvironmentHelper.makeApiUrl(ApiEndpointEnum.FOLDERS_ROOTS, false))
   }
 
-  update(id: Guid, item: UpdateFolderDto): Observable<void> {
+  update(id: string, item: UpdateFolderDto): Observable<void> {
     return this.httpClient.patch<void>(this.makeDetailUrl(id), item);
   }
 
@@ -47,7 +55,7 @@ export class FolderService implements FolderServiceInterface {
     folders: Folder[],
     opts?: { sort?: (a: Folder, b: Folder) => number }
   ): Folder[] {
-    const gid = (g: Guid | string | null | undefined) => g ? g.toString() : null;
+    const gid = (g: string | string | null | undefined) => g ? g.toString() : null;
 
     const sort = opts?.sort ?? ((a, b) => a.title.localeCompare(b.title, 'ru'));
 

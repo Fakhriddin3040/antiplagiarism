@@ -1,12 +1,11 @@
 import {inject, Injectable} from '@angular/core';
 import {DocumentServiceInterface} from '../../core/features/document/document.service.interface';
-import { Guid } from 'guid-typescript';
 import { Observable } from 'rxjs';
 import {Query} from '../../components/data-table/types/table';
 import {HttpQueryParser} from '../../core/http/helpers/http-query.parser';
 import {ApiEndpointEnum} from '../../shared/enums/routing/api-endpoint.enum';
 import {HttpClient} from '@angular/common/http';
-import {DocumentPage} from '../../core/features/document/types/document.types';
+import {CreateDocumentDto, Document, DocumentPage} from '../../core/features/document/types/document.types';
 import {EnvironmentHelper} from '../../helpers/environment/environment.helper';
 
 @Injectable({
@@ -16,7 +15,7 @@ export class DocumentService implements DocumentServiceInterface {
   httpClient = inject(HttpClient);
   baseUrl = EnvironmentHelper.makeApiUrl(ApiEndpointEnum.DOCUMENTS, false);
 
-  private makeDetailUrl(id: Guid): string {
+  private makeDetailUrl(id: string): string {
     return `${EnvironmentHelper.makeApiUrl(ApiEndpointEnum.DOCUMENTS, true)}${id.toString()}`;
 }
 
@@ -31,13 +30,26 @@ export class DocumentService implements DocumentServiceInterface {
       throw new Error('Method not implemented.');
   }
 
-  delete(id: Guid): Observable<void> {
+  create(data: CreateDocumentDto): Observable<Document> {
+    const formData = new FormData();
+
+    formData.append('title', data.title);
+    formData.append('author_id', data.authorId.toString());
+    formData.append('folder_id', data.folderId.toString());
+    formData.append('file', data.file, data.file.name);
+
+    return this.httpClient.post<Document>(
+      `${this.baseUrl}/`, formData
+    );
+  }
+
+  delete(id: string): Observable<void> {
       return this.httpClient.delete<void>(
         this.makeDetailUrl(id)
       );
   }
 
-  bulkDelete(ids: Guid[]): Observable<void> {
+  bulkDelete(ids: string[]): Observable<void> {
     ids.forEach((id) => {
       this.httpClient.delete<void>(
         this.makeDetailUrl(id)

@@ -69,6 +69,17 @@ export class DynamicFormModalComponent {
     this.open.set(true);
   }
 
+  private validateValue() {
+    this._fields().forEach((f) => {
+      if (f.kind == 'file') {
+        if (!f.multiple) {
+          const files = this.value()[f.key]
+          this.value()[f.key] = files.length > 0 ? files[0] : null;
+        }
+      }
+    })
+  }
+
   close(confirmed: boolean) {
     const close = (c: boolean) => {
       // Confirmation modal closed by applying or cancelling
@@ -76,6 +87,8 @@ export class DynamicFormModalComponent {
         return
       }
       this.open.set(false);
+
+      this.validateValue();
       this.closed.emit({confirmed, value: this.value()});
     }
 

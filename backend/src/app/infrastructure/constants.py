@@ -44,7 +44,7 @@ ACCESS_TOKEN_EXPIRATION_SECONDS = (
 ) * 1000  # 60 sec * 60 min = 1 hour; * 24 = 1 day
 
 
-MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
+MAX_FILE_SIZE = 50 * 1024 * 1024  # 10MB
 
 
 class AllowedMimeTypeEnum(StrEnum):

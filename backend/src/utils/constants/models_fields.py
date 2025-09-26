@@ -82,8 +82,6 @@ class DocumentField(ModelFieldsEnum):
     CREATED_AT = auto()
     UPDATED_AT = auto()
     CREATED_BY = auto()
-    IS_INDEXED = auto()
-    INDEXED_AT = auto()
 
     @staticmethod
     def as_outref() -> str:

@@ -1,16 +1,20 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable} from 'rxjs';
-import { Guid } from 'guid-typescript';
-import {Author, AuthorsPage, CreateAuthorDto, UpdateAuthorDto} from '../../core/features/author/types/author.types';
+import {
+  Author,
+  AuthorsPage,
+  CreateAuthorDto,
+  ShortAuthorPage,
+  UpdateAuthorDto
+} from '../../core/features/author/types/author.types';
 import {AuthorServiceInterface} from '../../core/features/author/author.service.interface';
 import {EnvironmentHelper} from '../../helpers/environment/environment.helper';
 import { ApiEndpointEnum } from '../../shared/enums/routing/api-endpoint.enum';
-import {Query} from '../../components/data-table/types/table';
+import {Page, Query} from '../../components/data-table/types/table';
 import {HttpQueryParser} from '../../core/http/helpers/http-query.parser';
 
 function normalizeAuthor(a: Author): Author {
-  // Приводим поля времени к Date (если пришли строками)
   const createdAt = a.createdAt instanceof Date ? a.createdAt : new Date(a.createdAt as unknown as string);
   const updatedAt = a.updatedAt instanceof Date ? a.updatedAt : new Date(a.updatedAt as unknown as string);
   return { ...a, createdAt, updatedAt };
@@ -25,7 +29,7 @@ export class AuthorService implements AuthorServiceInterface {
   private listUrl = EnvironmentHelper.makeApiUrl(ApiEndpointEnum.AUTHORS, false);
   private baseUrl = EnvironmentHelper.makeApiUrl(ApiEndpointEnum.AUTHORS, true);
 
-  private detailUrl(id: Guid): string {
+  private detailUrl(id: string): string {
     return `${this.baseUrl}${id.toString()}`;
   }
 
@@ -35,20 +39,26 @@ export class AuthorService implements AuthorServiceInterface {
       .get<AuthorsPage>(this.listUrl, { params: params })
   }
 
+  shortList(query?: Query): Observable<ShortAuthorPage> {
+    const params = query ? HttpQueryParser.makeParams(query) : undefined;
+    return this.http
+      .get<ShortAuthorPage>(this.listUrl, { params: params });
+  }
+
   create(item: CreateAuthorDto): Observable<Author> {
     return this.http
       .post<Author>(this.baseUrl, item);
   }
 
-  update(id: Guid, item: UpdateAuthorDto): Observable<void> {
+  update(id: string, item: UpdateAuthorDto): Observable<void> {
     return this.http.patch<void>(this.detailUrl(id), item);
   }
 
-  delete(id: Guid): Observable<void> {
+  delete(id: string): Observable<void> {
     return this.http.delete<void>(this.detailUrl(id));
   }
 
-  bulkDelete(ids: Guid[]): undefined {
+  bulkDelete(ids: string[]): undefined {
     ids.forEach((id) => this.delete(id).subscribe({
       next: () => {},
       error: (err) => {

@@ -46,7 +46,9 @@ async def create(
 
 
 @router.get(
-    "", response_model=ApiListResponse[DocumentListSchema], status_code=status.HTTP_200_OK
+    "",
+    response_model=ApiListResponse[DocumentListSchema],
+    status_code=status.HTTP_200_OK,
 )
 async def list_(
     params: Annotated[DocumentFilterSearchParamsSchema, Query()],
@@ -67,7 +69,9 @@ async def list_(
     )
 
 
-@router.delete("/{doc_id}/", response_model=None, status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{doc_id}/", response_model=None, status_code=status.HTTP_204_NO_CONTENT
+)
 async def delete(
     doc_id: ID_T,
     user: User = Depends(get_current_user),

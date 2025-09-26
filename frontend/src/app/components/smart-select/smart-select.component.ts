@@ -24,7 +24,7 @@ export class SmartSelectComponent<T = any> {
   @Input({ required: true }) labelOf!: (item: T) => string;
 
   /** Идентификатор (для track & сравнения). По умолчанию — labelOf(item). */
-  @Input() idOf: (item: T) => string | number = (i) => this.labelOf(i);
+  @Input() idOf: (item: T) => string | number | string = (i) => this.labelOf(i);
 
   /** Рендер кастомной опции (опционально). Context: {$implicit: item, label: string, selected: boolean} */
   @Input() optionTpl?: TemplateRef<any>;
@@ -86,7 +86,7 @@ export class SmartSelectComponent<T = any> {
     this.timer = setTimeout(() => this.fetch(), this.debounceMs);
   }
 
-  private fetch() {
+  fetch() {
     if (!this.load) return;
     this.loading.set(true);
     this.sub?.unsubscribe();
@@ -97,7 +97,9 @@ export class SmartSelectComponent<T = any> {
         this.loading.set(false);
         this.open.set(true);
       },
-      error: () => {
+      error: err => {
+        console.log('Error loading options for SmartSelect');
+        console.error(err)
         this.options.set([]);
         this.highlightIdx.set(-1);
         this.loading.set(false);

@@ -16,7 +16,7 @@ class File(SQLAlchemyBaseModel, ChronoModelMixin, AuditableModelMixin):
     __tablename__ = DatabaseTables.FILES
 
     title: Mapped[str] = mapped_column(nullable=False, index=True)
-    description: Mapped[str] = mapped_column(nullable=False)
+    description: Mapped[str] = mapped_column(nullable=True)
     path: Mapped[str] = mapped_column(nullable=False)
     extension: Mapped[FileExtensionTD.choices] = mapped_column(
         FileExtensionTD, nullable=False

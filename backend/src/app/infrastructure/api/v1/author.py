@@ -64,15 +64,9 @@ async def list_(
     filters = params.parse_filters()
     logger.debug("Search params: %s, filters: %s for user %s", search, filters, user.id)
     authors, count = await author_repo.filter(
-        **filters,
-        search=search,
-        created_by_id=user.id,
-        need_count=True
+        **filters, search=search, created_by_id=user.id, need_count=True
     )
-    return ApiListResponse[DocumentAuthorListSchema](
-        count=count,
-        rows=authors
-    )
+    return ApiListResponse[DocumentAuthorListSchema](count=count, rows=authors)
 
 
 @router.patch(

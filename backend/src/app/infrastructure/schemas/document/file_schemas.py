@@ -15,14 +15,14 @@ from src.base.types.pytypes import ID_T
 
 class FileCreateSchema(AbstractPydanticSchema):
     title: str
-    description: str
+    description: Optional[str] = None
     file: UploadFile
 
 
 class FileListSchema(AbstractPydanticSchema):
     id: ID_T
     title: str
-    description: str
+    description: Optional[str] = None
     path: str
     extension: FileAllowedExtensionEnum
     mimetype: AllowedMimeTypeEnum

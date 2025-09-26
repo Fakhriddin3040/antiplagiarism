@@ -99,7 +99,6 @@ class AbstractAsyncSQLAlchemyRepository(ABC):
             if value
         ]
 
-
     async def filter(
         self,
         limit: Optional[int] = 10,
@@ -129,10 +128,9 @@ class AbstractAsyncSQLAlchemyRepository(ABC):
         return result, 0
 
     async def _get_count(self, smt: Select) -> Optional[int]:
-        return (await self.db.execute(
-            select(count()).select_from(smt.subquery())
-        )).scalar_one_or_none()
-
+        return (
+            await self.db.execute(select(count()).select_from(smt.subquery()))
+        ).scalar_one_or_none()
 
     async def filter_exists(
         self, search: Optional[Dict[str, Any]] = None, **filters

@@ -30,10 +30,7 @@ class AbstractPydanticSearchSchema(BaseModel):
         if not self.search:
             return {}
 
-        return {
-            field: self.search
-            for field in permitted_fields
-        }
+        return {field: self.search for field in permitted_fields}
 
 
 class AbstractPydanticFilterSchema(BaseModel):

@@ -13,10 +13,10 @@ class PlagiarismMatch(SQLAlchemyBaseModel, ChronoModelMixin):
         ForeignKey(DatabaseTables.PLAGIARISM_CHECKS.as_foreign_key)
     )
     source_chunk_id: Mapped[ID_T] = mapped_column(
-        ForeignKey(DatabaseTables.DOCUMENT_CHUNKS.as_foreign_key, ondelete='cascade')
+        ForeignKey(DatabaseTables.DOCUMENT_CHUNKS.as_foreign_key, ondelete="cascade")
     )
     matched_chunk_id: Mapped[ID_T] = mapped_column(
-        ForeignKey(DatabaseTables.DOCUMENT_CHUNKS.as_foreign_key, ondelete='cascade')
+        ForeignKey(DatabaseTables.DOCUMENT_CHUNKS.as_foreign_key, ondelete="cascade")
     )
     similarity: Mapped[float] = mapped_column(nullable=False)
     updated_at = None
