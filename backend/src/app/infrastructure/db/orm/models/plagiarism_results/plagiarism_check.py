@@ -33,8 +33,8 @@ class PlagiarismCheck(SQLAlchemyBaseModel, ChronoModelMixin, AuditableModelMixin
         nullable=False,
         default=PlagiarismCheckStatusEnum.PENDING,
     )
-    chunks_found: Mapped[int] = mapped_column(nullable=True)
-    matches_found: Mapped[int] = mapped_column(nullable=True)
+    chunks_count: Mapped[int] = mapped_column(nullable=True)
+    matches_count: Mapped[int] = mapped_column(nullable=True)
     average_chunks_similarity: Mapped[float] = mapped_column(nullable=True)
     verdict: Mapped[PlagiarismCheckVerdictTD.choices] = mapped_column(
         PlagiarismCheckVerdictTD,

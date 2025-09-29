@@ -85,8 +85,8 @@ class PlagiarismCheckService:
         logger.info("Check in final stage. Making verdict...")
         check.max_similarity_score = max_similarity
         check.status = PlagiarismCheckStatusEnum.COMPLETE
-        check.matches_found = len(matches)
-        check.chunks_found = len(source_chunks)
+        check.matches_count = len(matches)
+        check.chunks_count = len(source_chunks)
 
         chunks_found_coverage = self._get_coverage(
             chunks=source_chunks, thr=SIMILARITY_THRESHOLD
@@ -109,6 +109,7 @@ class PlagiarismCheckService:
         logger.info(f"Verdict: {verdict}")
 
         check.verdict = verdict
+        check.average_chunks_similarity = chunks_found_coverage
 
         logger.info("Saving result into db")
         await self.check_repo.save(check)

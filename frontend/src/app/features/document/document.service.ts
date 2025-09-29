@@ -17,7 +17,7 @@ export class DocumentService implements DocumentServiceInterface {
 
   private makeDetailUrl(id: string): string {
     return `${EnvironmentHelper.makeApiUrl(ApiEndpointEnum.DOCUMENTS, true)}${id.toString()}`;
-}
+  }
 
   getAll(query?: Query): Observable<DocumentPage> {
     const params = query ? HttpQueryParser.makeParams(query) : undefined;

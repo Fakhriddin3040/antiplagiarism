@@ -30,6 +30,8 @@ import {FormModalService} from './app/core/services/form-modal.service';
 import {DOCUMENT_DATA_SOURCE, DOCUMENT_SERVICE} from './app/core/features/document/document.tokens';
 import {DocumentDataSource} from './app/features/document/document.data-source';
 import {DocumentService} from './app/features/document/document.service';
+import {PLAGIARISM_CHECK_SERVICE} from './app/core/features/plagiarism-check/plagiarism-check.tokens';
+import {PlagiarismCheckService} from './app/features/plagiarism-check/plagiarism-check.service';
 
 const routes: Routes = [
 
@@ -94,6 +96,7 @@ bootstrapApplication(AppComponent, {
     { provide: AUTHOR_SERVICE, useClass: AuthorService },
     { provide: DOCUMENT_DATA_SOURCE, useClass: DocumentDataSource },
     { provide: DOCUMENT_SERVICE, useClass: DocumentService },
+    { provide: PLAGIARISM_CHECK_SERVICE, useClass: PlagiarismCheckService },
     { provide: NgbActiveModal, useClass: NgbActiveModal },
   ],
 });

@@ -1,0 +1,88 @@
+<mat-expansion-panel class="plagiarism-card">
+  <mat-expansion-panel-header>
+    <mat-panel-title>Проверка на плагиат</mat-panel-title>
+    <mat-panel-description>
+      @if (!isLoading()) {
+        {{ verdictText() }}
+      } @else {
+        Идёт проверка…
+      }
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+
+  <div class="card-content">
+    @if (isLoading()) {
+      <div class="loading-container">
+        <mat-spinner diameter="32" strokeWidth="4" color="primary"></mat-spinner>
+        <span class="loading-text">Проверка на плагиат…</span>
+      </div>
+    } @else {
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="label">Вердикт:</span>
+          <span class="value" [ngClass]="verdictClass()">{{ verdictText() }}</span>
+        </div>
+
+        <div class="stat-item">
+          <span class="label">Максимальное совпадение:</span>
+          <span class="value">{{ check().maxSimilarityScore }}%</span>
+        </div>
+
+        <div class="stat-item">
+          <span class="label">Фрагментов найдено:</span>
+          <span class="value">{{ check().chunkCount }}</span>
+        </div>
+
+        <div class="stat-item">
+          <span class="label">Совпадений найдено:</span>
+          <span class="value">{{ check().matchesCount }}</span>
+        </div>
+
+        @if (check().averageChunksSimilarity !== undefined) {
+          <div class="stat-item">
+            <span class="label">Среднее совпадение:</span>
+            <span class="value">{{ check().averageChunksSimilarity }}%</span>
+          </div>
+        }
+
+        <div class="stat-item">
+          <span class="label">Покрытие:</span>
+          <span class="value">{{ check().coverage ?? check().maxSimilarityScore }}%</span>
+        </div>
+      </div>
+
+      <div class="progress-bar-container">
+        <mat-progress-bar
+          mode="determinate"
+          [value]="progressValue()"
+          [color]="progressColor()">
+        </mat-progress-bar>
+      </div>
+
+      @if (check().matchedChunks?.length) {
+        <div class="matched-chunks">
+          <h4>Совпавшие фрагменты:</h4>
+          <ul>
+            @for (m of check().matchedChunks!; track m.matchedChunkId) {
+              <li>
+                Фрагмент {{ m.matchedChunkId }} — {{ m.similarity }}%
+                с фрагментом {{ m.sourceChunkId }}
+              </li>
+            }
+          </ul>
+        </div>
+      }
+
+      <div class="actions">
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="onRecheck()"
+          [disabled]="isLoading()">
+          <mat-icon>refresh</mat-icon>
+          Перепроверить
+        </button>
+      </div>
+    }
+  </div>
+</mat-expansion-panel>

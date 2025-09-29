@@ -10,13 +10,6 @@ export enum PlagiarismVerdict {
   UNIQUE = 3
 }
 
-export const plagiarismVerdictLabels: Record<PlagiarismVerdict, string> = {
-  [PlagiarismVerdict.PLAGIARISM]: 'Плагиат',
-  [PlagiarismVerdict.PARTIAL_PLAGIARISM]: 'Частичный плагиат',
-  [PlagiarismVerdict.UNIQUE]: 'Уникальный'
-}
-
-
 export type LocalFile = BaseModel & ChronoModel & {
   title: string,
   path: string,

@@ -1,8 +1,8 @@
 <app-data-table
   [columns]="columns"
   [actions]="actions"
-  [dataSource]="dataSource"
-></app-data-table>
+  [dataSource]="dataSource">
+</app-data-table>
 
 <ng-template #createdAtTpl let-row>
   <span>{{ row.createdAt | date }}</span>
@@ -10,4 +10,21 @@
 
 <ng-template #updatedAtTpl let-row>
   <span>{{ row.updatedAt | date }}</span>
+</ng-template>
+
+<ng-template #titleTpl let-row>
+  <span class="link-like" (click)="openPlagiarismCheckCard(row)">
+    {{ row.title }}
+  </span>
+  @if (openedRow() && openedRow()!.id === row.id) {
+    <!-- Используем async-пайп, никаких signals в шаблоне -->
+    @if (check$ | async; as c) {
+      <app-plagiarism-check-card
+        [check]="c"
+        [isLoading]="loading()"
+        (recheck)="plagiarismRecheck(openedRow()!)">
+      </app-plagiarism-check-card>
+    }
+  }
+
 </ng-template>

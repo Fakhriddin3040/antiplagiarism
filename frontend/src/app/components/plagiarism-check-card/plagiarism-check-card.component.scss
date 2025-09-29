@@ -1,0 +1,42 @@
+:host { display: block; margin: 1rem 0; }
+
+/* Карточка */
+.plagiarism-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+}
+
+/* Хедер */
+.mat-expansion-panel-header {
+  background-color: #f9f9fb;
+  font-weight: 600;
+}
+.mat-expansion-panel-header.mat-expanded {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* Грид метрик */
+.stats-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 2rem;
+  margin-bottom: 1rem;
+}
+.stat-item .label { font-weight: 500; margin-right: .35rem; }
+
+.verdict-plagiarism { color: #e53935; }
+.verdict-partial    { color: #fb8c00; }
+.verdict-unique     { color: #43a047; }
+
+.progress-bar-container { margin: .5rem 0 1rem; }
+
+.matched-chunks ul { margin: 0; padding-left: 1.2rem; }
+.matched-chunks li { margin-bottom: 4px; }
+
+.loading-container {
+  display: flex; align-items: center; justify-content: center; padding: 1rem 0;
+}
+.loading-text { margin-left: .5rem; color: #555; }
+
+.actions { margin-top: 1rem; }
+.actions button mat-icon { vertical-align: middle; margin-right: 4px; }

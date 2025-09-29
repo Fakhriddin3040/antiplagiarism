@@ -11,4 +11,7 @@ export enum ApiEndpointEnum {
 
   //AUTHORS
   AUTHORS = `${DOCUMENTS}/authors`,
+
+  // PLAGIARISM CHECK
+  PLAGIARISM_CHECK = 'check',
 }
