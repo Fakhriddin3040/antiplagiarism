@@ -13,18 +13,19 @@
 </ng-template>
 
 <ng-template #titleTpl let-row>
-  <span class="link-like" (click)="openPlagiarismCheckCard(row)">
+  <span class="link-like" (click)="openPlagiarismModal(row)">
     {{ row.title }}
   </span>
-  @if (openedRow() && openedRow()!.id === row.id) {
-    <!-- Используем async-пайп, никаких signals в шаблоне -->
-    @if (check$ | async; as c) {
-      <app-plagiarism-check-card
-        [check]="c"
-        [isLoading]="loading()"
-        (recheck)="plagiarismRecheck(openedRow()!)">
-      </app-plagiarism-check-card>
-    }
-  }
-
 </ng-template>
+
+@if (openedRow(); as row) {
+  <ng-container>
+    <app-plagiarism-check-modal
+      [plagiarismCheck]="(check$ | async)!"
+      [isChecked]="!!(check$ | async)"
+      [loading]="loading()"
+      (close)="closePlagiarismModal()"
+      (check)="onPlagiarismCheckAction()">
+    </app-plagiarism-check-modal>
+  </ng-container>
+}

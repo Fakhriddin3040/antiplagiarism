@@ -13,8 +13,8 @@ import {DocumentModalService} from '../../features/document/document.modal.servi
 import {PlagiarismCheck} from '../../core/features/plagiarism-check/types/plagiarism-check.types';
 
 import {AppDataTableComponent} from '../data-table/data-table.component';
-import {PlagiarismCheckCardComponent} from '../plagiarism-check-card/plagiarism-check-card.component';
 import {ActionDef, ColumnDef, Query} from '../data-table/types/table';
+import {PlagiarismCheckModalComponent} from '../plagiarism-check-modal/plagiarism-check-modal.component';
 
 @Component({
   selector: 'app-document.data-table',
@@ -22,8 +22,8 @@ import {ActionDef, ColumnDef, Query} from '../data-table/types/table';
   imports: [
     AppDataTableComponent,
     DatePipe,
-    PlagiarismCheckCardComponent,
     AsyncPipe,
+    PlagiarismCheckModalComponent,
   ],
   templateUrl: './document.data-table.component.html',
   styleUrls: ['./document.data-table.component.scss'],
@@ -96,10 +96,27 @@ export class DocumentDataTableComponent implements AfterViewInit {
     tap(() => this.loading.set(false)),
   );
 
-  // Handlers
-  openPlagiarismCheckCard(row: Document) {
-    const current = this.openedRow();
-    this.openedRow.set(current?.id === row.id ? null : row);
+  openPlagiarismModal(row: Document) {
+    console.log(row);
+    this.openedRow.set(row);
+  }
+
+  // Закрыть модалку
+  closePlagiarismModal() {
+    this.openedRow.set(null);
+  }
+
+  onPlagiarismCheckAction() {
+    const row = this.openedRow();
+    if (!row?.id) return;
+    this.loading.set(true);
+    this.plagiarismCheckService.checkDocument(row.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => this.checkTrigger$.next(row.id),
+        error: () => this.loading.set(false)
+      });
+    this.checkTrigger$.next(row.id);
   }
 
   plagiarismRecheck(row: Document): void {

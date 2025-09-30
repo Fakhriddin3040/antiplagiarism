@@ -1,0 +1,142 @@
+/* Подложка */
+.overlay {
+  position: fixed; inset: 0;
+  background: radial-gradient(1200px 1200px at 50% 20%, rgba(0,0,0,.35), rgba(0,0,0,.55));
+  display: grid; place-items: center; z-index: 2000;
+}
+
+/* Окно */
+.window {
+  width: 880px; max-width: calc(100vw - 64px);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-stroke);
+  border-radius: 18px;
+  box-shadow: var(--glass-shadow);
+  color: var(--c-text);
+  overflow: hidden;
+}
+
+/* Шапка */
+.head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 22px; background: var(--c-header-bg);
+  border-bottom: 1px solid var(--c-border);
+
+  .title {
+    display: flex; gap: 12px; align-items: center;
+    .ico { width: 28px; height: 28px; opacity: .7 }
+    h1 { margin: 0; font-size: 20px; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 4px; width: max-content;
+      padding: 4px 10px; border-radius: var(--chip-radius); font-size: 12px;
+      background: rgba(0,0,0,.05); border: 1px solid var(--c-border);
+    }
+  }
+
+  .close {
+    border: 1px solid var(--c-border); background: #fff;
+    border-radius: 10px; width: 32px; height: 32px;
+    cursor: pointer; font-size: 16px;
+    &:hover { background: var(--c-bg-hover); }
+  }
+}
+
+/* Контент */
+.content {
+  display: grid; grid-template-columns: 340px 1fr; gap: 22px; padding: 22px;
+
+  .left {
+    display: grid; gap: 18px;
+
+    .gauge {
+      --val: 0%;
+      width: 240px; height: 240px; margin: 0 auto;
+      border-radius: 50%;
+      background:
+        radial-gradient(closest-side, #fff 75%, transparent 76% 100%),
+        conic-gradient(var(--theme) var(--val), rgba(0,0,0,.08) 0);
+      box-shadow: var(--shadow-m);
+      position: relative;
+
+      .gauge-core {
+        position: absolute; inset: 12% 12%;
+        border-radius: 50%;
+        background: var(--c-surface);
+        display: grid; place-items: center;
+        text-align: center; padding: 12px;
+      }
+      .gauge-num { font-weight: 700; font-size: 32px; line-height: 1; }
+      .pct { font-size: 16px; margin-left: 4px; opacity: .7; }
+      .gauge-label { margin-top: 6px; font-size: 12px; color: var(--c-muted); }
+    }
+
+    .chips {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+      .chip {
+        background: #fff; border: 1px solid var(--c-border);
+        border-radius: var(--btn-radius); padding: 10px 12px;
+        box-shadow: var(--shadow-s); display: flex; justify-content: space-between;
+        .chip-label { color: var(--c-muted); font-size: 12px; }
+        .chip-val { font-weight: 600; }
+      }
+    }
+  }
+
+  .right {
+    display: grid; gap: 16px;
+
+    .stat {
+      background: #fff; border: 1px solid var(--c-border);
+      border-radius: var(--radius); padding: 12px 14px; box-shadow: var(--shadow-s);
+
+      .stat-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
+      .bar {
+        --val: 0; height: 10px; border-radius: 999px; overflow: hidden;
+        background: linear-gradient(to right, var(--theme) var(--val), rgba(0,0,0,.08) var(--val));
+      }
+      .bar-muted {
+        background: linear-gradient(to right, var(--c-accent) var(--val), rgba(0,0,0,.08) var(--val));
+      }
+    }
+  }
+}
+
+/* Футер */
+.foot {
+  display: flex; justify-content: flex-end; gap: 10px;
+  padding: 16px 22px; border-top: 1px solid var(--c-border);
+  .btn-primary {
+    padding: 10px 14px; border-radius: var(--btn-radius);
+    background: var(--c-primary); color: #fff; border: 1px solid transparent;
+    cursor: pointer; font-weight: 600;
+    &:hover { background: var(--c-primary-dark); }
+  }
+  .btn-ghost {
+    padding: 10px 14px; border-radius: var(--btn-radius);
+    background: #fff; border: 1px solid var(--c-border); cursor: pointer;
+    &:hover { background: var(--c-bg-hover); }
+  }
+}
+
+/* Темы по вердикту — цвет в одном месте */
+.window.is-unique    { --theme: #22c55e; }  /* зелёный */
+.window.is-partial   { --theme: #f59e0b; }  /* оранжевый */
+.window.is-bad       { --theme: var(--c-danger); } /* красный */
+
+/* Скелетон */
+@keyframes shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+.skeleton .skeleton-box,
+.skeleton-box {
+  border-radius: 8px; height: 14px;
+  background: linear-gradient(90deg, #ececec 25%, #f7f7f7 37%, #ececec 63%);
+  background-size: 200px 100%;
+  animation: shimmer 1.2s infinite linear;
+}
+.skeleton .gauge.skeleton-box { width: 240px; height: 240px; border-radius: 50%; }
+.w-40 { width: 40%; } .w-20 { width: 20%; }
