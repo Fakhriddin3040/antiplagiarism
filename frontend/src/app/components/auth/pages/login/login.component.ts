@@ -43,7 +43,7 @@ export class LoginComponent implements OnInit {
     this.auth.login(request).subscribe({
       next: (value) => {
         AuthHelper.setToken(value.accessToken);
-        this.router.navigate(['page-layout/authors']);
+        this.router.navigate(['/app/authors']);
       },
       error: () => {
         this.form.reset();

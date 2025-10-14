@@ -54,7 +54,7 @@ class DocumentListSchema(ChronoSchemaMixin):
     verdict: Optional[PlagiarismCheckVerdictEnum]
     folder_id: ID_T
     description: Optional[str] = None
-    file: FileListSchema
+    file: Optional[FileListSchema] = None
 
 
 class DocumentFilterSearchParamsSchema(AbstractPydanticFilterSearchSchema):

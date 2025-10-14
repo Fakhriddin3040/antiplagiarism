@@ -47,7 +47,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
   },
   {
-    path: 'page-layout',
+    path: 'app',
     loadComponent: () =>
       import('./app/page-layout/page-layout.component')
         .then(m => m.PageLayoutComponent),

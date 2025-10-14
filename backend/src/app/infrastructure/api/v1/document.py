@@ -11,10 +11,16 @@ from src.app.infrastructure.db.orm import User, Document
 from src.app.infrastructure.db.repositories.documents.document import DocumentRepository
 from src.app.infrastructure.deps.repositories import get_document_repository
 from src.app.infrastructure.deps.services.document import get_document_create_service
+from src.app.infrastructure.deps.services.plagiarism import (
+    get_plagiarism_check_create_service,
+)
 from src.app.infrastructure.schemas.document.document_schemas import (
     DocumentCreateSchema,
     DocumentListSchema,
     DocumentFilterSearchParamsSchema,
+)
+from src.app.infrastructure.services.check.plagiarism_check_service import (
+    PlagiarismCheckService,
 )
 from src.app.infrastructure.services.document.document_create_service import (
     DocumentCreateService,
@@ -40,8 +46,12 @@ async def create(
     user: User = Depends(get_current_user),
     schema: DocumentCreateSchema = Depends(DocumentCreateSchema.as_form),
     create_service: DocumentCreateService = Depends(get_document_create_service),
+    check_service: PlagiarismCheckService = Depends(
+        get_plagiarism_check_create_service
+    ),
 ) -> Document:
     doc = await create_service.create(user=user, schema=schema)
+    await check_service.check(user=user, document_id=doc.id)
     return doc
 
 
